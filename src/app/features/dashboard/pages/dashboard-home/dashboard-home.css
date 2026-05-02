@@ -17,21 +17,6 @@
   font-size: 14px;
 }
 
-.btn-primary {
-  background-color: #1a56db;
-  color: #ffffff;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 16px;
-  font-size: 14px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
 .btn-primary:hover {
   background-color: #1e40af;
 }

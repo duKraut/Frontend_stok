@@ -35,9 +35,16 @@
     cursor: pointer;
 }
 
+.btn-primary span {
+    font-size: 14px;
+}
+
+.ph-plus {
+    font-size: 18px;
+}
+
 .btn-outline {
     background-color: #f8fafc;
-    color: #1a56db;
     border: 1px solid #cbd5e1;
     border-radius: 8px;
     padding: 10px 16px;
@@ -46,6 +53,14 @@
     align-items: center;
     gap: 8px;
     cursor: pointer;
+}
+
+.btn-outline span {
+    font-size: 14px;
+}
+
+.ph-arrows-left-right {
+    font-size: 18px;
 }
 
 .stats-grid {
