@@ -103,16 +103,16 @@
         <span>Mostrando página {{ paginaAtual }} de {{ totalPaginas }} ativos</span>
 
         <div class="pagination-buttons">
-            <button class="btn-page" (click)="paginaAnterior()" [disabled]="paginaAtual === 1"><i
-                    class="ph ph-caret-left"></i></button>
+            <button class="btn-page" (click)="paginaAnterior()" [disabled]="paginaAtual === 1"><i 
+                class="ph ph-caret-left"></i></button>
 
             <button class="btn-page" *ngFor="let pagina of arrayPaginas" [class.active]="pagina === paginaAtual"
                 (click)="irParaPagina(pagina)">
                 {{ pagina }}
             </button>
 
-            <button class="btn-page" (click)="proximaPagina()" [disabled]="paginaAtual === totalPaginas"><i
-                    class="ph ph-caret-right"></i></button>
+            <button class="btn-page" (click)="proximaPagina()" [disabled]="paginaAtual === totalPaginas"><i 
+                class="ph ph-caret-right"></i></button>
         </div>
     </div>
 </div>
