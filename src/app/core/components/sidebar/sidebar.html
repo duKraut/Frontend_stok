@@ -19,18 +19,22 @@
         <a routerLink="/patrimonio" routerLinkActive="active" class="nav-item">
             <i class="ph ph-suitcase-simple"></i> Patrimônio
         </a>
-        
-        <a class="nav-item"><i class="ph ph-chart-bar"></i> Consultas</a>
-        <a class="nav-item"><i class="ph ph-gear"></i> Configurações</a>
+        <a routerLink="/suppliers" routerLinkActive="active" class="nav-item">
+            <i class="ph ph-users"></i> Fornecedores
+        </a>
+        <a routerLink="/reports" routerLinkActive="active" class="nav-item">
+            <i class="ph ph-chart-bar"></i> Consultas</a>
+        <a routerLink="/configs" routerLinkActive="active" class="nav-item">
+            <i class="ph ph-gear"></i> Configurações</a>
     </nav>
 
     <div class="user-profile">
-        <img src="assets/images/perfil.png" alt="Avatar do Usuário" class="avatar">
+        <img src="assets/images/pessoa.png" alt="Avatar do Usuário" class="avatar">
         <div class="user-info">
             <span class="user-name">Admin User</span>
             <span class="user-mail" >admin@mail.com</span>
         </div>
-        <button class="btn-logout" title="Sair">
+        <button routerLink="/login" routerLinkActive="active" class="btn-logout" title="Sair">
             <i class="ph ph-sign-out"></i>
         </button>
     </div>

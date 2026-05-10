@@ -31,6 +31,21 @@ const routes: Routes = [
         path: 'patrimonio',
         loadChildren: () =>
           import('./features/patrimonio/patrimonio-module').then(m => m.PatrimonioModule),
+      },
+      {
+        path: 'suppliers',
+        loadChildren: () =>
+          import('./features/suppliers/suppliers-module').then(m => m.SuppliersModule),
+      },
+      {
+        path: 'reports',
+        loadChildren: () =>
+          import('./features/reports/reports-module').then(m => m.ReportsModule),
+      },
+      {
+        path: 'configs',
+        loadChildren: () =>
+          import('./features/configs/configs-module').then(m => m.ConfigsModule),
       }
     ]
   },
