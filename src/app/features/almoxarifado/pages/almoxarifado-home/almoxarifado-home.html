@@ -53,6 +53,7 @@
     <thead>
       <tr>
         <th>NOME DO ITEM</th>
+        <th>MARCA</th>
         <th>CATEGORIA</th>
         <th>SALDO ATUAL</th>
         <th>UNID.</th>
@@ -67,6 +68,9 @@
           <strong>{{ item.nome }}</strong>
           <span>SKU: {{ item.sku }}</span>
         </td>
+        
+        <td> {{ item.marca }} </td>
+        
         <td>{{ item.categoria }}</td>
         
         <td [ngClass]="{'text-warning font-bold': item.saldo < item.min && item.saldo > 0, 'text-danger font-bold': item.saldo === 0, 'font-bold': item.saldo >= item.min}">

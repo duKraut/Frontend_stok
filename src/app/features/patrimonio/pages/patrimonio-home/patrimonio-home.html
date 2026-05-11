@@ -66,6 +66,7 @@
             <tr>
                 <th>TOMBAMENTO</th>
                 <th>DESCRIÇÃO</th>
+                <th>MARCA</th>
                 <th>AQUISIÇÃO</th>
                 <th>DEPARTAMENTO</th>
                 <th>ESTADO</th>
@@ -86,6 +87,7 @@
                     </strong>
                     <span>{{ ativo.desc }}</span>
                 </td>
+                <td>{{ ativo.marca }}</td>
                 <td>{{ ativo.aquisicao }}</td>
                 <td>{{ ativo.depto }}</td>
                 <td><span class="badge" [ngClass]="ativo.estadoClass">{{ ativo.estado }}</span></td>

@@ -2,7 +2,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 72px;
+  height: 60px;
   padding: 0 32px;
   background-color: #ffffff;
   border-bottom: 1px solid #e2e8f0;
@@ -39,6 +39,7 @@
 }
 
 .header-actions {
+  margin-left: auto;
   display: flex;
   align-items: center;
   gap: 16px;
