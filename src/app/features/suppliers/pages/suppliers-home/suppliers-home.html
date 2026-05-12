@@ -34,10 +34,11 @@
         <thead>
             <tr>
                 <th>NOME</th>
-                <th>CNPJ</th>
-                <th>REPRESENTANTE</th>
-                <th>CPF</th>
+                <th>CNPJ/CPF</th>
+                <th>CONTATO</th>
                 <th>EMAIL</th>
+                <th>TIPO</th>
+                <th>ATIVO</th>
             </tr>
         </thead>
         <tbody>
@@ -47,10 +48,11 @@
                         {{ active.name }}
                     </strong>
                 </td>
-                <td>{{ active.cnpj }}</td>
-                <td>{{ active.agent }}</td>
-                <td>{{ active.cpf }}</td>
+                <td>{{ active.cnpj_cpf }}</td>
+                <td>{{ active.person_contact }}</td>
                 <td>{{ active.email }}</td>
+                <td>{{ active.type }}</td>
+                <td>{{ active.stats }}</td>
                 <td class="actions-td">
                     <button><i class="ph ph-eye"></i></button>
                     <button><i class="ph ph-pencil-simple"></i></button>

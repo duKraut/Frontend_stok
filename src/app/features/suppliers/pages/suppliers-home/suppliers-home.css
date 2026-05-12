@@ -1,12 +1,13 @@
-.patrimonio-header {
+.suppliers-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 32px;
+    margin-bottom: 120px;
+
 }
 
 .title-area h1 {
-    font-size: 28px;
+    font-size: 45px;
     font-weight: 700;
     color: #0f172a;
     margin-bottom: 4px;
@@ -14,7 +15,7 @@
 
 .title-area p {
     color: #64748b;
-    font-size: 14px;
+    font-size: 20px;
 }
 
 .header-actions-btn {
@@ -43,108 +44,11 @@
     font-size: 18px;
 }
 
-.btn-outline {
-    background-color: #f8fafc;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    padding: 10px 16px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-}
-
-.btn-outline span {
-    font-size: 14px;
-}
-
-.ph-arrows-left-right {
-    font-size: 18px;
-}
-
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
-    margin-bottom: 32px;
-}
-
 .card {
     background: #fff;
     border: 1px solid #e2e8f0;
     border-radius: 12px;
     padding: 24px;
-}
-
-.stat-box {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    padding: 20px;
-    position: relative;
-    overflow: hidden;
-}
-
-.border-left-warning::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 4px;
-    background-color: #f59e0b;
-}
-
-.border-left-danger::before {
-    content: "";
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    width: 4px;
-    background-color: #ef4444;
-}
-
-.stat-top {
-    font-size: 12px;
-    color: #64748b;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-}
-
-.stat-bottom {
-    display: flex;
-    align-items: baseline;
-    gap: 12px;
-}
-
-.stat-bottom h2 {
-    font-size: 28px;
-    color: #0f172a;
-    margin: 0;
-    font-weight: 700;
-}
-
-.text-success {
-    color: #16a34a;
-}
-
-.text-sm {
-    font-size: 12px;
-}
-
-.font-bold {
-    font-weight: 600;
-}
-
-.text-primary {
-    color: #1a56db;
-}
-
-.table-container {
-    padding: 0;
-    overflow: hidden;
 }
 
 .filters-row {
