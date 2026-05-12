@@ -1,1 +1,54 @@
-<p>suppliers-home works!</p>
+<div class="suppliers-header">
+    <div class="title-area">
+        <h1>Fornecedores</h1>
+        <p>Gerenciamento e cadastro de Fornecedores</p>
+    </div>
+    <div class="header-actions-btn">
+        <button class="btn-primary"><i class="ph ph-plus"></i><span> Novo Fornecedor</span></button>
+    </div>
+</div>
+
+<div class="card table-container">
+
+    <div class="filters-row">
+        <div class="filter-group flex">
+            <div class="search-input-wrapper">
+                <i class="ph ph-magnifying-glass"></i>
+                <input type="text" placeholder="Buscar Fornecedores...">
+            </div>
+        </div>
+        <div class="filter-group">
+            <select>
+                <option>Nome</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <select>
+                <option>Ativos</option>
+            </select>
+        </div>
+        <button class="btn-icon"><i class="ph ph-funnel"></i></button>
+    </div>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>NOME</th>
+                <th>CNPJ</th>
+                <th>REPRESENTANTE</th>
+                <th>CPF</th>
+                <th>EMAIL</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let active of itemsDisplayed">
+                <td class="text-primary font-bold">{{ active.supplier }}</td>
+                <td>
+                    <strong>
+                        
+                    </strong>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
