@@ -22,6 +22,75 @@
     gap: 12px;
 }
 
+.filters-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.table-tabs {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 20px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.tab {
+  border: none;
+  background: transparent;
+  color: #64748b;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.tab:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.tab.active {
+  background: #eef2ff;
+  color: #1d4ed8;
+}
+
+.btn-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  border: none;
+  background: transparent;
+
+  color: #475569;
+
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+
+  cursor: pointer;
+
+  padding: 8px 12px;
+  border-radius: 8px;
+
+  transition: 0.2s;
+}
+
+.btn-text:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.btn-text i {
+  font-size: 16px;
+}
+
 .btn-primary {
     background-color: #1a56db;
     color: #fff;
@@ -156,64 +225,6 @@
     background-color: #f8fafc;
 }
 
-.filter-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.flex-2 {
-    flex: 2;
-}
-
-.search-input-wrapper {
-    display: flex;
-    align-items: center;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    padding: 0 12px;
-    height: 44px;
-    background: #fff;
-}
-
-.search-input-wrapper i {
-    color: #94a3b8;
-    margin-right: 8px;
-    font-size: 18px;
-}
-
-.search-input-wrapper input {
-    border: none;
-    outline: none;
-    width: 100%;
-    font-family: inherit;
-    font-size: 14px;
-}
-
-.filter-group select {
-    height: 44px;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    padding: 0 12px;
-    background: #fff;
-    font-family: inherit;
-    color: #334155;
-    font-size: 14px;
-}
-
-.btn-icon {
-    background: #fff;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    height: 44px;
-    width: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: #475569;
-    font-size: 18px;
-}
 
 .data-table {
     width: 100%;

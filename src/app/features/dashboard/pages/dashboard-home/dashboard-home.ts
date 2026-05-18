@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { OnInit } from '@angular/core';
+import { HeaderService } from '../../../../core/services/header';
 
 @Component({
   selector: 'app-dashboard-home',
@@ -6,6 +8,14 @@ import { Component } from '@angular/core';
   templateUrl: './dashboard-home.html',
   styleUrl: './dashboard-home.css',
 })
-export class DashboardHome {
+export class DashboardHome implements OnInit{
+  
+  constructor(private headerService: HeaderService) {}
 
+  ngOnInit(): void {
+    this.headerService.setConfig({
+      searchPlaceholder: '',
+      showSearch: false
+    });
+  }
 }

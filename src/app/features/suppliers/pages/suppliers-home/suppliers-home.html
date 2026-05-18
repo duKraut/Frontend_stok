@@ -10,49 +10,33 @@
 
 <div class="card table-container">
 
-    <div class="filters-row">
-        <div class="filter-group flex-2">
-            <div class="search-input-wrapper">
-                <i class="ph ph-magnifying-glass"></i>
-                <input type="text" placeholder="Buscar Fornecedores...">
-            </div>
-        </div>
-        <div class="filter-group">
-            <select>
-                <option>Nome</option>
-            </select>
-        </div>
-        <div class="filter-group">
-            <select>
-                <option>Ativos</option>
-            </select>
-        </div>
-        <button class="btn-icon"><i class="ph ph-funnel"></i></button>
-    </div>
-
     <table class="data-table">
         <thead>
             <tr>
+                <th>CÓDIGO</th>
                 <th>NOME</th>
                 <th>CNPJ/CPF</th>
-                <th>CONTATO</th>
-                <th>EMAIL</th>
-                <th>TIPO</th>
+                <th>CATEGORIA</th>
                 <th>ATIVO</th>
             </tr>
         </thead>
         <tbody>
             <tr *ngFor="let active of itemsDisplayed">
+                <td>{{ active.id }}</td>
                 <td>
-                    <strong>
-                        {{ active.name }}
-                    </strong>
+                    <div class="supplier-cell">
+                        <div class="supplier-avatar" [ngClass]="getAvatarClass(active.category)">
+                        {{ getInitials(active.name) }}
+                        </div>
+
+                        <div class="supplier-info">
+                        <strong>{{ active.name }}</strong>
+                        </div>
+                    </div>
                 </td>
                 <td>{{ active.cnpj_cpf }}</td>
-                <td>{{ active.person_contact }}</td>
-                <td>{{ active.email }}</td>
-                <td>{{ active.type }}</td>
-                <td>{{ active.stats }}</td>
+                <td>{{ active.category }}</td>
+                <td><span class="badge" [ngClass]="active.statsClass">{{ active.stats }}</span></td>
                 <td class="actions-td">
                     <button><i class="ph ph-eye"></i></button>
                     <button><i class="ph ph-pencil-simple"></i></button>

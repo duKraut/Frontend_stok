@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { OnInit } from '@angular/core';
+import { HeaderService } from '../../../../core/services/header';
 
 @Component({
   selector: 'app-patrimonio-home',
@@ -6,7 +8,7 @@ import { Component } from '@angular/core';
   templateUrl: './patrimonio-home.html',
   styleUrl: './patrimonio-home.css',
 })
-export class PatrimonioHome {
+export class PatrimonioHome implements OnInit{
   todosAtivos = [
     { tombamento: '#PAT-00124', nome: 'Notebook Dell Latitude 5420', desc: 'Core i7, 16GB RAM, 512GB SSD', marca: 'Dell', aquisicao: '12/05/2022', depto: 'TI - Sede', estado: 'EXCELENTE', estadoClass: 'badge-excelente', valor: 'R$ 5.400,00' },
     { tombamento: '#PAT-00089', nome: 'Ar Condicionado 12k BTU', desc: 'Samsung Digital Inverter', marca: 'Samsung', alerta: true, aquisicao: '15/03/2019', depto: 'Vendas', estado: 'MANUTENÇÃO', estadoClass: 'badge-manutencao', valor: 'R$ 2.100,00' },
@@ -37,5 +39,16 @@ export class PatrimonioHome {
   }
   paginaAnterior() {
     if (this.paginaAtual > 1) this.paginaAtual--;
+  }
+
+  constructor(private headerService: HeaderService) {}
+
+  ngOnInit(): void {
+    this.headerService.setConfig({
+      searchPlaceholder: 'Buscar Tombamento, descrição ou categoria...',
+      showSearch: true,
+      primaryButtonLabel: 'Novo Fornecedor',
+      primaryButtonIcon: 'ph ph-plus'
+    });
   }
 }
