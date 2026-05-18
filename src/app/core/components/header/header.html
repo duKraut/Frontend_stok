@@ -1,4 +1,13 @@
-<header class="top-header">
+<header class="top-header" *ngIf="headerService.config$ | async as config">
+
+    <div class="search-box" *ngIf="config.showSearch">
+        <i class="ph ph-magnifying-glass"></i>
+
+        <input
+            type="text"
+            [placeholder]="config.searchPlaceholder"
+        />
+    </div>
 
     <div class="header-actions">
 

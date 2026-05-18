@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { OnInit } from '@angular/core';
+import { HeaderService } from '../../../../core/services/header';
 
 @Component({
   selector: 'app-almoxarifado-home',
@@ -6,7 +8,7 @@ import { Component } from '@angular/core';
   templateUrl: './almoxarifado-home.html',
   styleUrl: './almoxarifado-home.css',
 })
-export class AlmoxarifadoHome {
+export class AlmoxarifadoHome implements OnInit{
   todosItens = [
     { nome: 'Papel A4 Sulfite 75g', sku: 'SUP-OFF-001', marca: 'Chamex', categoria: 'Escritório', saldo: 5, unid: 'CX', min: 10, status: 'ESTOQUE BAIXO', statusClass: 'warning-outline' },
     { nome: 'Detergente Líquido 5L', sku: 'CLN-LIQ-042', marca: 'Ypê', categoria: 'Limpeza', saldo: 24, unid: 'UN', min: 5, status: 'EM ESTOQUE', statusClass: 'success-outline' },
@@ -46,5 +48,16 @@ export class AlmoxarifadoHome {
 
   paginaAnterior() {
     if (this.paginaAtual > 1) this.paginaAtual--;
+  }
+
+  constructor(private headerService: HeaderService) {}
+  
+  ngOnInit(): void {
+    this.headerService.setConfig({
+      searchPlaceholder: 'Buscar item, marca ou categoria...',
+      showSearch: true,
+      primaryButtonLabel: 'Novo Fornecedor',
+      primaryButtonIcon: 'ph ph-plus'
+    });
   }
 }

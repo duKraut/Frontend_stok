@@ -1,4 +1,4 @@
-.dashboard-header {
+.almoxarifado-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
@@ -60,7 +60,7 @@
     font-size: 14px;
 }
 
-.ph-shopping-cart {
+.ph-arrows-left-right {
     font-size: 18px;
 }
 
@@ -151,71 +151,72 @@
 }
 
 .filters-row {
-    display: flex;
-    gap: 16px;
-    padding: 24px;
-    border-bottom: 1px solid #e2e8f0;
-    align-items: flex-end;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  border-bottom: 1px solid #e2e8f0;
 }
 
-.filter-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+.table-tabs {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 20px;
+  border-bottom: 1px solid #e2e8f0;
 }
 
-.flex-1 {
-    flex: 1;
+.tab {
+  border: none;
+  background: transparent;
+  color: #64748b;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
 }
 
-.filter-group label {
-    font-size: 11px;
-    font-weight: 700;
-    color: #94a3b8;
+.tab:hover {
+  background: #f1f5f9;
+  color: #0f172a;
 }
 
-.search-input-wrapper {
-    display: flex;
-    align-items: center;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    padding: 0 12px;
-    height: 40px;
-    background: #fff;
-}
-
-.search-input-wrapper i {
-    color: #94a3b8;
-    margin-right: 8px;
-}
-
-.search-input-wrapper input {
-    border: none;
-    outline: none;
-    width: 100%;
-    font-family: inherit;
-}
-
-.filter-group select {
-    height: 40px;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    padding: 0 12px;
-    background: #fff;
-    font-family: inherit;
-    color: #334155;
+.tab.active {
+  background: #eef2ff;
+  color: #1d4ed8;
 }
 
 .btn-text {
-    background: none;
-    border: none;
-    color: #0f172a;
-    font-weight: 00;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    padding-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  border: none;
+  background: transparent;
+
+  color: #475569;
+
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+
+  cursor: pointer;
+
+  padding: 8px 12px;
+  border-radius: 8px;
+
+  transition: 0.2s;
+}
+
+.btn-text:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.btn-text i {
+  font-size: 16px;
 }
 
 .data-table {

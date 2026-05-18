@@ -1,10 +1,10 @@
-<div class="dashboard-header">
+<div class="almoxarifado-header">
   <div class="title-area">
     <h1>Gestão de Almoxarifado</h1>
     <p>Controle e monitoramento de itens de consumo e níveis de estoque.</p>
   </div>
   <div class="header-actions-btn">
-    <button class="btn-outline"><i class="ph ph-shopping-cart"></i><span>Movimentações</span></button>
+    <button class="btn-outline"><i class="ph ph-arrows-left-right"></i><span>Movimentações</span></button>
     <button class="btn-primary"><i class="ph ph-plus"></i><span>Novo Item</span></button>
   </div>
 </div>
@@ -31,22 +31,16 @@
 <div class="card table-container">
   
   <div class="filters-row">
-    <div class="filter-group flex-1">
-      <label>BUSCAR</label>
-      <div class="search-input-wrapper">
-        <i class="ph ph-magnifying-glass"></i>
-        <input type="text" placeholder="Nome do item ou SKU...">
-      </div>
+    <div class="table-tabs">
+      <button class="tab active">Todos</button>
+      <button class="tab">Em Estoque</button>
+      <button class="tab">Estoque baixo</button>
+      <button class="tab">Esgotados</button>
     </div>
-    <div class="filter-group">
-      <label>CATEGORIA</label>
-      <select><option>Todas</option></select>
-    </div>
-    <div class="filter-group">
-      <label>STATUS DE ESTOQUE</label>
-      <select><option>Todos os Status</option></select>
-    </div>
-    <button class="btn-text"><i class="ph ph-faders"></i> Mais Filtros</button>
+    <button class="btn-text">
+      <i class="ph ph-faders"></i>
+      Mais filtros
+    </button>
   </div>
 
   <table class="data-table">
