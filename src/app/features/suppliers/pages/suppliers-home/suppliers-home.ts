@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { OnInit } from '@angular/core';
 import { HeaderService } from '../../../../core/services/header';
 
+type SupplierFormMode = 'create' | 'edit';
+
 @Component({
   selector: 'app-suppliers-home',
   standalone: false,
@@ -23,7 +25,27 @@ export class SuppliersHome implements OnInit{
   ];
 
     paginaAtual = 1;
-  itensPorPagina = 6;
+  itensPorPagina = 5;
+
+  isSupplierFormOpen = false;
+  supplierFormMode: SupplierFormMode = 'create';
+  selectedSupplier: any = null;
+
+  openCreateSupplier(): void {
+    this.supplierFormMode = 'create';
+    this.selectedSupplier = null;
+    this.isSupplierFormOpen = true;
+  }
+
+  openEditSupplier(supplier: any): void {
+    this.supplierFormMode = 'edit';
+    this.selectedSupplier = supplier;
+    this.isSupplierFormOpen = true;
+  }
+
+  closeSupplierForm(): void {
+    this.isSupplierFormOpen = false;
+  }
 
   get totalPaginas() { return Math.ceil(this.allActives.length / this.itensPorPagina); }
   

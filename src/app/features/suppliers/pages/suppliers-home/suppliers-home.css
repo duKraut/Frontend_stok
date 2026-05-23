@@ -2,12 +2,12 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 120px;
+    margin-bottom: 32px;
 
 }
 
 .title-area h1 {
-    font-size: 45px;
+    font-size: 28px;
     font-weight: 700;
     color: #0f172a;
     margin-bottom: 4px;
@@ -15,7 +15,7 @@
 
 .title-area p {
     color: #64748b;
-    font-size: 20px;
+    font-size: 14px;
 }
 
 .header-actions-btn {
@@ -306,4 +306,12 @@
 .avatar-default {
   background: #e5e7eb;
   color: #374151;
+}
+
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.35);
+  backdrop-filter: blur(4px);
+  z-index: 70;
 }

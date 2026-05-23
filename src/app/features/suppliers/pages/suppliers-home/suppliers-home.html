@@ -4,7 +4,7 @@
         <p>Gerenciamento e cadastro de Fornecedores</p>
     </div>
     <div class="header-actions-btn">
-        <button class="btn-primary"><i class="ph ph-plus"></i><span> Novo Fornecedor</span></button>
+        <button class="btn-primary" type="button" (click)="openCreateSupplier()"><i class="ph ph-plus"></i><span> Novo Fornecedor</span></button>
     </div>
 </div>
 
@@ -39,7 +39,7 @@
                 <td><span class="badge" [ngClass]="active.statsClass">{{ active.stats }}</span></td>
                 <td class="actions-td">
                     <button><i class="ph ph-eye"></i></button>
-                    <button><i class="ph ph-pencil-simple"></i></button>
+                    <button type="button" (click)="openEditSupplier(active)"><i class="ph ph-pencil-simple"></i></button>
                     <button><i class="ph ph-clock-counter-clockwise"></i></button>
                 </td>
             </tr>
@@ -63,3 +63,16 @@
         </div>
     </div>
 </div>
+
+<div
+  class="drawer-backdrop"
+  *ngIf="isSupplierFormOpen"
+  (click)="closeSupplierForm()">
+</div>
+
+<app-suppliers-form
+  *ngIf="isSupplierFormOpen"
+  [mode]="supplierFormMode"
+  [supplier]="selectedSupplier"
+  (close)="closeSupplierForm()">
+</app-suppliers-form>

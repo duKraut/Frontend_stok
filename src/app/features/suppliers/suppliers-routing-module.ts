@@ -5,8 +5,6 @@ import { SuppliersForm } from './pages/suppliers-form/suppliers-form';
 
 const routes: Routes = [
   { path: "", component: SuppliersHome },
-  { path : "new", component: SuppliersForm },
-  { path : "edit/:id", component: SuppliersForm } //vai puxar do banco, provavelmente mude pra uuid
 ];
 
 @NgModule({
