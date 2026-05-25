@@ -10,6 +10,9 @@
   box-shadow: -24px 0 60px rgba(15, 23, 42, 0.18);
   display: flex;
   flex-direction: column;
+  display: flex;
+  flex-direction: column;
+  animation: slideInRight 0.28s ease-out;
 }
 
 .drawer-header {
@@ -157,4 +160,41 @@
   color: #6b7280;
   font-size: 10px;
   text-transform: uppercase;
+}
+
+.checkbox-group {
+  margin-top: 6px;
+  margin-bottom: 10px;
+  margin-left: 325px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: #334155;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+
+  accent-color: #2563eb;
+
+  cursor: pointer;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0.7;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }

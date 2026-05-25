@@ -1,7 +1,7 @@
 <aside class="supplier-drawer">
   <div class="drawer-header">
     <div>
-      <h2>{{ mode === 'edit' ? 'Editar Fornecedor' : 'Cadastro de Fornecedor' }}</h2>
+      <h2>{{ mode === 'create' ? 'Cadastro de Fornecedor' : mode === 'edit' ? 'Editar Fornecedor' : 'Detalhes do Fornecedor' }}</h2>
       <p>Insira os dados do parceiro no registro global.</p>
     </div>
 
@@ -17,15 +17,22 @@
         <h3>Identificação Corporativa</h3>
       </div>
 
+      <div class="form-group checkbox-group">
+        <label class="checkbox-label">
+          <input type="checkbox" checked [disabled]="mode === 'view'"/>
+          <span>Fornecedor Ativo</span>
+        </label>
+      </div>
+
       <div class="form-grid">
         <div class="form-group full">
-          <label>Razão Social</label>
-          <input type="text" placeholder="Ex: Global Logistics Solutions LTDA" />
+          <label>Nome / Razão Social</label>
+          <input type="text" placeholder="Ex: Global Logistics Solutions LTDA" [disabled]="mode === 'view'"/>
         </div>
 
         <div class="form-group">
           <label>CNPJ / CPF</label>
-          <input type="text" placeholder="00.000.000/0000-00" />
+          <input type="text" placeholder="00.000.000/0000-00" [disabled]="mode === 'view'"/>
         </div>
 
         <div class="form-group">
@@ -49,17 +56,17 @@
       <div class="form-grid">
         <div class="form-group full">
           <label>Nome do Responsável</label>
-          <input type="text" placeholder="Nome completo" />
+          <input type="text" placeholder="Nome completo" [disabled]="mode === 'view'"/>
         </div>
 
         <div class="form-group">
           <label>E-mail</label>
-          <input type="email" placeholder="email@fornecedor.com" />
+          <input type="email" placeholder="email@fornecedor.com" [disabled]="mode === 'view'"/>
         </div>
 
         <div class="form-group">
           <label>Telefone</label>
-          <input type="text" placeholder="+55 (11) 00000-0000" />
+          <input type="text" placeholder="+55 (11) 00000-0000" [disabled]="mode === 'view'"/>
         </div>
       </div>
     </section>
@@ -73,33 +80,31 @@
       <div class="form-grid">
         <div class="form-group wide">
           <label>Endereço</label>
-          <input type="text" placeholder="Rua, Av..." />
+          <input type="text" placeholder="Rua, Av..." [disabled]="mode === 'view'"/>
         </div>
 
         <div class="form-group small">
           <label>CEP</label>
-          <input type="text" placeholder="00000-000" />
+          <input type="text" placeholder="00000-000" [disabled]="mode === 'view'"/>
         </div>
 
         <div class="form-group">
           <label>Cidade</label>
-          <input type="text" placeholder="Cidade" />
+          <input type="text" placeholder="Cidade" [disabled]="mode === 'view'"/>
         </div>
 
         <div class="form-group">
           <label>Bairro</label>
-          <input type="text" placeholder="Bairro" />
+          <input type="text" placeholder="Bairro" [disabled]="mode === 'view'"/>
         </div>
       </div>
     </section>
   </div>
 
-  <div class="drawer-footer">
+  <div class="drawer-footer" *ngIf="mode !== 'view'">
     <button class="btn-save" type="button">
       <i class="ph ph-floppy-disk"></i>
       Salvar Fornecedor
     </button>
-
-    <span>Rascunho salvo automaticamente a cada 30 segundos</span>
   </div>
 </aside>

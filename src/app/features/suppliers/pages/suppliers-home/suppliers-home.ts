@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { OnInit } from '@angular/core';
 import { HeaderService } from '../../../../core/services/header';
 
-type SupplierFormMode = 'create' | 'edit';
+type SupplierFormMode = 'create' | 'edit' | 'view';
 
 @Component({
   selector: 'app-suppliers-home',
@@ -24,7 +24,7 @@ export class SuppliersHome implements OnInit{
     {id: '10', name: 'Rodrigo Augusto Barbosa', cnpj_cpf: '159.753.486-33', category: 'Outros', stats: 'Ativo',  statsClass: 'badge-Ativo'},
   ];
 
-    paginaAtual = 1;
+  paginaAtual = 1;
   itensPorPagina = 5;
 
   isSupplierFormOpen = false;
@@ -39,6 +39,12 @@ export class SuppliersHome implements OnInit{
 
   openEditSupplier(supplier: any): void {
     this.supplierFormMode = 'edit';
+    this.selectedSupplier = supplier;
+    this.isSupplierFormOpen = true;
+  }
+
+  openViewSupplier(supplier: any): void {
+    this.supplierFormMode = 'view';
     this.selectedSupplier = supplier;
     this.isSupplierFormOpen = true;
   }
