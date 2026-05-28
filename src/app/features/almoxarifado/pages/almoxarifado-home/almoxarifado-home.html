@@ -46,6 +46,7 @@
   <table class="data-table">
     <thead>
       <tr>
+        <th>ID</th>
         <th>NOME DO ITEM</th>
         <th>MARCA</th>
         <th>CATEGORIA</th>
@@ -58,6 +59,7 @@
     </thead>
     <tbody>
       <tr *ngFor="let item of itensExibidos">
+        <td> {{ item.id }}</td>
         <td>
           <strong>{{ item.nome }}</strong>
           <span>SKU: {{ item.sku }}</span>

@@ -162,8 +162,6 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 18px 20px;
-  border-bottom: 1px solid #e2e8f0;
 }
 
 .tab {
@@ -192,21 +190,15 @@
   display: flex;
   align-items: center;
   gap: 8px;
-
   border: none;
   background: transparent;
-
   color: #475569;
-
   font-size: 14px;
   font-weight: 600;
   font-family: 'Inter', sans-serif;
-
   cursor: pointer;
-
   padding: 8px 12px;
   border-radius: 8px;
-
   transition: 0.2s;
 }
 
