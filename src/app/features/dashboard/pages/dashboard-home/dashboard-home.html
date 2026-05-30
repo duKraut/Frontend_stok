@@ -1,74 +1,128 @@
 <div class="dashboard-header">
-    <div class="title-area">
-        <h1>Visão Geral</h1>
-        <p>Bem-vindo ao painel de controle central</p>
-    </div>
+  <div class="title-area">
+    <h1>Visão Geral</h1>
+    <p>Bem-vindo ao painel de controle central</p>
+  </div>
 </div>
 
 <div class="stats-grid">
-  <app-stat-card 
-    title="Itens em Estoque" 
-    value="12.450" 
-    badgeText="+2.4%" 
-    badgeType="success" 
-    iconClass="ph-fill ph-archive-box">
+  <app-stat-card
+    title="ITENS EM ESTOQUE"
+    value="12.450"
+    badgeText="+2.4% este mês"
+    badgeColor="success">
   </app-stat-card>
 
-  <app-stat-card 
-    title="Alertas de Estoque Baixo" 
-    value="18" 
-    badgeText="+12%" 
-    badgeType="danger" 
-    iconClass="ph-fill ph-warning">
+  <app-stat-card
+    title="ALERTAS DE ESTOQUE BAIXO"
+    value="18"
+    accentColor="danger"
+    iconClass="ph-fill ph-warning"
+    iconColor="#ef4444">
   </app-stat-card>
 
-  <app-stat-card 
-    title="Valor do Patrimônio" 
-    value="R$ 2.4M" 
-    badgeText="+0.8%" 
-    badgeType="success" 
-    iconClass="ph-fill ph-currency-dollar">
+  <app-stat-card
+    title="VALOR DO PATRIMÔNIO"
+    value="R$ 2.4M"
+    badgeText="+0.8% este mês"
+    badgeColor="success">
   </app-stat-card>
 
-  <app-stat-card 
-    title="Ativos em Manutenção" 
-    value="12" 
-    badgeText="Estável" 
-    badgeType="neutral" 
-    iconClass="ph-fill ph-wrench">
+  <app-stat-card
+    title="ATIVOS EM MANUTENÇÃO"
+    value="12"
+    accentColor="warning"
+    iconClass="ph-fill ph-wrench"
+    iconColor="#f59e0b">
   </app-stat-card>
-</div> <div class="bottom-grid">
-  
+</div>
+
+<div class="bottom-grid">
+
   <div class="card chart-section">
     <div class="chart-header">
       <h3>Consumo vs. Aquisições (Mensal)</h3>
       <div class="chart-legend">
-        <span class="legend-item"><span class="dot blue"></span> Consumo</span>
-        <span class="legend-item"><span class="dot grey"></span> Aquisições</span>
+        <span class="legend-item"><span class="dot gray"></span> Consumo</span>
+        <span class="legend-item"><span class="dot blue"></span> Aquisições</span>
       </div>
     </div>
 
     <div class="chart-body">
-      <div class="chart-labels-x">
-        <span>Jan</span>
-        <span>Fev</span>
-        <span>Mar</span>
-        <span>Abr</span>
-        <span>Mai</span>
-        <span>Jun</span>
+      <div class="y-axis">
+        <span>200</span>
+        <span>150</span>
+        <span>100</span>
+        <span>50</span>
+        <span>0</span>
+      </div>
+
+      <div class="chart-area">
+        <div class="gridlines">
+          <div class="gridline"></div>
+          <div class="gridline"></div>
+          <div class="gridline"></div>
+          <div class="gridline"></div>
+          <div class="gridline"></div>
+        </div>
+
+        <div class="chart-bars">
+          <div class="bar-col">
+            <div class="bars">
+              <div class="bar-wrap"><span class="bar-value">130</span><div class="bar consumption" style="height:65%"></div></div>
+              <div class="bar-wrap"><span class="bar-value">90</span><div class="bar acquisition" style="height:45%"></div></div>
+            </div>
+            <span class="bar-label">Jan</span>
+          </div>
+          <div class="bar-col">
+            <div class="bars">
+              <div class="bar-wrap"><span class="bar-value">160</span><div class="bar consumption" style="height:80%"></div></div>
+              <div class="bar-wrap"><span class="bar-value">120</span><div class="bar acquisition" style="height:60%"></div></div>
+            </div>
+            <span class="bar-label">Fev</span>
+          </div>
+          <div class="bar-col">
+            <div class="bars">
+              <div class="bar-wrap"><span class="bar-value">100</span><div class="bar consumption" style="height:50%"></div></div>
+              <div class="bar-wrap"><span class="bar-value">150</span><div class="bar acquisition" style="height:75%"></div></div>
+            </div>
+            <span class="bar-label">Mar</span>
+          </div>
+          <div class="bar-col">
+            <div class="bars">
+              <div class="bar-wrap"><span class="bar-value">180</span><div class="bar consumption" style="height:90%"></div></div>
+              <div class="bar-wrap"><span class="bar-value">110</span><div class="bar acquisition" style="height:55%"></div></div>
+            </div>
+            <span class="bar-label">Abr</span>
+          </div>
+          <div class="bar-col">
+            <div class="bars">
+              <div class="bar-wrap"><span class="bar-value">140</span><div class="bar consumption" style="height:70%"></div></div>
+              <div class="bar-wrap"><span class="bar-value">80</span><div class="bar acquisition" style="height:40%"></div></div>
+            </div>
+            <span class="bar-label">Mai</span>
+          </div>
+          <div class="bar-col">
+            <div class="bars">
+              <div class="bar-wrap"><span class="bar-value">170</span><div class="bar consumption" style="height:85%"></div></div>
+              <div class="bar-wrap"><span class="bar-value">130</span><div class="bar acquisition" style="height:65%"></div></div>
+            </div>
+            <span class="bar-label">Jun</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
-<div class="card actions-section">
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-    <h3>Ações Críticas</h3>
-    <span class="badge danger" style="background-color: #fee2e2; color: #991b1b; padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: bold;">ATENÇÃO</span>
-  </div>
-  
-  <app-action-list></app-action-list>
+  <div class="card actions-section">
+    <div class="actions-header">
+      <h3>Ações Críticas</h3>
+      <span class="alert-badge">ATENÇÃO</span>
+    </div>
 
-  <button class="btn-outline" style="width: 100%; margin-top: 16px; padding: 12px; background: transparent; border: 1px solid #cbd5e1; color: #1a56db; font-weight: 600; border-radius: 8px; cursor: pointer;">
-    Ver Todos os Alertas
-  </button>
+    <app-action-list></app-action-list>
+
+    <button class="btn-ver-todos">Ver Todos os Alertas</button>
+  </div>
+
 </div>

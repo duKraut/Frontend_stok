@@ -4,38 +4,42 @@
     <p>Controle e monitoramento de itens de consumo e níveis de estoque.</p>
   </div>
   <div class="header-actions-btn">
-    <button class="btn-outline"><i class="ph ph-arrows-left-right"></i><span>Movimentações</span></button>
-    <button class="btn-primary"><i class="ph ph-plus"></i><span>Novo Item</span></button>
+    <button class="btn-outline" type="button" (click)="goToMovimentacoes()">
+      <i class="ph ph-arrows-left-right"></i><span>Movimentações</span>
+    </button>
+    <button class="btn-primary" type="button" (click)="openCreateItem()">
+      <i class="ph ph-plus"></i><span>Novo Item</span>
+    </button>
   </div>
 </div>
 
 <div class="stats-grid almoxarifado-cards">
   <div class="card stat-box">
-    <div class="stat-top"><span>Total de SKUs</span> <i class="ph ph-archive-box" style="color: #1a56db;"></i></div>
-    <div class="stat-bottom"><h2>1.240</h2> <span class="badge success">+2.4%</span></div>
+    <div class="stat-top"><span>TOTAL DE SKUs</span></div>
+    <div class="stat-bottom"><h2>1.240</h2> <span class="text-success text-sm font-bold">+2.4% este mês</span></div>
   </div>
-  <div class="card stat-box warning-box">
-    <div class="stat-top"><span>Itens em Baixa</span> <i class="ph-fill ph-warning" style="color: #f59e0b;"></i></div>
-    <div class="stat-bottom"><h2>42</h2> <span class="badge warning-light">Revisar</span></div>
+  <div class="card stat-box border-left-warning">
+    <div class="stat-top"><span>ITENS EM BAIXA</span></div>
+    <div class="stat-bottom"><h2>42</h2> <i class="ph-fill ph-warning" style="color: #f59e0b; font-size: 24px;"></i></div>
   </div>
-  <div class="card stat-box danger-box">
-    <div class="stat-top"><span>Esgotados</span> <i class="ph-fill ph-warning-circle" style="color: #ef4444;"></i></div>
-    <div class="stat-bottom"><h2>12</h2> <span class="badge danger-light">Crítico</span></div>
+  <div class="card stat-box border-left-danger">
+    <div class="stat-top"><span>ESGOTADOS</span></div>
+    <div class="stat-bottom"><h2>12</h2> <i class="ph-fill ph-warning-circle" style="color: #ef4444; font-size: 24px;"></i></div>
   </div>
   <div class="card stat-box">
-    <div class="stat-top"><span>Saídas (Hoje)</span> <i class="ph-fill ph-trend-up" style="color: #8b5cf6;"></i></div>
-    <div class="stat-bottom"><h2>156</h2> <span class="badge neutral">Estável</span></div>
+    <div class="stat-top"><span>SAÍDAS HOJE</span></div>
+    <div class="stat-bottom"><h2>156</h2> <span class="text-sm font-bold" style="color: #8b5cf6;">Estável</span></div>
   </div>
 </div>
 
 <div class="card table-container">
-  
+
   <div class="filters-row">
     <div class="table-tabs">
-      <button class="tab active">Todos</button>
-      <button class="tab">Em Estoque</button>
-      <button class="tab">Estoque baixo</button>
-      <button class="tab">Esgotados</button>
+      <button class="tab" [class.active]="activeTab === 'Todos'" (click)="setTab('Todos')">Todos</button>
+      <button class="tab" [class.active]="activeTab === 'Em Estoque'" (click)="setTab('Em Estoque')">Em Estoque</button>
+      <button class="tab" [class.active]="activeTab === 'Estoque Baixo'" (click)="setTab('Estoque Baixo')">Estoque Baixo</button>
+      <button class="tab" [class.active]="activeTab === 'Esgotados'" (click)="setTab('Esgotados')">Esgotados</button>
     </div>
     <button class="btn-text">
       <i class="ph ph-faders"></i>
@@ -59,43 +63,56 @@
     </thead>
     <tbody>
       <tr *ngFor="let item of itensExibidos">
-        <td> {{ item.id }}</td>
+        <td>{{ item.id }}</td>
         <td>
           <strong>{{ item.nome }}</strong>
           <span>SKU: {{ item.sku }}</span>
         </td>
-        
-        <td> {{ item.marca }} </td>
-        
+        <td>{{ item.marca }}</td>
         <td>{{ item.categoria }}</td>
-        
         <td [ngClass]="{'text-warning font-bold': item.saldo < item.min && item.saldo > 0, 'text-danger font-bold': item.saldo === 0, 'font-bold': item.saldo >= item.min}">
-          {{ item.saldo }} <i *ngIf="item.saldo < item.min" class="ph ph-arrow-down"></i>
+          {{ item.saldo }} <i *ngIf="item.saldo < item.min && item.saldo > 0" class="ph ph-arrow-down"></i>
         </td>
-        
         <td>{{ item.unid }}</td>
         <td>{{ item.min }}</td>
         <td><span class="badge" [ngClass]="item.statusClass">{{ item.status }}</span></td>
         <td class="actions-td">
-          <button><i class="ph ph-clock-counter-clockwise"></i></button>
-          <button><i class="ph ph-pencil-simple"></i></button>
+          <button type="button" title="Movimentações" (click)="goToMovimentacoes()">
+            <i class="ph ph-clock-counter-clockwise"></i>
+          </button>
+          <button type="button" title="Visualizar" (click)="openViewItem(item)">
+            <i class="ph ph-eye"></i>
+          </button>
+          <button type="button" title="Editar" (click)="openEditItem(item)">
+            <i class="ph ph-pencil-simple"></i>
+          </button>
         </td>
       </tr>
     </tbody>
   </table>
 
-    <div class="pagination-footer">
-      <span>Mostrando página {{ paginaAtual }} de {{ totalPaginas }} ativos</span>
-    
-        <div class="pagination-buttons">
-          <button class="btn-page" (click)="paginaAnterior()" [disabled]="paginaAtual === 1"><i class="ph ph-caret-left"></i></button>
-      
-            <button class="btn-page" *ngFor="let pagina of arrayPaginas" [class.active]="pagina === paginaAtual" 
-              (click)="irParaPagina(pagina)">
-              {{ pagina }}
-            </button>
-      
-            <button class="btn-page" (click)="proximaPagina()" [disabled]="paginaAtual === totalPaginas"><i class="ph ph-caret-right"></i></button>
-        </div>
+  <div class="pagination-footer">
+    <span>Mostrando página {{ paginaAtual }} de {{ totalPaginas }}</span>
+    <div class="pagination-buttons">
+      <button class="btn-page" (click)="paginaAnterior()" [disabled]="paginaAtual === 1">
+        <i class="ph ph-caret-left"></i>
+      </button>
+      <button class="btn-page" *ngFor="let pagina of arrayPaginas"
+        [class.active]="pagina === paginaAtual" (click)="irParaPagina(pagina)">
+        {{ pagina }}
+      </button>
+      <button class="btn-page" (click)="proximaPagina()" [disabled]="paginaAtual === totalPaginas">
+        <i class="ph ph-caret-right"></i>
+      </button>
     </div>
+  </div>
 </div>
+
+<div class="drawer-backdrop" *ngIf="isItemFormOpen" (click)="closeItemForm()"></div>
+
+<app-almoxarifado-item-form
+  *ngIf="isItemFormOpen"
+  [mode]="itemFormMode"
+  [item]="selectedItem"
+  (close)="closeItemForm()">
+</app-almoxarifado-item-form>

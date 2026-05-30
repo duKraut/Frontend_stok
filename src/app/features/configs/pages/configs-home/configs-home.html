@@ -1,1 +1,117 @@
-<p>configs-home works!</p>
+<div class="configs-header">
+  <div class="title-area">
+    <h1>Usuários e Acessos</h1>
+    <p>Cadastro de usuários e gerenciamento de permissões do sistema</p>
+  </div>
+  <div class="header-actions-btn">
+    <button class="btn-primary" type="button" (click)="openCreateUser()">
+      <i class="ph ph-plus"></i><span> Novo Usuário</span>
+    </button>
+  </div>
+</div>
+
+<div class="stats-grid">
+  <div class="card stat-box">
+    <div class="stat-top"><span>TOTAL DE USUÁRIOS</span></div>
+    <div class="stat-bottom">
+      <h2>{{ allUsers.length }}</h2>
+    </div>
+  </div>
+  <div class="card stat-box">
+    <div class="stat-top"><span>USUÁRIOS ATIVOS</span></div>
+    <div class="stat-bottom">
+      <h2>{{ totalAtivos }}</h2>
+    </div>
+  </div>
+  <div class="card stat-box">
+    <div class="stat-top"><span>ADMINISTRADORES</span></div>
+    <div class="stat-bottom">
+      <h2>{{ totalAdmins }}</h2>
+    </div>
+  </div>
+  <div class="card stat-box stat-box-warning">
+    <div class="stat-top"><span>PENDENTES DE APROVAÇÃO</span></div>
+    <div class="stat-bottom">
+      <h2>1</h2>
+    </div>
+  </div>
+</div>
+
+<div class="card table-container">
+  <div class="filters-row">
+    <div class="table-tabs">
+      <button class="tab" [class.active]="activeTab === 'Todos'" (click)="setTab('Todos')">Todos</button>
+      <button class="tab" [class.active]="activeTab === 'Ativos'" (click)="setTab('Ativos')">Ativos</button>
+      <button class="tab" [class.active]="activeTab === 'Inativos'" (click)="setTab('Inativos')">Inativos</button>
+    </div>
+    <button class="btn-text">
+      <i class="ph ph-faders"></i>
+      Mais filtros
+    </button>
+  </div>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>USUÁRIO</th>
+        <th>DEPARTAMENTO</th>
+        <th>PERFIL</th>
+        <th>STATUS</th>
+        <th>AÇÕES</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let user of itemsDisplayed">
+        <td>{{ user.id }}</td>
+        <td>
+          <div class="user-cell">
+            <div class="user-avatar" [ngClass]="getRoleAvatarClass(user.role)">
+              {{ getInitials(user.name) }}
+            </div>
+            <div class="user-info">
+              <strong>{{ user.name }}</strong>
+              <span>{{ user.email }}</span>
+            </div>
+          </div>
+        </td>
+        <td>{{ user.department }}</td>
+        <td>
+          <div class="role-badge-wrap">
+            <span class="role-badge" [ngClass]="'role-' + user.role">{{ user.role }}</span>
+          </div>
+        </td>
+        <td><span class="badge" [ngClass]="user.statusClass">{{ user.status }}</span></td>
+        <td class="actions-td">
+          <button type="button" title="Visualizar" (click)="openViewUser(user)"><i class="ph ph-eye"></i></button>
+          <button type="button" title="Editar" (click)="openEditUser(user)"><i class="ph ph-pencil-simple"></i></button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="pagination-footer">
+    <span>Mostrando página {{ paginaAtual }} de {{ totalPaginas }}</span>
+    <div class="pagination-buttons">
+      <button class="btn-page" (click)="paginaAnterior()" [disabled]="paginaAtual === 1">
+        <i class="ph ph-caret-left"></i>
+      </button>
+      <button class="btn-page" *ngFor="let pagina of arrayPaginas"
+        [class.active]="pagina === paginaAtual" (click)="irParaPagina(pagina)">
+        {{ pagina }}
+      </button>
+      <button class="btn-page" (click)="proximaPagina()" [disabled]="paginaAtual === totalPaginas">
+        <i class="ph ph-caret-right"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="drawer-backdrop" *ngIf="isUserFormOpen" (click)="closeUserForm()"></div>
+
+<app-configs-form
+  *ngIf="isUserFormOpen"
+  [mode]="userFormMode"
+  [user]="selectedUser"
+  (close)="closeUserForm()">
+</app-configs-form>

@@ -1,0 +1,157 @@
+<aside class="item-drawer">
+  <div class="drawer-header">
+    <div>
+      <h2>{{ mode === 'create' ? 'Novo Item' : mode === 'edit' ? 'Editar Item' : 'Detalhes do Item' }}</h2>
+      <p>{{ mode === 'view' ? 'Visualizando dados cadastrais do item.' : 'Preencha os dados do item de estoque.' }}</p>
+    </div>
+    <button class="drawer-close" type="button" (click)="closeDrawer()">
+      <i class="ph ph-x"></i>
+    </button>
+  </div>
+
+  <div class="drawer-content">
+
+    <section class="form-card">
+      <div class="form-section-header">
+        <span class="section-number">01</span>
+        <h3>Identificação do Item</h3>
+      </div>
+
+      <div class="form-group checkbox-group">
+        <label class="checkbox-label">
+          <input type="checkbox" checked [disabled]="mode === 'view'" />
+          <span>Item Ativo</span>
+        </label>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>Nome do Item</label>
+          <input type="text" placeholder="Ex: Papel A4 Sulfite 75g" [disabled]="mode === 'view'"
+            [value]="item?.nome || ''" />
+        </div>
+
+        <div class="form-group">
+          <label>SKU / Código</label>
+          <input type="text" placeholder="Ex: SUP-OFF-001" [disabled]="mode === 'view'"
+            [value]="item?.sku || ''" />
+        </div>
+
+        <div class="form-group">
+          <label>Marca / Fabricante</label>
+          <input type="text" placeholder="Ex: Chamex" [disabled]="mode === 'view'"
+            [value]="item?.marca || ''" />
+        </div>
+
+        <div class="form-group">
+          <label>Categoria</label>
+          <select [disabled]="mode === 'view'">
+            <option value="">Selecione...</option>
+            <option *ngFor="let cat of categorias" [selected]="item?.categoria === cat">{{ cat }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Localização no Almoxarifado</label>
+          <input type="text" placeholder="Ex: Prateleira A3 – Seção 2" [disabled]="mode === 'view'" />
+        </div>
+
+        <div class="form-group full">
+          <label>Descrição / Especificações</label>
+          <textarea rows="3" placeholder="Detalhes técnicos, especificações ou observações do item..."
+            [disabled]="mode === 'view'"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <section class="form-card">
+      <div class="form-section-header">
+        <span class="section-number">02</span>
+        <h3>Estocagem e Controle</h3>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Unidade de Medida</label>
+          <select [disabled]="mode === 'view'">
+            <option value="">Selecione...</option>
+            <option *ngFor="let un of unidades" [selected]="item?.unid === un">{{ un }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Estoque Mínimo</label>
+          <input type="number" min="0" placeholder="0" [disabled]="mode === 'view'"
+            [value]="item?.min || ''" />
+        </div>
+
+        <div class="form-group" *ngIf="mode === 'view'">
+          <label>Saldo Atual</label>
+          <input type="number" [disabled]="true" [value]="item?.saldo || 0" />
+        </div>
+
+        <div class="form-group" *ngIf="mode === 'view'">
+          <label>Status</label>
+          <input type="text" [disabled]="true" [value]="item?.status || ''" />
+        </div>
+      </div>
+    </section>
+
+    <section class="form-card" *ngIf="mode !== 'view'">
+      <div class="form-section-header">
+        <span class="section-number">03</span>
+        <h3>Nota Fiscal de Origem</h3>
+      </div>
+
+      <div class="info-tip">
+        <i class="ph ph-info"></i>
+        <span>Informe a NF do lote inicial de cadastro. Movimentações futuras registram suas próprias notas.</span>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Número da Nota Fiscal</label>
+          <input type="text" placeholder="Ex: NF-000123" />
+        </div>
+
+        <div class="form-group">
+          <label>Data de Emissão</label>
+          <input type="date" />
+        </div>
+
+        <div class="form-group full">
+          <label>Fornecedor</label>
+          <input type="text" placeholder="Nome ou razão social do fornecedor" />
+        </div>
+
+        <div class="form-group">
+          <label>Quantidade Inicial</label>
+          <input type="number" min="0" placeholder="0" />
+        </div>
+
+        <div class="form-group">
+          <label>Valor Unitário (R$)</label>
+          <input type="number" min="0" step="0.01" placeholder="0,00" />
+        </div>
+
+        <div class="form-group">
+          <label>Valor Total da NF (R$)</label>
+          <input type="number" min="0" step="0.01" placeholder="0,00" [disabled]="true" />
+        </div>
+
+        <div class="form-group">
+          <label>Chave de Acesso NF-e</label>
+          <input type="text" placeholder="44 dígitos (opcional)" />
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="drawer-footer" *ngIf="mode !== 'view'">
+    <button class="btn-save" type="button">
+      <i class="ph ph-floppy-disk"></i>
+      {{ mode === 'create' ? 'Cadastrar Item' : 'Salvar Alterações' }}
+    </button>
+  </div>
+</aside>

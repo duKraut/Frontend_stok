@@ -1,13 +1,14 @@
-<div class="stat-card">
-    <div class="card-header">
-        <div class="icon-wrapper">
-            <i [class]="iconClass"></i>
-        </div>
-        <span class="badge" [ngClass]="badgeType"> {{ badgeText }}</span>
-    </div>
+<div class="stat-card"
+  [class.border-left-warning]="accentColor === 'warning'"
+  [class.border-left-danger]="accentColor === 'danger'">
 
-    <div class="card-body">
-        <span class="title">{{ title }}</span>
-        <h3 class="value>{{ value }}"></h3>
-    </div>
+  <div class="stat-top">
+    <span>{{ title }}</span>
+  </div>
+
+  <div class="stat-bottom">
+    <h2>{{ value }}</h2>
+    <span *ngIf="badgeText" class="badge-text" [ngClass]="'text-' + badgeColor">{{ badgeText }}</span>
+    <i *ngIf="iconClass" [ngClass]="iconClass" [style.color]="iconColor" class="stat-icon"></i>
+  </div>
 </div>

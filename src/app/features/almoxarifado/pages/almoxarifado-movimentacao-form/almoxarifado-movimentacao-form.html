@@ -1,0 +1,183 @@
+<aside class="mov-drawer">
+  <div class="drawer-header">
+    <div>
+      <h2>{{ mode === 'create' ? 'Nova Movimentação' : 'Detalhes da Movimentação' }}</h2>
+      <p>{{ mode === 'view' ? ('Registro ' + movimentacao?.id) : 'Registre uma entrada ou saída de estoque.' }}</p>
+    </div>
+    <button class="drawer-close" type="button" (click)="closeDrawer()">
+      <i class="ph ph-x"></i>
+    </button>
+  </div>
+
+  <div class="drawer-content">
+
+    <!-- Toggle Tipo -->
+    <div class="tipo-toggle" *ngIf="mode === 'create'">
+      <button class="tipo-btn" [class.active-entrada]="tipoSelecionado === 'Entrada'"
+        (click)="tipoSelecionado = 'Entrada'" type="button">
+        <i class="ph ph-arrow-circle-down"></i>
+        Entrada
+      </button>
+      <button class="tipo-btn" [class.active-saida]="tipoSelecionado === 'Saída'"
+        (click)="tipoSelecionado = 'Saída'" type="button">
+        <i class="ph ph-arrow-circle-up"></i>
+        Saída
+      </button>
+    </div>
+
+    <!-- View: tipo badge -->
+    <div class="tipo-view-badge" *ngIf="mode === 'view'">
+      <span class="tipo-badge" [ngClass]="movimentacao?.tipoClass">
+        <i [ngClass]="movimentacao?.tipo === 'Entrada' ? 'ph ph-arrow-circle-down' : 'ph ph-arrow-circle-up'"></i>
+        {{ movimentacao?.tipo }}
+      </span>
+    </div>
+
+    <!-- Seção 01: Item e Quantidade -->
+    <section class="form-card">
+      <div class="form-section-header">
+        <span class="section-number">01</span>
+        <h3>Item e Quantidade</h3>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>Item do Almoxarifado</label>
+          <select [disabled]="mode === 'view'">
+            <option value="">Selecione o item...</option>
+            <option *ngFor="let item of itens"
+              [selected]="movimentacao?.item && item.startsWith(movimentacao.item)">{{ item }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Quantidade</label>
+          <input type="number" min="1" placeholder="0" [disabled]="mode === 'view'"
+            [value]="movimentacao?.qtd || ''" />
+        </div>
+
+        <div class="form-group">
+          <label>Unidade de Medida</label>
+          <input type="text" placeholder="Ex: UN, CX, PCT" [disabled]="mode === 'view'"
+            [value]="movimentacao?.unid || ''" />
+        </div>
+
+        <div class="form-group">
+          <label>Data da Movimentação</label>
+          <input type="date" [disabled]="mode === 'view'" />
+        </div>
+
+        <div class="form-group">
+          <label>Responsável</label>
+          <input type="text" placeholder="Nome do responsável" [disabled]="mode === 'view'"
+            [value]="movimentacao?.responsavel || ''" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Seção 02: Dados de Entrada -->
+    <section class="form-card entrada-card" *ngIf="tipoSelecionado === 'Entrada'">
+      <div class="form-section-header">
+        <span class="section-number section-entrada">02</span>
+        <h3 class="header-entrada">Dados da Nota Fiscal</h3>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Número da Nota Fiscal</label>
+          <input type="text" placeholder="Ex: NF-004521" [disabled]="mode === 'view'"
+            [value]="movimentacao?.nf !== '—' ? (movimentacao?.nf || '') : ''" />
+        </div>
+
+        <div class="form-group">
+          <label>Data de Emissão</label>
+          <input type="date" [disabled]="mode === 'view'" />
+        </div>
+
+        <div class="form-group full">
+          <label>Fornecedor</label>
+          <input type="text" placeholder="Nome ou razão social" [disabled]="mode === 'view'" />
+        </div>
+
+        <div class="form-group">
+          <label>Valor Unitário (R$)</label>
+          <input type="number" min="0" step="0.01" placeholder="0,00" [disabled]="mode === 'view'" />
+        </div>
+
+        <div class="form-group">
+          <label>Valor Total (R$)</label>
+          <input type="number" min="0" step="0.01" placeholder="0,00" [disabled]="true" />
+        </div>
+
+        <div class="form-group">
+          <label>Chave de Acesso NF-e</label>
+          <input type="text" placeholder="44 dígitos (opcional)" [disabled]="mode === 'view'" />
+        </div>
+
+        <div class="form-group">
+          <label>Local de Armazenamento</label>
+          <input type="text" placeholder="Ex: Prateleira B2" [disabled]="mode === 'view'" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Seção 02: Dados de Saída -->
+    <section class="form-card saida-card" *ngIf="tipoSelecionado === 'Saída'">
+      <div class="form-section-header">
+        <span class="section-number section-saida">02</span>
+        <h3 class="header-saida">Destino e Justificativa</h3>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>Setor / Destino</label>
+          <select [disabled]="mode === 'view'">
+            <option value="">Selecione o setor...</option>
+            <option *ngFor="let setor of setores"
+              [selected]="movimentacao?.setor === setor">{{ setor }}</option>
+          </select>
+        </div>
+
+        <div class="form-group full">
+          <label>Solicitante</label>
+          <input type="text" placeholder="Nome de quem solicitou" [disabled]="mode === 'view'" />
+        </div>
+
+        <div class="form-group full">
+          <label>Motivo / Justificativa</label>
+          <select [disabled]="mode === 'view'">
+            <option value="">Selecione o motivo...</option>
+            <option>Uso interno</option>
+            <option>Distribuição periódica</option>
+            <option>Requisição de setor</option>
+            <option>Manutenção corretiva</option>
+            <option>Manutenção preventiva</option>
+            <option>Descarte / baixa</option>
+            <option>Outro</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- Seção 03: Observações -->
+    <section class="form-card">
+      <div class="form-section-header">
+        <span class="section-number">03</span>
+        <h3>Observações</h3>
+      </div>
+
+      <div class="form-group full">
+        <textarea rows="3" placeholder="Informações adicionais sobre esta movimentação (opcional)..."
+          [disabled]="mode === 'view'">{{ movimentacao?.obs || '' }}</textarea>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="drawer-footer" *ngIf="mode === 'create'">
+    <button class="btn-save" [ngClass]="tipoSelecionado === 'Saída' ? 'btn-save-saida' : ''" type="button">
+      <i [ngClass]="tipoSelecionado === 'Entrada' ? 'ph ph-arrow-circle-down' : 'ph ph-arrow-circle-up'"></i>
+      Registrar {{ tipoSelecionado }}
+    </button>
+  </div>
+</aside>

@@ -1,0 +1,211 @@
+<aside class="bem-drawer">
+  <div class="drawer-header">
+    <div>
+      <h2>{{ mode === 'create' ? 'Novo Bem Patrimonial' : mode === 'edit' ? 'Editar Bem' : 'Detalhes do Bem' }}</h2>
+      <p>{{ mode === 'view' ? 'Tombamento Nº ' + (bem?.tombamento || '—') : 'Preencha os dados do bem a ser patrimonializado.' }}</p>
+    </div>
+    <button class="drawer-close" type="button" (click)="closeDrawer()">
+      <i class="ph ph-x"></i>
+    </button>
+  </div>
+
+  <div class="drawer-content">
+
+    <section class="form-card">
+      <div class="form-section-header">
+        <span class="section-number">01</span>
+        <h3>Identificação do Bem</h3>
+      </div>
+
+      <div class="form-group checkbox-group">
+        <label class="checkbox-label">
+          <input type="checkbox" checked [disabled]="mode === 'view'" />
+          <span>Bem Ativo</span>
+        </label>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>Descrição / Nome do Bem</label>
+          <input type="text" placeholder="Ex: Notebook Dell Latitude 5420" [disabled]="mode === 'view'"
+            [value]="bem?.nome || ''" />
+        </div>
+
+        <div class="form-group">
+          <label>Nº de Tombamento</label>
+          <input type="text" placeholder="Ex: TOMB-00001" [disabled]="mode === 'view'"
+            [value]="bem?.tombamento || ''" />
+        </div>
+
+        <div class="form-group">
+          <label>Categoria</label>
+          <select [disabled]="mode === 'view'">
+            <option value="">Selecione...</option>
+            <option *ngFor="let cat of categorias" [selected]="bem?.categoria === cat">{{ cat }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Marca / Fabricante</label>
+          <input type="text" placeholder="Ex: Dell" [disabled]="mode === 'view'"
+            [value]="bem?.marca || ''" />
+        </div>
+
+        <div class="form-group">
+          <label>Modelo</label>
+          <input type="text" placeholder="Ex: Latitude 5420" [disabled]="mode === 'view'" />
+        </div>
+
+        <div class="form-group">
+          <label>Número de Série</label>
+          <input type="text" placeholder="Ex: SN-4F7X2K9" [disabled]="mode === 'view'" />
+        </div>
+
+        <div class="form-group">
+          <label>Estado de Conservação</label>
+          <select [disabled]="mode === 'view'">
+            <option value="">Selecione...</option>
+            <option [selected]="bem?.estado === 'EXCELENTE'">Excelente</option>
+            <option [selected]="bem?.estado === 'BOM'">Bom</option>
+            <option [selected]="bem?.estado === 'REGULAR'">Regular</option>
+            <option [selected]="bem?.estado === 'MANUTENÇÃO'">Em Manutenção</option>
+            <option [selected]="bem?.estado === 'SUBSTITUIR'">Substituir</option>
+          </select>
+        </div>
+
+        <div class="form-group full">
+          <label>Especificações Técnicas</label>
+          <textarea rows="3" placeholder="Ex: Core i7, 16GB RAM, 512GB SSD..."
+            [disabled]="mode === 'view'">{{ bem?.desc || '' }}</textarea>
+        </div>
+      </div>
+    </section>
+
+    <section class="form-card">
+      <div class="form-section-header">
+        <span class="section-number">02</span>
+        <h3>Localização e Responsável</h3>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Departamento / Setor</label>
+          <select [disabled]="mode === 'view'">
+            <option value="">Selecione...</option>
+            <option *ngFor="let dep of departamentos" [selected]="bem?.depto === dep">{{ dep }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Localização Física</label>
+          <input type="text" placeholder="Ex: Sala 302 – 3º Andar" [disabled]="mode === 'view'" />
+        </div>
+
+        <div class="form-group full">
+          <label>Responsável pelo Bem</label>
+          <input type="text" placeholder="Nome do responsável ou usuário" [disabled]="mode === 'view'" />
+        </div>
+      </div>
+    </section>
+
+    <section class="form-card">
+      <div class="form-section-header">
+        <span class="section-number">03</span>
+        <h3>Dados de Aquisição e Fiscal</h3>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Data de Aquisição</label>
+          <input type="date" [disabled]="mode === 'view'" />
+        </div>
+
+        <div class="form-group">
+          <label>Valor de Aquisição (R$)</label>
+          <input type="number" min="0" step="0.01" placeholder="0,00" [disabled]="mode === 'view'"
+            [value]="bem?.valor ? bem.valor.replace('R$ ', '').replace('.', '').replace(',', '.') : ''" />
+        </div>
+
+        <div class="form-group full">
+          <label>Fornecedor</label>
+          <input type="text" placeholder="Razão social ou nome do fornecedor" [disabled]="mode === 'view'" />
+        </div>
+
+        <div class="form-group">
+          <label>Número da Nota Fiscal</label>
+          <input type="text" placeholder="Ex: NF-000456" [disabled]="mode === 'view'" />
+        </div>
+
+        <div class="form-group">
+          <label>Data de Emissão da NF</label>
+          <input type="date" [disabled]="mode === 'view'" />
+        </div>
+
+        <div class="form-group">
+          <label>Chave de Acesso NF-e</label>
+          <input type="text" placeholder="44 dígitos (opcional)" [disabled]="mode === 'view'" />
+        </div>
+
+        <div class="form-group">
+          <label>Garantia até</label>
+          <input type="date" [disabled]="mode === 'view'" />
+        </div>
+      </div>
+    </section>
+
+    <section class="form-card">
+      <div class="form-section-header">
+        <span class="section-number">04</span>
+        <h3>Depreciação</h3>
+      </div>
+
+      <div class="info-tip">
+        <i class="ph ph-info"></i>
+        <span>A depreciação é calculada automaticamente com base no valor de aquisição, vida útil e método selecionado.</span>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Vida Útil (anos)</label>
+          <input type="number" min="1" max="50" placeholder="Ex: 5" [disabled]="mode === 'view'" />
+        </div>
+
+        <div class="form-group">
+          <label>Taxa de Depreciação (% a.a.)</label>
+          <input type="number" min="0" max="100" step="0.01" placeholder="Ex: 20" [disabled]="mode === 'view'" />
+        </div>
+
+        <div class="form-group">
+          <label>Valor Residual (R$)</label>
+          <input type="number" min="0" step="0.01" placeholder="0,00" [disabled]="mode === 'view'" />
+        </div>
+
+        <div class="form-group">
+          <label>Método de Depreciação</label>
+          <select [disabled]="mode === 'view'">
+            <option value="">Selecione...</option>
+            <option *ngFor="let m of metodos">{{ m }}</option>
+          </select>
+        </div>
+
+        <div class="form-group" *ngIf="mode === 'view'">
+          <label>Valor Depreciado Atual (R$)</label>
+          <input type="text" [disabled]="true" value="R$ 3.240,00" />
+        </div>
+
+        <div class="form-group" *ngIf="mode === 'view'">
+          <label>Valor Contábil Atual (R$)</label>
+          <input type="text" [disabled]="true" value="R$ 2.160,00" />
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="drawer-footer" *ngIf="mode !== 'view'">
+    <button class="btn-save" type="button">
+      <i class="ph ph-floppy-disk"></i>
+      {{ mode === 'create' ? 'Cadastrar Bem' : 'Salvar Alterações' }}
+    </button>
+  </div>
+</aside>

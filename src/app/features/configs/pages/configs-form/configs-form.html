@@ -1,0 +1,153 @@
+<aside class="user-drawer">
+  <div class="drawer-header">
+    <div>
+      <h2>
+        {{ mode === 'create' ? 'Novo Usuário' : mode === 'edit' ? 'Editar Usuário' : 'Detalhes do Usuário' }}
+      </h2>
+      <p>{{ mode === 'view' ? 'Visualizando dados e permissões do usuário.' : 'Preencha os dados e defina as permissões de acesso.' }}</p>
+    </div>
+    <button class="drawer-close" type="button" (click)="closeDrawer()">
+      <i class="ph ph-x"></i>
+    </button>
+  </div>
+
+  <div class="drawer-content">
+
+    <section class="form-card">
+      <div class="form-section-header">
+        <span class="section-number">01</span>
+        <h3>Identificação do Usuário</h3>
+      </div>
+
+      <div class="form-group checkbox-group">
+        <label class="checkbox-label">
+          <input type="checkbox" checked [disabled]="mode === 'view'" />
+          <span>Usuário Ativo</span>
+        </label>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>Nome Completo</label>
+          <input type="text" placeholder="Ex: João Pedro da Silva" [disabled]="mode === 'view'"
+            [value]="user?.name || ''" />
+        </div>
+
+        <div class="form-group full">
+          <label>E-mail</label>
+          <input type="email" placeholder="usuario@sistema.com" [disabled]="mode === 'view'"
+            [value]="user?.email || ''" />
+        </div>
+
+        <div class="form-group" *ngIf="mode === 'create'">
+          <label>Senha Provisória</label>
+          <input type="password" placeholder="Mín. 8 caracteres" />
+        </div>
+
+        <div class="form-group" *ngIf="mode === 'create'">
+          <label>Confirmar Senha</label>
+          <input type="password" placeholder="Repita a senha" />
+        </div>
+      </div>
+    </section>
+
+    <section class="form-card">
+      <div class="form-section-header">
+        <span class="section-number">02</span>
+        <h3>Dados Funcionais</h3>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Cargo</label>
+          <input type="text" placeholder="Ex: Analista de TI" [disabled]="mode === 'view'"
+            [value]="user?.role || ''" />
+        </div>
+
+        <div class="form-group">
+          <label>Departamento</label>
+          <select [disabled]="mode === 'view'">
+            <option [selected]="user?.department === 'TI'">TI</option>
+            <option [selected]="user?.department === 'Almoxarifado'">Almoxarifado</option>
+            <option [selected]="user?.department === 'Patrimônio'">Patrimônio</option>
+            <option [selected]="user?.department === 'Compras'">Compras</option>
+            <option [selected]="user?.department === 'Financeiro'">Financeiro</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <section class="form-card">
+      <div class="form-section-header">
+        <span class="section-number">03</span>
+        <h3>Perfil de Acesso</h3>
+      </div>
+
+      <div class="form-group full">
+        <label>Perfil do Usuário</label>
+        <select [disabled]="mode === 'view'">
+          <option [selected]="user?.role === 'Administrador'">Administrador</option>
+          <option [selected]="user?.role === 'Gerente'">Gerente</option>
+          <option [selected]="user?.role === 'Operador'">Operador</option>
+          <option [selected]="user?.role === 'Visualizador'">Visualizador</option>
+        </select>
+      </div>
+
+      <div class="role-descriptions">
+        <div class="role-desc-item role-desc-admin">
+          <i class="ph ph-shield-check"></i>
+          <div>
+            <strong>Administrador</strong>
+            <span>Acesso total ao sistema, incluindo configurações</span>
+          </div>
+        </div>
+        <div class="role-desc-item role-desc-manager">
+          <i class="ph ph-user-gear"></i>
+          <div>
+            <strong>Gerente</strong>
+            <span>Leitura e edição nos módulos atribuídos</span>
+          </div>
+        </div>
+        <div class="role-desc-item role-desc-operator">
+          <i class="ph ph-user"></i>
+          <div>
+            <strong>Operador</strong>
+            <span>Criação e edição limitadas ao seu setor</span>
+          </div>
+        </div>
+        <div class="role-desc-item role-desc-viewer">
+          <i class="ph ph-eye"></i>
+          <div>
+            <strong>Visualizador</strong>
+            <span>Somente leitura, sem permissão de edição</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="form-card">
+      <div class="form-section-header">
+        <span class="section-number">04</span>
+        <h3>Módulos Liberados</h3>
+      </div>
+
+      <div class="modules-grid">
+        <label class="module-item" *ngFor="let mod of modules">
+          <div class="module-left">
+            <i [ngClass]="mod.icon"></i>
+            <span>{{ mod.label }}</span>
+          </div>
+          <input type="checkbox" [disabled]="mode === 'view'" checked />
+        </label>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="drawer-footer" *ngIf="mode !== 'view'">
+    <button class="btn-save" type="button">
+      <i class="ph ph-floppy-disk"></i>
+      {{ mode === 'create' ? 'Cadastrar Usuário' : 'Salvar Alterações' }}
+    </button>
+  </div>
+</aside>

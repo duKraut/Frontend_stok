@@ -1,0 +1,122 @@
+<div class="mov-header">
+  <div class="title-area">
+    <div class="title-with-back">
+      <a class="btn-back" routerLink="/almoxarifado">
+        <i class="ph ph-caret-left"></i>
+      </a>
+      <div>
+        <h1>Movimentações de Estoque</h1>
+        <p>Registro de entradas e saídas de itens do almoxarifado</p>
+      </div>
+    </div>
+  </div>
+  <div class="header-actions-btn">
+    <button class="btn-primary" type="button" (click)="openCreate()">
+      <i class="ph ph-arrows-left-right"></i><span> Nova Movimentação</span>
+    </button>
+  </div>
+</div>
+
+<div class="stats-grid">
+  <div class="card stat-box">
+    <div class="stat-top"><span>TOTAL DE MOVIMENTAÇÕES</span><i class="ph ph-list-numbers" style="color:#1a56db;"></i></div>
+    <div class="stat-bottom"><h2>{{ todasMovimentacoes.length }}</h2></div>
+  </div>
+  <div class="card stat-box entrada-box">
+    <div class="stat-top"><span>ENTRADAS</span><i class="ph-fill ph-arrow-circle-down" style="color:#047857;"></i></div>
+    <div class="stat-bottom"><h2>{{ totalEntradas }}</h2><span class="badge badge-entrada">Entrada</span></div>
+  </div>
+  <div class="card stat-box saida-box">
+    <div class="stat-top"><span>SAÍDAS</span><i class="ph-fill ph-arrow-circle-up" style="color:#b91c1c;"></i></div>
+    <div class="stat-bottom"><h2>{{ totalSaidas }}</h2><span class="badge badge-saida">Saída</span></div>
+  </div>
+  <div class="card stat-box">
+    <div class="stat-top"><span>HOJE</span><i class="ph ph-calendar-check" style="color:#7c3aed;"></i></div>
+    <div class="stat-bottom"><h2>2</h2></div>
+  </div>
+</div>
+
+<div class="card table-container">
+  <div class="filters-row">
+    <div class="table-tabs">
+      <button class="tab" [class.active]="activeTab === 'Todos'" (click)="setTab('Todos')">Todos</button>
+      <button class="tab" [class.active]="activeTab === 'Entrada'" (click)="setTab('Entrada')">Entradas</button>
+      <button class="tab" [class.active]="activeTab === 'Saída'" (click)="setTab('Saída')">Saídas</button>
+    </div>
+    <button class="btn-text">
+      <i class="ph ph-faders"></i>
+      Mais filtros
+    </button>
+  </div>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>TIPO</th>
+        <th>ITEM</th>
+        <th>QUANTIDADE</th>
+        <th>RESPONSÁVEL</th>
+        <th>NF / SETOR</th>
+        <th>DATA</th>
+        <th>AÇÕES</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let mov of itensExibidos">
+        <td><span class="mov-id">{{ mov.id }}</span></td>
+        <td>
+          <span class="tipo-badge" [ngClass]="mov.tipoClass">
+            <i [ngClass]="mov.tipo === 'Entrada' ? 'ph ph-arrow-circle-down' : 'ph ph-arrow-circle-up'"></i>
+            {{ mov.tipo }}
+          </span>
+        </td>
+        <td>
+          <strong>{{ mov.item }}</strong>
+          <span>SKU: {{ mov.sku }}</span>
+        </td>
+        <td>
+          <span class="qtd-cell">{{ mov.qtd }} <em>{{ mov.unid }}</em></span>
+        </td>
+        <td>{{ mov.responsavel }}</td>
+        <td>
+          <span *ngIf="mov.tipo === 'Entrada'" class="nf-tag">
+            <i class="ph ph-receipt"></i> {{ mov.nf }}
+          </span>
+          <span *ngIf="mov.tipo === 'Saída'" class="setor-tag">
+            <i class="ph ph-door-open"></i> {{ mov.setor }}
+          </span>
+        </td>
+        <td>{{ mov.data }}</td>
+        <td class="actions-td">
+          <button type="button" title="Visualizar" (click)="openView(mov)">
+            <i class="ph ph-eye"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="pagination-footer">
+    <span>Mostrando página {{ paginaAtual }} de {{ totalPaginas }}</span>
+    <div class="pagination-buttons">
+      <button class="btn-page" (click)="paginaAnterior()" [disabled]="paginaAtual === 1">
+        <i class="ph ph-caret-left"></i>
+      </button>
+      <button class="btn-page" *ngFor="let p of arrayPaginas"
+        [class.active]="p === paginaAtual" (click)="irParaPagina(p)">{{ p }}</button>
+      <button class="btn-page" (click)="proximaPagina()" [disabled]="paginaAtual === totalPaginas">
+        <i class="ph ph-caret-right"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="drawer-backdrop" *ngIf="isFormOpen" (click)="closeForm()"></div>
+
+<app-almoxarifado-movimentacao-form
+  *ngIf="isFormOpen"
+  [mode]="formMode"
+  [movimentacao]="selectedMov"
+  (close)="closeForm()">
+</app-almoxarifado-movimentacao-form>

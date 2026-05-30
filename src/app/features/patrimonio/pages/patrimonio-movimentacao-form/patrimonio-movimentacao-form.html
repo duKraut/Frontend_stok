@@ -1,0 +1,244 @@
+<aside class="mov-drawer">
+  <div class="drawer-header">
+    <div>
+      <h2>{{ mode === 'create' ? 'Nova Movimentação' : 'Detalhes da Movimentação' }}</h2>
+      <p>{{ mode === 'view' ? ('Registro ' + movimentacao?.id) : 'Registre uma transferência, manutenção ou baixa de bem.' }}</p>
+    </div>
+    <button class="drawer-close" type="button" (click)="closeDrawer()">
+      <i class="ph ph-x"></i>
+    </button>
+  </div>
+
+  <div class="drawer-content">
+
+    <!-- Toggle tipo (create) -->
+    <div class="tipo-toggle" *ngIf="mode === 'create'">
+      <button class="tipo-btn" [class.active-transferencia]="tipoSelecionado === 'Transferência'"
+        (click)="tipoSelecionado = 'Transferência'" type="button">
+        <i class="ph ph-swap"></i> Transferência
+      </button>
+      <button class="tipo-btn" [class.active-manutencao]="tipoSelecionado === 'Manutenção'"
+        (click)="tipoSelecionado = 'Manutenção'" type="button">
+        <i class="ph ph-wrench"></i> Manutenção
+      </button>
+      <button class="tipo-btn" [class.active-baixa]="tipoSelecionado === 'Baixa'"
+        (click)="tipoSelecionado = 'Baixa'" type="button">
+        <i class="ph ph-trash"></i> Baixa
+      </button>
+    </div>
+
+    <!-- Badge tipo (view) -->
+    <div class="tipo-view-badge" *ngIf="mode === 'view'">
+      <span class="tipo-badge" [ngClass]="movimentacao?.tipoClass">
+        <i [ngClass]="movimentacao?.tipo === 'Transferência' ? 'ph ph-swap' : movimentacao?.tipo === 'Manutenção' ? 'ph ph-wrench' : 'ph ph-trash'"></i>
+        {{ movimentacao?.tipo }}
+      </span>
+    </div>
+
+    <!-- Seção 01: Bem e data -->
+    <section class="form-card">
+      <div class="form-section-header">
+        <span class="section-number">01</span>
+        <h3>Bem Patrimonial</h3>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>Bem Patrimonial</label>
+          <select [disabled]="mode === 'view'">
+            <option value="">Selecione o bem...</option>
+            <option *ngFor="let b of bens"
+              [selected]="movimentacao?.bem && b.startsWith(movimentacao.bem)">{{ b }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Data da Movimentação</label>
+          <input type="date" [disabled]="mode === 'view'" />
+        </div>
+
+        <div class="form-group">
+          <label>Responsável</label>
+          <input type="text" placeholder="Nome do responsável" [disabled]="mode === 'view'"
+            [value]="movimentacao?.responsavel || ''" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Seção 02: Transferência -->
+    <section class="form-card transferencia-card" *ngIf="tipoSelecionado === 'Transferência'">
+      <div class="form-section-header">
+        <span class="section-number section-transferencia">02</span>
+        <h3 class="header-transferencia">Dados da Transferência</h3>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Departamento de Origem</label>
+          <select [disabled]="mode === 'view'">
+            <option value="">Selecione...</option>
+            <option *ngFor="let dep of departamentos" [selected]="movimentacao?.de === dep">{{ dep }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Departamento de Destino</label>
+          <select [disabled]="mode === 'view'">
+            <option value="">Selecione...</option>
+            <option *ngFor="let dep of departamentos" [selected]="movimentacao?.para === dep">{{ dep }}</option>
+          </select>
+        </div>
+
+        <div class="form-group full">
+          <label>Novo Responsável (Destino)</label>
+          <input type="text" placeholder="Nome do novo responsável" [disabled]="mode === 'view'" />
+        </div>
+
+        <div class="form-group full">
+          <label>Nova Localização Física</label>
+          <input type="text" placeholder="Ex: Sala 205 – 2º Andar" [disabled]="mode === 'view'" />
+        </div>
+
+        <div class="form-group full">
+          <label>Justificativa</label>
+          <select [disabled]="mode === 'view'">
+            <option value="">Selecione...</option>
+            <option>Realocação por reestruturação</option>
+            <option>Solicitação do departamento</option>
+            <option>Empréstimo temporário</option>
+            <option>Reforma ou obras</option>
+            <option>Outro</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- Seção 02: Manutenção -->
+    <section class="form-card manutencao-card" *ngIf="tipoSelecionado === 'Manutenção'">
+      <div class="form-section-header">
+        <span class="section-number section-manutencao">02</span>
+        <h3 class="header-manutencao">Dados da Manutenção</h3>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Tipo de Manutenção</label>
+          <select [disabled]="mode === 'view'">
+            <option value="">Selecione...</option>
+            <option *ngFor="let t of tiposManutencao">{{ t }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Nº da Ordem de Serviço</label>
+          <input type="text" placeholder="Ex: OS-0091" [disabled]="mode === 'view'"
+            [value]="movimentacao?.os !== '—' ? (movimentacao?.os || '') : ''" />
+        </div>
+
+        <div class="form-group full">
+          <label>Prestador / Oficina</label>
+          <input type="text" placeholder="Nome da empresa ou técnico responsável" [disabled]="mode === 'view'" />
+        </div>
+
+        <div class="form-group">
+          <label>Data de Envio</label>
+          <input type="date" [disabled]="mode === 'view'" />
+        </div>
+
+        <div class="form-group">
+          <label>Previsão de Retorno</label>
+          <input type="date" [disabled]="mode === 'view'" />
+        </div>
+
+        <div class="form-group">
+          <label>Custo Estimado (R$)</label>
+          <input type="number" min="0" step="0.01" placeholder="0,00" [disabled]="mode === 'view'" />
+        </div>
+
+        <div class="form-group">
+          <label>Custo Final (R$)</label>
+          <input type="number" min="0" step="0.01" placeholder="0,00" [disabled]="mode === 'view'" />
+        </div>
+
+        <div class="form-group full">
+          <label>Descrição do Problema</label>
+          <textarea rows="3" placeholder="Descreva o defeito ou serviço a ser realizado..."
+            [disabled]="mode === 'view'"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- Seção 02: Baixa -->
+    <section class="form-card baixa-card" *ngIf="tipoSelecionado === 'Baixa'">
+      <div class="form-section-header">
+        <span class="section-number section-baixa">02</span>
+        <h3 class="header-baixa">Dados da Baixa Patrimonial</h3>
+      </div>
+
+      <div class="alert-baixa">
+        <i class="ph-fill ph-warning-circle"></i>
+        <span>Esta ação é irreversível. O bem será removido do inventário ativo após a baixa ser confirmada.</span>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>Motivo da Baixa</label>
+          <select [disabled]="mode === 'view'">
+            <option value="">Selecione o motivo...</option>
+            <option *ngFor="let m of motivosBaixa">{{ m }}</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Nº do Termo de Baixa</label>
+          <input type="text" placeholder="Ex: TB-2026-041" [disabled]="mode === 'view'" />
+        </div>
+
+        <div class="form-group">
+          <label>Valor de Alienação (R$)</label>
+          <input type="number" min="0" step="0.01" placeholder="0,00 (se aplicável)" [disabled]="mode === 'view'" />
+        </div>
+
+        <div class="form-group full">
+          <label>Parecer Técnico / Autorização</label>
+          <input type="text" placeholder="Ex: Parecer nº 12/2026 – Dpto. TI" [disabled]="mode === 'view'" />
+        </div>
+
+        <div class="form-group full">
+          <label>Destinação Final</label>
+          <select [disabled]="mode === 'view'">
+            <option value="">Selecione...</option>
+            <option>Descarte / Sucata</option>
+            <option>Doação a entidade</option>
+            <option>Leilão</option>
+            <option>Devolução ao fornecedor</option>
+            <option>Outro</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- Seção 03: Observações -->
+    <section class="form-card">
+      <div class="form-section-header">
+        <span class="section-number">03</span>
+        <h3>Observações</h3>
+      </div>
+
+      <div class="form-group full">
+        <textarea rows="3" placeholder="Informações adicionais sobre esta movimentação (opcional)..."
+          [disabled]="mode === 'view'">{{ movimentacao?.obs || '' }}</textarea>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="drawer-footer" *ngIf="mode === 'create'">
+    <button class="btn-save"
+      [ngClass]="{ 'btn-save-manutencao': tipoSelecionado === 'Manutenção', 'btn-save-baixa': tipoSelecionado === 'Baixa' }"
+      type="button">
+      <i [ngClass]="tipoSelecionado === 'Transferência' ? 'ph ph-swap' : tipoSelecionado === 'Manutenção' ? 'ph ph-wrench' : 'ph ph-trash'"></i>
+      Registrar {{ tipoSelecionado }}
+    </button>
+  </div>
+</aside>

@@ -1,0 +1,128 @@
+<div class="mov-header">
+  <div class="title-area">
+    <div class="title-with-back">
+      <a class="btn-back" routerLink="/patrimonio">
+        <i class="ph ph-caret-left"></i>
+      </a>
+      <div>
+        <h1>Movimentações de Patrimônio</h1>
+        <p>Transferências, manutenções e baixas de bens patrimoniais</p>
+      </div>
+    </div>
+  </div>
+  <div class="header-actions-btn">
+    <button class="btn-primary" type="button" (click)="openCreate()">
+      <i class="ph ph-arrows-left-right"></i><span> Nova Movimentação</span>
+    </button>
+  </div>
+</div>
+
+<div class="stats-grid">
+  <div class="card stat-box">
+    <div class="stat-top"><span>TOTAL DE MOVIMENTAÇÕES</span><i class="ph ph-list-numbers" style="color:#1a56db;"></i></div>
+    <div class="stat-bottom"><h2>{{ todasMovimentacoes.length }}</h2></div>
+  </div>
+  <div class="card stat-box transferencia-box">
+    <div class="stat-top"><span>TRANSFERÊNCIAS</span><i class="ph-fill ph-swap" style="color:#1a56db;"></i></div>
+    <div class="stat-bottom"><h2>{{ totalTransferencias }}</h2><span class="badge badge-transferencia">Transferência</span></div>
+  </div>
+  <div class="card stat-box manutencao-box">
+    <div class="stat-top"><span>MANUTENÇÕES</span><i class="ph-fill ph-wrench" style="color:#d97706;"></i></div>
+    <div class="stat-bottom"><h2>{{ totalManutencoes }}</h2><span class="badge badge-manutencao">Manutenção</span></div>
+  </div>
+  <div class="card stat-box baixa-box">
+    <div class="stat-top"><span>BAIXAS</span><i class="ph-fill ph-trash" style="color:#b91c1c;"></i></div>
+    <div class="stat-bottom"><h2>{{ totalBaixas }}</h2><span class="badge badge-baixa">Baixa</span></div>
+  </div>
+</div>
+
+<div class="card table-container">
+  <div class="filters-row">
+    <div class="table-tabs">
+      <button class="tab" [class.active]="activeTab === 'Todos'" (click)="setTab('Todos')">Todos</button>
+      <button class="tab" [class.active]="activeTab === 'Transferência'" (click)="setTab('Transferência')">Transferências</button>
+      <button class="tab" [class.active]="activeTab === 'Manutenção'" (click)="setTab('Manutenção')">Manutenções</button>
+      <button class="tab" [class.active]="activeTab === 'Baixa'" (click)="setTab('Baixa')">Baixas</button>
+    </div>
+    <button class="btn-text">
+      <i class="ph ph-faders"></i>
+      Mais filtros
+    </button>
+  </div>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>TIPO</th>
+        <th>BEM PATRIMONIAL</th>
+        <th>ORIGEM → DESTINO</th>
+        <th>RESPONSÁVEL</th>
+        <th>O.S. / REF.</th>
+        <th>DATA</th>
+        <th>AÇÕES</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let mov of itensExibidos">
+        <td><span class="mov-id">{{ mov.id }}</span></td>
+        <td>
+          <span class="tipo-badge" [ngClass]="mov.tipoClass">
+            <i [ngClass]="mov.tipo === 'Transferência' ? 'ph ph-swap' : mov.tipo === 'Manutenção' ? 'ph ph-wrench' : 'ph ph-trash'"></i>
+            {{ mov.tipo }}
+          </span>
+        </td>
+        <td>
+          <strong>{{ mov.bem }}</strong>
+          <span>Tomb. {{ mov.tombamento }}</span>
+        </td>
+        <td>
+          <div class="fluxo-cell" *ngIf="mov.tipo !== 'Baixa'">
+            <span class="depto-tag">{{ mov.de }}</span>
+            <i class="ph ph-arrow-right fluxo-arrow"></i>
+            <span class="depto-tag depto-dest">{{ mov.para }}</span>
+          </div>
+          <span class="baixa-origem" *ngIf="mov.tipo === 'Baixa'">
+            <i class="ph ph-map-pin"></i> {{ mov.de }}
+          </span>
+        </td>
+        <td>{{ mov.responsavel }}</td>
+        <td>
+          <span class="os-tag" *ngIf="mov.os !== '—'">
+            <i class="ph ph-file-text"></i> {{ mov.os }}
+          </span>
+          <span class="sem-os" *ngIf="mov.os === '—'">—</span>
+        </td>
+        <td>{{ mov.data }}</td>
+        <td class="actions-td">
+          <button type="button" title="Visualizar" (click)="openView(mov)">
+            <i class="ph ph-eye"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="pagination-footer">
+    <span>Mostrando página {{ paginaAtual }} de {{ totalPaginas }}</span>
+    <div class="pagination-buttons">
+      <button class="btn-page" (click)="paginaAnterior()" [disabled]="paginaAtual === 1">
+        <i class="ph ph-caret-left"></i>
+      </button>
+      <button class="btn-page" *ngFor="let p of arrayPaginas"
+        [class.active]="p === paginaAtual" (click)="irParaPagina(p)">{{ p }}</button>
+      <button class="btn-page" (click)="proximaPagina()" [disabled]="paginaAtual === totalPaginas">
+        <i class="ph ph-caret-right"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="drawer-backdrop" *ngIf="isFormOpen" (click)="closeForm()"></div>
+
+<app-patrimonio-movimentacao-form
+  *ngIf="isFormOpen"
+  [mode]="formMode"
+  [movimentacao]="selectedMov"
+  (close)="closeForm()">
+</app-patrimonio-movimentacao-form>

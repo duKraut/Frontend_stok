@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 
 import { ConfigsRoutingModule } from './configs-routing-module';
 import { ConfigsHome } from './pages/configs-home/configs-home';
+import { ConfigsForm } from './pages/configs-form/configs-form';
 
 
 @NgModule({
   declarations: [
-    ConfigsHome
+    ConfigsHome,
+    ConfigsForm
   ],
   imports: [
     CommonModule,

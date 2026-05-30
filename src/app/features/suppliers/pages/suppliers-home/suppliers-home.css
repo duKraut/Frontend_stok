@@ -340,3 +340,25 @@
     font-weight: 700;
 }
 
+.border-left-danger::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background-color: #ef4444;
+}
+
+.text-success {
+    color: #16a34a;
+}
+
+.text-sm {
+    font-size: 12px;
+}
+
+.font-bold {
+    font-weight: 600;
+}
+

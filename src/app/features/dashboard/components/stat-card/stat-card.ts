@@ -9,7 +9,9 @@ import { Component, Input } from '@angular/core';
 export class StatCard {
   @Input() title: string = '';
   @Input() value: string = '';
+  @Input() accentColor: 'warning' | 'danger' | '' = '';
   @Input() badgeText: string = '';
-  @Input() badgeType: 'success' | 'danger' | 'neutral' = 'neutral';
+  @Input() badgeColor: 'success' | 'neutral' = 'neutral';
   @Input() iconClass: string = '';
+  @Input() iconColor: string = '';
 }
