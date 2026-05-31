@@ -1,12 +1,12 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 
 @Component({
-  selector: 'app-almoxarifado-movimentacao-form',
+  selector: 'app-inventory-movimentacao-form',
   standalone: false,
-  templateUrl: './almoxarifado-movimentacao-form.html',
-  styleUrl: './almoxarifado-movimentacao-form.css',
+  templateUrl: './inventory-movimentacao-form.html',
+  styleUrl: './inventory-movimentacao-form.css',
 })
-export class AlmoxarifadoMovimentacaoForm implements OnInit {
+export class InventoryMovimentacaoForm implements OnInit {
   @Input() mode: 'create' | 'view' = 'create';
   @Input() movimentacao: any = null;
 

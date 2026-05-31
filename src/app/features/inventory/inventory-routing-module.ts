@@ -1,15 +1,15 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AlmoxarifadoHome } from './pages/almoxarifado-home/almoxarifado-home';
-import { AlmoxarifadoMovimentacoes } from './pages/almoxarifado-movimentacoes/almoxarifado-movimentacoes';
+import { InventoryHome } from './pages/inventory-home/inventory-home';
+import { InventoryMovimentacoes } from './pages/inventory-movimentacoes/inventory-movimentacoes';
 
 const routes: Routes = [
-  { path: '', component: AlmoxarifadoHome },
-  { path: 'movimentacoes', component: AlmoxarifadoMovimentacoes }
+  { path: '', component: InventoryHome },
+  { path: 'movimentacoes', component: InventoryMovimentacoes }
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class AlmoxarifadoRoutingModule { }
+export class InventoryRoutingModule { }

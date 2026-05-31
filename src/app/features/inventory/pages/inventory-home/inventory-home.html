@@ -1,4 +1,4 @@
-<div class="almoxarifado-header">
+<div class="inventory-header">
   <div class="title-area">
     <h1>Gestão de Almoxarifado</h1>
     <p>Controle e monitoramento de itens de consumo e níveis de estoque.</p>
@@ -13,7 +13,7 @@
   </div>
 </div>
 
-<div class="stats-grid almoxarifado-cards">
+<div class="stats-grid inventory-cards">
   <div class="card stat-box">
     <div class="stat-top"><span>TOTAL DE SKUs</span></div>
     <div class="stat-bottom"><h2>1.240</h2> <span class="text-success text-sm font-bold">+2.4% este mês</span></div>
@@ -110,9 +110,9 @@
 
 <div class="drawer-backdrop" *ngIf="isItemFormOpen" (click)="closeItemForm()"></div>
 
-<app-almoxarifado-item-form
+<app-inventory-item-form
   *ngIf="isItemFormOpen"
   [mode]="itemFormMode"
   [item]="selectedItem"
   (close)="closeItemForm()">
-</app-almoxarifado-item-form>
+</app-inventory-item-form>

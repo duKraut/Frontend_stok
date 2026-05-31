@@ -3,12 +3,12 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 type TipoMov = 'Transferência' | 'Manutenção' | 'Baixa';
 
 @Component({
-  selector: 'app-patrimonio-movimentacao-form',
+  selector: 'app-assets-movimentacao-form',
   standalone: false,
-  templateUrl: './patrimonio-movimentacao-form.html',
-  styleUrl: './patrimonio-movimentacao-form.css',
+  templateUrl: './assets-movimentacao-form.html',
+  styleUrl: './assets-movimentacao-form.css',
 })
-export class PatrimonioMovimentacaoForm implements OnInit {
+export class AssetsMovimentacaoForm implements OnInit {
   @Input() mode: 'create' | 'view' = 'create';
   @Input() movimentacao: any = null;
 

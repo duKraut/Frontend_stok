@@ -23,14 +23,14 @@ const routes: Routes = [
           import('./features/dashboard/dashboard-module').then(m => m.DashboardModule),
       },
       {
-        path: 'almoxarifado',
+        path: 'inventory',
         loadChildren: () =>
-          import('./features/almoxarifado/almoxarifado-module').then(m => m.AlmoxarifadoModule),
+          import('./features/inventory/inventory-module').then(m => m.InventoryModule),
       },
       {
-        path: 'patrimonio',
+        path: 'assets',
         loadChildren: () =>
-          import('./features/patrimonio/patrimonio-module').then(m => m.PatrimonioModule),
+          import('./features/assets/assets-module').then(m => m.AssetsModule),
       },
       {
         path: 'suppliers',

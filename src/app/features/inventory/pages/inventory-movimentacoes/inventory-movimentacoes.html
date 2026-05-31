@@ -1,7 +1,7 @@
 <div class="mov-header">
   <div class="title-area">
     <div class="title-with-back">
-      <a class="btn-back" routerLink="/almoxarifado">
+      <a class="btn-back" routerLink="/inventory">
         <i class="ph ph-caret-left"></i>
       </a>
       <div>
@@ -114,9 +114,9 @@
 
 <div class="drawer-backdrop" *ngIf="isFormOpen" (click)="closeForm()"></div>
 
-<app-almoxarifado-movimentacao-form
+<app-inventory-movimentacao-form
   *ngIf="isFormOpen"
   [mode]="formMode"
   [movimentacao]="selectedMov"
   (close)="closeForm()">
-</app-almoxarifado-movimentacao-form>
+</app-inventory-movimentacao-form>

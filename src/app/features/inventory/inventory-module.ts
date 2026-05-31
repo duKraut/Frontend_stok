@@ -2,24 +2,24 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
-import { AlmoxarifadoRoutingModule } from './almoxarifado-routing-module';
-import { AlmoxarifadoHome } from './pages/almoxarifado-home/almoxarifado-home';
-import { AlmoxarifadoItemForm } from './pages/almoxarifado-item-form/almoxarifado-item-form';
-import { AlmoxarifadoMovimentacoes } from './pages/almoxarifado-movimentacoes/almoxarifado-movimentacoes';
-import { AlmoxarifadoMovimentacaoForm } from './pages/almoxarifado-movimentacao-form/almoxarifado-movimentacao-form';
+import { InventoryRoutingModule } from './inventory-routing-module';
+import { InventoryHome } from './pages/inventory-home/inventory-home';
+import { InventoryItemForm } from './pages/inventory-item-form/inventory-item-form';
+import { InventoryMovimentacoes } from './pages/inventory-movimentacoes/inventory-movimentacoes';
+import { InventoryMovimentacaoForm } from './pages/inventory-movimentacao-form/inventory-movimentacao-form';
 
 
 @NgModule({
   declarations: [
-    AlmoxarifadoHome,
-    AlmoxarifadoItemForm,
-    AlmoxarifadoMovimentacoes,
-    AlmoxarifadoMovimentacaoForm
+    InventoryHome,
+    InventoryItemForm,
+    InventoryMovimentacoes,
+    InventoryMovimentacaoForm
   ],
   imports: [
     CommonModule,
     RouterModule,
-    AlmoxarifadoRoutingModule
+    InventoryRoutingModule
   ]
 })
-export class AlmoxarifadoModule { }
+export class InventoryModule { }

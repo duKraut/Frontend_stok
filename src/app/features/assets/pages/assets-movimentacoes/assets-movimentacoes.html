@@ -1,7 +1,7 @@
 <div class="mov-header">
   <div class="title-area">
     <div class="title-with-back">
-      <a class="btn-back" routerLink="/patrimonio">
+      <a class="btn-back" routerLink="/assets">
         <i class="ph ph-caret-left"></i>
       </a>
       <div>
@@ -120,9 +120,9 @@
 
 <div class="drawer-backdrop" *ngIf="isFormOpen" (click)="closeForm()"></div>
 
-<app-patrimonio-movimentacao-form
+<app-assets-movimentacao-form
   *ngIf="isFormOpen"
   [mode]="formMode"
   [movimentacao]="selectedMov"
   (close)="closeForm()">
-</app-patrimonio-movimentacao-form>
+</app-assets-movimentacao-form>

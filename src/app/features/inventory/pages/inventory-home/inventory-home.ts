@@ -5,12 +5,12 @@ import { HeaderService } from '../../../../core/services/header';
 type ItemFormMode = 'create' | 'edit' | 'view';
 
 @Component({
-  selector: 'app-almoxarifado-home',
+  selector: 'app-inventory-home',
   standalone: false,
-  templateUrl: './almoxarifado-home.html',
-  styleUrl: './almoxarifado-home.css',
+  templateUrl: './inventory-home.html',
+  styleUrl: './inventory-home.css',
 })
-export class AlmoxarifadoHome implements OnInit {
+export class InventoryHome implements OnInit {
   todosItens = [
     { id: '1', nome: 'Papel A4 Sulfite 75g', sku: 'SUP-OFF-001', marca: 'Chamex', categoria: 'Escritório', saldo: 5, unid: 'CX', min: 10, status: 'ESTOQUE BAIXO', statusClass: 'warning-outline' },
     { id: '2', nome: 'Detergente Líquido 5L', sku: 'CLN-LIQ-042', marca: 'Ypê', categoria: 'Limpeza', saldo: 24, unid: 'UN', min: 5, status: 'EM ESTOQUE', statusClass: 'success-outline' },
@@ -78,7 +78,7 @@ export class AlmoxarifadoHome implements OnInit {
   closeItemForm(): void { this.isItemFormOpen = false; }
 
   goToMovimentacoes(): void {
-    this.router.navigate(['/almoxarifado/movimentacoes']);
+    this.router.navigate(['/inventory/movimentacoes']);
   }
 
   constructor(private headerService: HeaderService, private router: Router) {}

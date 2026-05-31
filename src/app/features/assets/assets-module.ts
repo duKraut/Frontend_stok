@@ -2,24 +2,24 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
-import { PatrimonioRoutingModule } from './patrimonio-routing-module';
-import { PatrimonioHome } from './pages/patrimonio-home/patrimonio-home';
-import { PatrimonioBemForm } from './pages/patrimonio-bem-form/patrimonio-bem-form';
-import { PatrimonioMovimentacoes } from './pages/patrimonio-movimentacoes/patrimonio-movimentacoes';
-import { PatrimonioMovimentacaoForm } from './pages/patrimonio-movimentacao-form/patrimonio-movimentacao-form';
+import { AssetsRoutingModule } from './assets-routing-module';
+import { AssetsHome } from './pages/assets-home/assets-home';
+import { AssetsBemForm } from './pages/assets-bem-form/assets-bem-form';
+import { AssetsMovimentacoes } from './pages/assets-movimentacoes/assets-movimentacoes';
+import { AssetsMovimentacaoForm } from './pages/assets-movimentacao-form/assets-movimentacao-form';
 
 
 @NgModule({
   declarations: [
-    PatrimonioHome,
-    PatrimonioBemForm,
-    PatrimonioMovimentacoes,
-    PatrimonioMovimentacaoForm
+    AssetsHome,
+    AssetsBemForm,
+    AssetsMovimentacoes,
+    AssetsMovimentacaoForm
   ],
   imports: [
     CommonModule,
     RouterModule,
-    PatrimonioRoutingModule
+    AssetsRoutingModule
   ]
 })
-export class PatrimonioModule { }
+export class AssetsModule { }

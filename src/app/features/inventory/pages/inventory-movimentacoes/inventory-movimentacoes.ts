@@ -4,12 +4,12 @@ import { HeaderService } from '../../../../core/services/header';
 type MovFormMode = 'create' | 'view';
 
 @Component({
-  selector: 'app-almoxarifado-movimentacoes',
+  selector: 'app-inventory-movimentacoes',
   standalone: false,
-  templateUrl: './almoxarifado-movimentacoes.html',
-  styleUrl: './almoxarifado-movimentacoes.css',
+  templateUrl: './inventory-movimentacoes.html',
+  styleUrl: './inventory-movimentacoes.css',
 })
-export class AlmoxarifadoMovimentacoes implements OnInit {
+export class InventoryMovimentacoes implements OnInit {
   todasMovimentacoes = [
     { id: 'MOV-0041', tipo: 'Entrada', tipoClass: 'tipo-entrada', item: 'Papel A4 Sulfite 75g', sku: 'SUP-OFF-001', qtd: 10, unid: 'CX', responsavel: 'Ana Paula Ferreira', data: '30/05/2026', nf: 'NF-004521', setor: '—', obs: 'Reposição de estoque mensal.' },
     { id: 'MOV-0040', tipo: 'Saída', tipoClass: 'tipo-saida', item: 'Detergente Líquido 5L', sku: 'CLN-LIQ-042', qtd: 3, unid: 'UN', responsavel: 'Bruno Costa', data: '29/05/2026', nf: '—', setor: 'Limpeza / Térreo', obs: 'Distribuição semanal.' },

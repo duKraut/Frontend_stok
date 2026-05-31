@@ -5,12 +5,12 @@ import { HeaderService } from '../../../../core/services/header';
 type BemFormMode = 'create' | 'edit' | 'view';
 
 @Component({
-  selector: 'app-patrimonio-home',
+  selector: 'app-assets-home',
   standalone: false,
-  templateUrl: './patrimonio-home.html',
-  styleUrl: './patrimonio-home.css',
+  templateUrl: './assets-home.html',
+  styleUrl: './assets-home.css',
 })
-export class PatrimonioHome implements OnInit {
+export class AssetsHome implements OnInit {
   todosAtivos = [
     { tombamento: '1', nome: 'Notebook Dell Latitude 5420', desc: 'Core i7, 16GB RAM, 512GB SSD', marca: 'Dell', categoria: 'Informática', aquisicao: '12/05/2022', depto: 'TI - Sede', estado: 'EXCELENTE', estadoClass: 'badge-excelente', valor: 'R$ 5.400,00' },
     { tombamento: '2', nome: 'Ar Condicionado 12k BTU', desc: 'Samsung Digital Inverter', marca: 'Samsung', categoria: 'Equipamentos de Escritório', alerta: true, aquisicao: '15/03/2019', depto: 'Vendas', estado: 'MANUTENÇÃO', estadoClass: 'badge-manutencao', valor: 'R$ 2.100,00' },
@@ -75,7 +75,7 @@ export class PatrimonioHome implements OnInit {
   closeBemForm(): void { this.isBemFormOpen = false; }
 
   goToMovimentacoes(): void {
-    this.router.navigate(['/patrimonio/movimentacoes']);
+    this.router.navigate(['/assets/movimentacoes']);
   }
 
   constructor(private headerService: HeaderService, private router: Router) {}

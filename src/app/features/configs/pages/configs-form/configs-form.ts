@@ -13,8 +13,8 @@ export class ConfigsForm {
   @Output() close = new EventEmitter<void>();
 
   modules = [
-    { key: 'almoxarifado', label: 'Almoxarifado', icon: 'ph ph-archive-box' },
-    { key: 'patrimonio', label: 'Patrimônio', icon: 'ph ph-buildings' },
+    { key: 'inventory', label: 'Almoxarifado', icon: 'ph ph-archive-box' },
+    { key: 'assets', label: 'Patrimônio', icon: 'ph ph-buildings' },
     { key: 'suppliers', label: 'Fornecedores', icon: 'ph ph-handshake' },
     { key: 'reports', label: 'Relatórios', icon: 'ph ph-chart-bar' },
     { key: 'configs', label: 'Configurações', icon: 'ph ph-gear' },
