@@ -78,7 +78,7 @@ export class InventoryHome implements OnInit {
   closeItemForm(): void { this.isItemFormOpen = false; }
 
   goToMovimentacoes(): void {
-    this.router.navigate(['/inventory/movimentacoes']);
+    this.router.navigate(['/inventory/movements']);
   }
 
   constructor(private headerService: HeaderService, private router: Router) {}

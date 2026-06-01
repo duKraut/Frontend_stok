@@ -75,7 +75,7 @@ export class AssetsHome implements OnInit {
   closeBemForm(): void { this.isBemFormOpen = false; }
 
   goToMovimentacoes(): void {
-    this.router.navigate(['/assets/movimentacoes']);
+    this.router.navigate(['/assets/movements']);
   }
 
   constructor(private headerService: HeaderService, private router: Router) {}

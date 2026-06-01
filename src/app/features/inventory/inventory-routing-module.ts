@@ -5,7 +5,7 @@ import { InventoryMovimentacoes } from './pages/inventory-movimentacoes/inventor
 
 const routes: Routes = [
   { path: '', component: InventoryHome },
-  { path: 'movimentacoes', component: InventoryMovimentacoes }
+  { path: 'movements', component: InventoryMovimentacoes }
 ];
 
 @NgModule({

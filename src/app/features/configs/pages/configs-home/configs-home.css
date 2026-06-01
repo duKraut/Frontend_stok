@@ -243,9 +243,8 @@
   display: inline-block;
   padding: 4px 10px;
   border-radius: 6px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.4px;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .role-Administrador {
@@ -270,12 +269,10 @@
 
 .badge {
   display: inline-block;
-  width: fit-content;
   padding: 4px 10px;
   border-radius: 6px;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .badge-Ativo {
@@ -363,4 +360,39 @@
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+.data-table .badge-Ativo {
+  background: #dcfce7;
+  color: #86a998;
+}
+
+.data-table .badge-Inativo {
+  background: #fee2e2;
+  color: #b88f8f;
+}
+
+.data-table .badge-Pendente {
+  background: #fef9c3;
+  color: #c4a87a;
+}
+
+.data-table .role-Administrador {
+  background: #ede9fe;
+  color: #9b87c8;
+}
+
+.data-table .role-Gerente {
+  background: #dbeafe;
+  color: #7d98c8;
+}
+
+.data-table .role-Operador {
+  background: #fff3c4;
+  color: #c49b7a;
+}
+
+.data-table .role-Visualizador {
+  background: #e5e7eb;
+  color: #8a9aaa;
 }

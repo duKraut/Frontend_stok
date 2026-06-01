@@ -5,7 +5,7 @@ import { AssetsMovimentacoes } from './pages/assets-movimentacoes/assets-movimen
 
 const routes: Routes = [
   { path: '', component: AssetsHome },
-  { path: 'movimentacoes', component: AssetsMovimentacoes }
+  { path: 'movements', component: AssetsMovimentacoes }
 ];
 
 @NgModule({

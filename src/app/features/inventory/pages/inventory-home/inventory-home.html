@@ -77,14 +77,14 @@
         <td>{{ item.min }}</td>
         <td><span class="badge" [ngClass]="item.statusClass">{{ item.status }}</span></td>
         <td class="actions-td">
-          <button type="button" title="Movimentações" (click)="goToMovimentacoes()">
-            <i class="ph ph-clock-counter-clockwise"></i>
-          </button>
           <button type="button" title="Visualizar" (click)="openViewItem(item)">
             <i class="ph ph-eye"></i>
           </button>
           <button type="button" title="Editar" (click)="openEditItem(item)">
             <i class="ph ph-pencil-simple"></i>
+          </button>
+          <button type="button" title="Movimentações" (click)="goToMovimentacoes()">
+            <i class="ph ph-clock-counter-clockwise"></i>
           </button>
         </td>
       </tr>
