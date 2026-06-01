@@ -1,5 +1,4 @@
-import { Component } from '@angular/core';
-import { OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { HeaderService } from '../../../../core/services/header';
 import { SupplierService, Supplier } from '../../services/supplier.service';
 
@@ -88,7 +87,8 @@ export class SuppliersHome implements OnInit {
 
   constructor(
     private headerService: HeaderService,
-    private supplierService: SupplierService
+    private supplierService: SupplierService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -106,11 +106,7 @@ export class SuppliersHome implements OnInit {
     this.supplierService.getAll().subscribe({
       next: (data) => {
         this.allSuppliers = data;
-        console.log('activeTab:', this.activeTab);
-        console.log('filteredSuppliers:', this.filteredSuppliers);
-        console.log('itemsDisplayed:', this.itemsDisplayed);
-        this.activeTab = 'Todos';
-        this.paginaAtual = 1;
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('Erro ao buscar fornecedores', error);
