@@ -67,7 +67,7 @@
         </thead>
         <tbody>
             <tr *ngFor="let active of itemsDisplayed">
-                <td>{{ active.id }}</td>
+                <td>{{ active.code }}</td>
                 <td>
                     <div class="supplier-cell">
                         <div class="supplier-avatar" [ngClass]="getAvatarClass(active.category)">
@@ -79,9 +79,9 @@
                         </div>
                     </div>
                 </td>
-                <td>{{ active.cnpj_cpf }}</td>
+                <td>{{ active.document }}</td>
                 <td>{{ active.category }}</td>
-                <td><span class="badge" [ngClass]="active.statsClass">{{ active.stats }}</span></td>
+                <td><span class="badge" [ngClass]="active.active ? 'badge-active' : 'badge-inactive'">{{ active.active ? 'Ativo' : 'Inativo' }}</span></td>
                 <td class="actions-td">
                     <button type="button" (click)="openViewSupplier(active)"><i class="ph ph-eye"></i></button>
                     <button type="button" (click)="openEditSupplier(active)"><i class="ph ph-pencil-simple"></i></button>

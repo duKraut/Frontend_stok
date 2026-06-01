@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { OnInit } from '@angular/core';
 import { HeaderService } from '../../../../core/services/header';
+import { SupplierService, Supplier } from '../../services/supplier.service';
 
 type SupplierFormMode = 'create' | 'edit' | 'view';
 
@@ -11,18 +12,7 @@ type SupplierFormMode = 'create' | 'edit' | 'view';
   styleUrl: './suppliers-home.css',
 })
 export class SuppliersHome implements OnInit {
-  allSuppliers = [
-    { id: '1', name: 'Carlos Eduardo dos Santos', cnpj_cpf: '123.456.789-00', category: 'Representante', stats: 'Ativo', statsClass: 'badge-Ativo' },
-    { id: '2', name: 'Mariana Costa Oliveira', cnpj_cpf: '456.789.123-55', category: 'Representante', stats: 'Ativo', statsClass: 'badge-Ativo' },
-    { id: '3', name: 'InovaTech Soluções Digitais', cnpj_cpf: '45.892.301/0001-85', category: 'Informática e TI', stats: 'Ativo', statsClass: 'badge-Ativo' },
-    { id: '4', name: 'Thiago Pereira Souza', cnpj_cpf: '789.123.456-11', category: 'Representante', stats: 'Inativo', statsClass: 'badge-Inativo' },
-    { id: '5', name: 'Ana Beatriz Ribeiro', cnpj_cpf: '321.654.987-99', category: 'Representante', stats: 'Inativo', statsClass: 'badge-Inativo' },
-    { id: '6', name: 'Lucas Martins Almeida', cnpj_cpf: '654.987.321-88', category: 'Representante', stats: 'Inativo', statsClass: 'badge-Inativo' },
-    { id: '7', name: 'Global Office Papelaria', cnpj_cpf: '12.345.678/0001-00', category: 'Papelaria', stats: 'Ativo', statsClass: 'badge-Ativo' },
-    { id: '8', name: 'Juliana Mendes Rocha', cnpj_cpf: '987.321.654-22', category: 'Representante', stats: 'Inativo', statsClass: 'badge-Inativo' },
-    { id: '9', name: 'Vanguarda Alimentos e Bebidas', cnpj_cpf: '89.102.345/0001-99', category: 'Alimentícia', stats: 'Ativo', statsClass: 'badge-Ativo' },
-    { id: '10', name: 'Rodrigo Augusto Barbosa', cnpj_cpf: '159.753.486-33', category: 'Outros', stats: 'Ativo', statsClass: 'badge-Ativo' },
-  ];
+  allSuppliers: Supplier[] = [];
 
   activeTab: 'Todos' | 'Ativos' | 'Inativos' = 'Todos';
   paginaAtual = 1;
@@ -33,16 +23,16 @@ export class SuppliersHome implements OnInit {
   selectedSupplier: any = null;
 
   get filteredSuppliers() {
-    if (this.activeTab === 'Ativos') return this.allSuppliers.filter(s => s.stats === 'Ativo');
-    if (this.activeTab === 'Inativos') return this.allSuppliers.filter(s => s.stats === 'Inativo');
+    if (this.activeTab === 'Ativos') return this.allSuppliers.filter(s => s.active === true);
+    if (this.activeTab === 'Inativos') return this.allSuppliers.filter(s => s.active === false);
     return this.allSuppliers;
   }
 
-  get totalAtivos() { return this.allSuppliers.filter(s => s.stats === 'Ativo').length; }
-  get totalInativos() { return this.allSuppliers.filter(s => s.stats === 'Inativo').length; }
+  get totalAtivos() { return this.allSuppliers.filter(s => s.active === true).length; }
+  get totalInativos() { return this.allSuppliers.filter(s => s.active === false).length; }
   get totalCategorias() { return new Set(this.allSuppliers.map(s => s.category)).size; }
 
-  get totalPaginas() { return Math.ceil(this.filteredSuppliers.length / this.itensPorPagina); }
+  get totalPaginas() { return Math.max(1, Math.ceil(this.filteredSuppliers.length / this.itensPorPagina));}
 
   get itemsDisplayed() {
     const inicio = (this.paginaAtual - 1) * this.itensPorPagina;
@@ -50,7 +40,7 @@ export class SuppliersHome implements OnInit {
   }
 
   get arrayPaginas() {
-    return Array(this.totalPaginas).fill(0).map((_, i) => i + 1);
+    return Array(this.totalPaginas).fill(1).map((_, i) => i + 1);
   }
 
   setTab(tab: 'Todos' | 'Ativos' | 'Inativos') {
@@ -96,7 +86,10 @@ export class SuppliersHome implements OnInit {
     return 'avatar-default';
   }
 
-  constructor(private headerService: HeaderService) {}
+  constructor(
+    private headerService: HeaderService,
+    private supplierService: SupplierService
+  ) {}
 
   ngOnInit(): void {
     this.headerService.setConfig({
@@ -104,6 +97,24 @@ export class SuppliersHome implements OnInit {
       showSearch: true,
       primaryButtonLabel: 'Novo Fornecedor',
       primaryButtonIcon: 'ph ph-plus'
+    });
+
+    this.loadSuppliers();
+  }
+
+  loadSuppliers(): void {
+    this.supplierService.getAll().subscribe({
+      next: (data) => {
+        this.allSuppliers = data;
+        console.log('activeTab:', this.activeTab);
+        console.log('filteredSuppliers:', this.filteredSuppliers);
+        console.log('itemsDisplayed:', this.itemsDisplayed);
+        this.activeTab = 'Todos';
+        this.paginaAtual = 1;
+      },
+      error: (error) => {
+        console.error('Erro ao buscar fornecedores', error);
+      }
     });
   }
 }

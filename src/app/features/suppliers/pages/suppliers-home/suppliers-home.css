@@ -162,12 +162,12 @@
   font-weight: 600;
 }
 
-.badge-Ativo {
+.badge-active {
   background: #dcfce7;
   color: #166534;
 }
 
-.badge-Inativo {
+.badge-inactive {
   background: #fee2e2;
   color: #b91c1c;
 }
@@ -360,12 +360,12 @@
     font-weight: 600;
 }
 
-.data-table .badge-Ativo {
+.data-table .badge-active {
   background: #dcfce7;
   color: #86a998;
 }
 
-.data-table .badge-Inativo {
+.data-table .badge-inactive {
   background: #fee2e2;
   color: #b88f8f;
 }
