@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 import { SuppliersRoutingModule } from './suppliers-routing-module';
 import { SuppliersHome } from './pages/suppliers-home/suppliers-home';
@@ -13,6 +14,7 @@ import { SuppliersForm } from './pages/suppliers-form/suppliers-form';
   ],
   imports: [
     CommonModule,
+    FormsModule,
     SuppliersRoutingModule
   ]
 })

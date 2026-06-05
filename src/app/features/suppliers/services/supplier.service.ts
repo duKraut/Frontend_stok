@@ -3,11 +3,20 @@ import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 
 export interface Supplier {
-    code: string;
-    name:string;
-    document: string;
-    category: string;
-    active: boolean;
+  id?: string;
+  code?: number;
+  personType: 'PF' | 'PJ';
+  name: string;
+  document: string;
+  category: string;
+  contactName?: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  zipCode?: string;
+  city?: string;
+  neighborhood?: string;
+  active: boolean;
 }
 
 @Injectable({
