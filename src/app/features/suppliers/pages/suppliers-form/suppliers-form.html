@@ -10,38 +10,70 @@
     </button>
   </div>
 
+  <div class="form-group type">
+    <label><span>Tipo de Pessoa</span></label>
+
+    <div class="toggle-switch">
+      <button
+        type="button"
+        [class.active]="formData.personType === 'PJ'"
+        (click)="changePersonType('PJ')"
+        [disabled]="mode === 'view'"
+      >
+        Pessoa Jurídica
+      </button>
+
+      <button
+        type="button"
+        [class.active]="formData.personType === 'PF'"
+        (click)="changePersonType('PF')"
+        [disabled]="mode === 'view'"
+      >
+        Pessoa Física
+      </button>
+    </div>
+  </div>
+
   <div class="drawer-content">
+    <p class="required-hint" *ngIf="mode !== 'view'">Campos com <span class="required-mark">*</span> são obrigatórios</p>
+
     <section class="form-card">
       <div class="form-section-header">
         <span class="section-number">01</span>
         <h3>Identificação Corporativa</h3>
       </div>
 
-      <div class="form-group checkbox-group">
-        <label class="checkbox-label">
-          <input type="checkbox" checked [disabled]="mode === 'view'"/>
-          <span>Fornecedor Ativo</span>
-        </label>
+      <div class="active-switch-group">
+        <span>Fornecedor Ativo</span>
+
+        <button
+          type="button"
+          class="status-toggle"
+          [class.active]="formData.active"
+          (click)="formData.active = !formData.active"
+          [disabled]="mode === 'view'"
+        >
+          <span class="toggle-knob">
+          </span>
+        </button>
       </div>
 
       <div class="form-grid">
         <div class="form-group full">
-          <label>Nome / Razão Social</label>
-          <input type="text" placeholder="Ex: Global Logistics Solutions LTDA" [disabled]="mode === 'view'"/>
+          <label>Nome / Razão Social <span class="required-mark" *ngIf="mode !== 'view'">*</span></label>
+          <input type="text" [(ngModel)]="formData.name" placeholder="Ex: Global Logistics Solutions LTDA" [disabled]="mode === 'view'" [class.input-error]="submitted && validationErrors.name"/>
         </div>
 
         <div class="form-group">
-          <label>CNPJ / CPF</label>
-          <input type="text" placeholder="00.000.000/0000-00" [disabled]="mode === 'view'"/>
+          <label>CNPJ / CPF <span class="required-mark" *ngIf="mode !== 'view'">*</span></label>
+          <input type="text" [ngModel]="formData.document" (input)="formatDocument($event)" [placeholder]="formData.personType === 'PJ' ? '00.000.000/0000-00' : '000.000.000-00'" [disabled]="mode === 'view'" [class.input-error]="submitted && validationErrors.document"/>
         </div>
 
         <div class="form-group">
-          <label>Categoria</label>
-          <select>
-            <option>Hardware</option>
-            <option>Serviços</option>
-            <option>Papelaria</option>
-            <option>Limpeza</option>
+          <label>Categoria <span class="required-mark" *ngIf="mode !== 'view'">*</span></label>
+          <select [(ngModel)]="formData.category" [disabled]="mode === 'view'" [class.input-error]="submitted && validationErrors.category">
+            <option value="">Selecione...</option>
+            <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
           </select>
         </div>
       </div>
@@ -50,23 +82,23 @@
     <section class="form-card">
       <div class="form-section-header">
         <span class="section-number">02</span>
-        <h3>Ponto de Contato</h3>
+        <h3>{{ formData.personType === 'PJ' ? 'Ponto de Contato' : 'Contato' }}</h3>
       </div>
 
       <div class="form-grid">
-        <div class="form-group full">
+        <div class="form-group full" *ngIf="formData.personType === 'PJ'">
           <label>Nome do Responsável</label>
-          <input type="text" placeholder="Nome completo" [disabled]="mode === 'view'"/>
+          <input type="text" [(ngModel)]="formData.contactName" placeholder="Nome completo" [disabled]="mode === 'view'"/>
         </div>
 
         <div class="form-group">
-          <label>E-mail</label>
-          <input type="email" placeholder="email@fornecedor.com" [disabled]="mode === 'view'"/>
+          <label>E-mail <span class="required-mark" *ngIf="mode !== 'view'">*</span></label>
+          <input type="text" [(ngModel)]="formData.email" placeholder="email@fornecedor.com" [disabled]="mode === 'view'" [class.input-error]="submitted && validationErrors.email"/>
         </div>
 
         <div class="form-group">
-          <label>Telefone</label>
-          <input type="text" placeholder="+55 (11) 00000-0000" [disabled]="mode === 'view'"/>
+          <label>Telefone <span class="required-mark" *ngIf="mode !== 'view'">*</span></label>
+          <input type="text" [ngModel]="formData.phone" (input)="formatPhone($event)" placeholder="+55 (42) 00000-0000" [disabled]="mode === 'view'" [class.input-error]="submitted && validationErrors.phone"/>
         </div>
       </div>
     </section>
@@ -80,31 +112,45 @@
       <div class="form-grid">
         <div class="form-group wide">
           <label>Endereço</label>
-          <input type="text" placeholder="Rua, Av..." [disabled]="mode === 'view'"/>
+          <input type="text" [(ngModel)]="formData.address" placeholder="Rua, Av..." [disabled]="mode === 'view'"/>
         </div>
 
         <div class="form-group small">
           <label>CEP</label>
-          <input type="text" placeholder="00000-000" [disabled]="mode === 'view'"/>
+          <input type="text" [ngModel]="formData.zipCode" (input)="formatZipCode($event)" placeholder="00000-000" [disabled]="mode === 'view'" [class.input-error]="submitted && validationErrors.zipCode"/>
         </div>
 
         <div class="form-group">
           <label>Cidade</label>
-          <input type="text" placeholder="Cidade" [disabled]="mode === 'view'"/>
+          <input type="text" [(ngModel)]="formData.city" placeholder="Cidade" [disabled]="mode === 'view'"/>
         </div>
 
         <div class="form-group">
           <label>Bairro</label>
-          <input type="text" placeholder="Bairro" [disabled]="mode === 'view'"/>
+          <input type="text" [(ngModel)]="formData.neighborhood" placeholder="Bairro" [disabled]="mode === 'view'"/>
         </div>
       </div>
     </section>
   </div>
 
-  <div class="drawer-footer" *ngIf="mode !== 'view'">
-    <button class="btn-save" type="button">
-      <i class="ph ph-floppy-disk"></i>
-      Salvar Fornecedor
+  <div class="drawer-footer">
+    <button *ngIf="mode === 'view'" class="btn-save" type="button" (click)="requestEdit()">
+      <i class="ph ph-pencil-simple"></i>
+      Editar Fornecedor
+    </button>
+
+    <button *ngIf="mode !== 'view'" class="btn-save" type="button" (click)="saveSupplier()" [disabled]="isSaving">
+      <i class="ph" [ngClass]="isSaving ? 'ph-circle-notch loading-icon' : 'ph-floppy-disk'"></i>
+      {{ isSaving ? 'Salvando...' : 'Salvar Fornecedor' }}
     </button>
   </div>
 </aside>
+
+<div
+  class="toast toast-error"
+  *ngIf="errorMessage"
+  [class.toast-leaving]="toastLeaving"
+>
+  <i class="ph ph-warning-circle"></i>
+  <span>{{ errorMessage }}</span>
+</div>

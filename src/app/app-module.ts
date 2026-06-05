@@ -5,6 +5,7 @@ import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
 import { CoreModule } from './core/core-module';
 import { PrivateLayout } from './layouts/private-layout/private-layout';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -14,7 +15,8 @@ import { PrivateLayout } from './layouts/private-layout/private-layout';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    CoreModule
+    CoreModule,
+    HttpClientModule
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),
