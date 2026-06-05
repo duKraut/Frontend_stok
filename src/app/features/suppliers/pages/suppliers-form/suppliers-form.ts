@@ -14,13 +14,34 @@ export class SuppliersForm implements OnChanges {
   @Output() close = new EventEmitter<void>();
   @Output() saved = new EventEmitter<void>();
 
-  emailError = false;
+  submitted = false;
+
+  get validationErrors() {
+    return {
+      name: !this.formData.name.trim(),
+      document: !this.formData.document.trim(),
+      category: !this.formData.category.trim(),
+      email: !this.formData.email.trim() || !this.formData.email.includes('@'),
+      phone: !this.formData.phone.trim(),
+    };
+  }
+
+  readonly categoriesPJ = ['Hardware', 'Serviços', 'Papelaria', 'Limpeza', 'Representante', 'Outros'];
+  readonly categoriesPF = ['Representante', 'Outros'];
+
+  get categories(): string[] {
+    return this.formData.personType === 'PF' ? this.categoriesPF : this.categoriesPJ;
+  }
+
+  get hasErrors(): boolean {
+    return Object.values(this.validationErrors).some(v => v);
+  }
 
   formData = {
-    personType: 'PJ' as 'PF' | 'PJ', 
+    personType: 'PJ' as 'PF' | 'PJ',
     name: '',
     document: '',
-    category: 'Papelaria',
+    category: '',
     contactName: '',
     email: '',
     phone: '',
@@ -57,7 +78,7 @@ export class SuppliersForm implements OnChanges {
         personType: 'PJ',
         name: '',
         document: '',
-        category: 'Papelaria',
+        category: '',
         contactName: '',
         email: '',
         phone: '',
@@ -71,8 +92,10 @@ export class SuppliersForm implements OnChanges {
   }
 
   changePersonType(type: 'PF' | 'PJ'): void {
+    this.submitted = false;
     this.formData.personType = type;
     this.formData.document = '';
+    this.formData.category = '';
 
     if (type === 'PF') {
       this.formData.contactName = '';
@@ -80,8 +103,9 @@ export class SuppliersForm implements OnChanges {
   }
 
   saveSupplier(): void {
-    this.emailError = this.formData.email.length > 0 && !this.formData.email.includes('@');
-    if (this.emailError) return;
+    console.log('saveSupplier chamado', this.validationErrors);
+    this.submitted = true;
+    if (this.hasErrors) return;
 
     if (this.mode === 'create') {
       this.supplierService.create(this.formData).subscribe({
@@ -154,6 +178,7 @@ export class SuppliersForm implements OnChanges {
   }
 
   closeDrawer(): void {
+    this.submitted = false;
     this.close.emit();
   }
 }
