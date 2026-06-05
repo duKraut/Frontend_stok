@@ -22,6 +22,7 @@ export class SuppliersHome implements OnInit {
   selectedSupplier: any = null;
 
   successMessage = '';
+  successLeaving = false;
 
   get filteredSuppliers() {
     if (this.activeTab === 'Ativos') return this.allSuppliers.filter(s => s.active === true);
@@ -76,18 +77,25 @@ export class SuppliersHome implements OnInit {
   }
 
   onSupplierSaved(): void {
-  this.closeSupplierForm();
-  this.loadSuppliers();
+    this.closeSupplierForm();
+    this.loadSuppliers();
 
-  this.successMessage =
-    this.supplierFormMode === 'create'
+    this.successLeaving = false;
+    this.successMessage = this.supplierFormMode === 'create'
       ? 'Fornecedor cadastrado com sucesso.'
       : 'Fornecedor atualizado com sucesso.';
 
-  setTimeout(() => {
-    this.successMessage = '';
-  }, 3500);
-}
+    setTimeout(() => {
+      this.successLeaving = true;
+      this.cdr.detectChanges();
+
+      setTimeout(() => {
+        this.successMessage = '';
+        this.successLeaving = false;
+        this.cdr.detectChanges();
+      }, 400);
+    }, 4000);
+  }
 
   getInitials(name: string): string {
     return name.split(' ').filter(w => w.length > 0).slice(0, 2).map(w => w[0]).join('').toUpperCase();

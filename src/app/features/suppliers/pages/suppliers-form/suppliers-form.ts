@@ -13,21 +13,50 @@ export class SuppliersForm implements OnChanges {
 
   @Output() close = new EventEmitter<void>();
   @Output() saved = new EventEmitter<void>();
+  @Output() editRequested = new EventEmitter<void>();
 
   isSaving = false;
 
   errorMessage = '';
+  toastLeaving = false;
 
   submitted = false;
 
   get validationErrors() {
+    const docDigits = this.onlyNumbers(this.formData.document).length;
+    const expectedDocDigits = this.formData.personType === 'PF' ? 11 : 14;
+
     return {
       name: !this.formData.name.trim(),
-      document: !this.formData.document.trim(),
+      document: !this.formData.document.trim() || docDigits < expectedDocDigits,
       category: !this.formData.category.trim(),
-      email: !this.formData.email.trim() || !this.formData.email.includes('@'),
-      phone: !this.formData.phone.trim(),
+      email: !this.formData.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.formData.email),
+      phone: !this.formData.phone.trim() || this.onlyNumbers(this.formData.phone).length < 10,
+      zipCode: this.formData.zipCode.length > 0 && this.onlyNumbers(this.formData.zipCode).length < 8,
     };
+  }
+
+  get hasUnsavedChanges(): boolean {
+    if (this.mode === 'view') return false;
+
+    if (this.mode === 'create') {
+      return !!(this.formData.name || this.formData.document ||
+                this.formData.email || this.formData.phone || this.formData.category);
+    }
+
+    if (this.mode === 'edit' && this.supplier) {
+      return (
+        this.formData.name !== this.supplier.name ||
+        this.formData.document !== this.supplier.document ||
+        this.formData.category !== this.supplier.category ||
+        this.formData.personType !== (this.supplier.personType ?? 'PJ') ||
+        this.formData.email !== (this.supplier.email ?? '') ||
+        this.formData.phone !== (this.supplier.phone ?? '') ||
+        this.formData.active !== this.supplier.active
+      );
+    }
+
+    return false;
   }
 
   readonly categoriesPJ = ['Hardware', 'Serviços', 'Papelaria', 'Limpeza', 'Representante', 'Outros'];
@@ -123,7 +152,7 @@ export class SuppliersForm implements OnChanges {
         next: () => {
           this.isSaving = false;
           this.saved.emit();
-          this.closeDrawer();
+          this.closeDrawer(true);
         },
         error: (error) => {
           this.isSaving = false;
@@ -138,7 +167,7 @@ export class SuppliersForm implements OnChanges {
       next: () => {
         this.isSaving = false;
         this.saved.emit();
-        this.closeDrawer();
+        this.closeDrawer(true);
       },
       error: (error) => {
         this.isSaving = false;
@@ -200,18 +229,32 @@ export class SuppliersForm implements OnChanges {
   }
 
   private showError(error: any): void {
+    this.toastLeaving = false;
     this.errorMessage = error.status === 409
       ? 'Este CNPJ/CPF já está cadastrado.'
       : 'Erro ao salvar. Tente novamente.';
     this.cdr.detectChanges();
 
     setTimeout(() => {
-      this.errorMessage = '';
+      this.toastLeaving = true;
       this.cdr.detectChanges();
+
+      setTimeout(() => {
+        this.errorMessage = '';
+        this.toastLeaving = false;
+        this.cdr.detectChanges();
+      }, 400);
     }, 4000);
   }
 
-  closeDrawer(): void {
+  requestEdit(): void {
+    this.editRequested.emit();
+  }
+
+  closeDrawer(skipConfirm = false): void {
+    if (!skipConfirm && this.hasUnsavedChanges && !window.confirm('Você tem alterações não salvas. Deseja descartá-las?')) {
+      return;
+    }
     this.submitted = false;
     this.close.emit();
   }

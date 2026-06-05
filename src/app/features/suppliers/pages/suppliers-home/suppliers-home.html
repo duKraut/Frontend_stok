@@ -8,10 +8,6 @@
     </div>
 </div>
 
-<div class="success-box" *ngIf="successMessage">
-  <i class="ph ph-check-circle"></i>
-  <span>{{ successMessage }}</span>
-</div>
 
 <div class="stats-grid supplier-cards">
     <div class="card stat-box">
@@ -124,5 +120,15 @@
   [mode]="supplierFormMode"
   [supplier]="selectedSupplier"
   (close)="closeSupplierForm()"
-  (saved)="onSupplierSaved()">
+  (saved)="onSupplierSaved()"
+  (editRequested)="openEditSupplier(selectedSupplier)">
 </app-suppliers-form>
+
+<div
+  class="toast toast-success"
+  *ngIf="successMessage"
+  [class.toast-leaving]="successLeaving"
+>
+  <i class="ph ph-check-circle"></i>
+  <span>{{ successMessage }}</span>
+</div>
