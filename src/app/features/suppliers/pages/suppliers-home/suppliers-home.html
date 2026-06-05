@@ -118,5 +118,6 @@
   *ngIf="isSupplierFormOpen"
   [mode]="supplierFormMode"
   [supplier]="selectedSupplier"
-  (close)="closeSupplierForm()">
+  (close)="closeSupplierForm()"
+  (saved)="onSupplierSaved()">
 </app-suppliers-form>
