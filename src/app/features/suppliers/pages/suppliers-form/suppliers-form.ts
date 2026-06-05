@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { Supplier, SupplierService } from '../../services/supplier.service';
 
 @Component({
@@ -13,6 +13,10 @@ export class SuppliersForm implements OnChanges {
 
   @Output() close = new EventEmitter<void>();
   @Output() saved = new EventEmitter<void>();
+
+  isSaving = false;
+
+  errorMessage = '';
 
   submitted = false;
 
@@ -52,7 +56,7 @@ export class SuppliersForm implements OnChanges {
     active: true
   };
 
-  constructor(private supplierService: SupplierService) {}
+  constructor(private supplierService: SupplierService, private cdr: ChangeDetectorRef) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.supplier && (this.mode === 'edit' || this.mode === 'view')) {
@@ -103,31 +107,49 @@ export class SuppliersForm implements OnChanges {
   }
 
   saveSupplier(): void {
-    console.log('saveSupplier chamado', this.validationErrors);
+    if (this.isSaving) return;
+
     this.submitted = true;
-    if (this.hasErrors) return;
+
+    if (this.hasErrors) {
+      this.isSaving = false;
+      return;
+    }
+
+    this.isSaving = true;
 
     if (this.mode === 'create') {
       this.supplierService.create(this.formData).subscribe({
         next: () => {
+          this.isSaving = false;
           this.saved.emit();
           this.closeDrawer();
         },
-        error: (error) => console.error('Erro ao criar fornecedor', error)
+        error: (error) => {
+          this.isSaving = false;
+          this.showError(error);
+        }
       });
       return;
     }
 
-    if (this.mode === 'edit' && this.supplier?.id) {
-      this.supplierService.update(this.supplier.id, this.formData).subscribe({
-        next: () => {
-          this.saved.emit();
-          this.closeDrawer();
-        },
-        error: (error) => console.error('Erro ao atualizar fornecedor', error)
-      });
-    }
+  if (this.mode === 'edit' && this.supplier?.id) {
+    this.supplierService.update(this.supplier.id, this.formData).subscribe({
+      next: () => {
+        this.isSaving = false;
+        this.saved.emit();
+        this.closeDrawer();
+      },
+      error: (error) => {
+        this.isSaving = false;
+        this.showError(error);
+      }
+    });
+    return;
   }
+
+  this.isSaving = false;
+}
 
   onlyNumbers(value: string): string {
     return value.replace(/\D/g, '');
@@ -175,6 +197,18 @@ export class SuppliersForm implements OnChanges {
 
     this.formData.zipCode = formatted;
     input.value = formatted;
+  }
+
+  private showError(error: any): void {
+    this.errorMessage = error.status === 409
+      ? 'Este CNPJ/CPF já está cadastrado.'
+      : 'Erro ao salvar. Tente novamente.';
+    this.cdr.detectChanges();
+
+    setTimeout(() => {
+      this.errorMessage = '';
+      this.cdr.detectChanges();
+    }, 4000);
   }
 
   closeDrawer(): void {

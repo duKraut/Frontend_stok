@@ -21,6 +21,8 @@ export class SuppliersHome implements OnInit {
   supplierFormMode: SupplierFormMode = 'create';
   selectedSupplier: any = null;
 
+  successMessage = '';
+
   get filteredSuppliers() {
     if (this.activeTab === 'Ativos') return this.allSuppliers.filter(s => s.active === true);
     if (this.activeTab === 'Inativos') return this.allSuppliers.filter(s => s.active === false);
@@ -76,6 +78,15 @@ export class SuppliersHome implements OnInit {
   onSupplierSaved(): void {
   this.closeSupplierForm();
   this.loadSuppliers();
+
+  this.successMessage =
+    this.supplierFormMode === 'create'
+      ? 'Fornecedor cadastrado com sucesso.'
+      : 'Fornecedor atualizado com sucesso.';
+
+  setTimeout(() => {
+    this.successMessage = '';
+  }, 3500);
 }
 
   getInitials(name: string): string {
