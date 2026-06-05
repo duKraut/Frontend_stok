@@ -14,6 +14,8 @@ export class SuppliersForm implements OnChanges {
   @Output() close = new EventEmitter<void>();
   @Output() saved = new EventEmitter<void>();
 
+  emailError = false;
+
   formData = {
     personType: 'PJ' as 'PF' | 'PJ', 
     name: '',
@@ -78,6 +80,9 @@ export class SuppliersForm implements OnChanges {
   }
 
   saveSupplier(): void {
+    this.emailError = this.formData.email.length > 0 && !this.formData.email.includes('@');
+    if (this.emailError) return;
+
     if (this.mode === 'create') {
       this.supplierService.create(this.formData).subscribe({
         next: () => {
@@ -104,39 +109,48 @@ export class SuppliersForm implements OnChanges {
     return value.replace(/\D/g, '');
   }
 
-  formatDocument(): void {
-    const numbers = this.onlyNumbers(this.formData.document ?? '');
+  formatDocument(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const numbers = this.onlyNumbers(input.value);
+    let formatted: string;
 
     if (this.formData.personType === 'PF') {
-      this.formData.document = numbers
+      formatted = numbers
         .slice(0, 11)
         .replace(/(\d{3})(\d)/, '$1.$2')
         .replace(/(\d{3})(\d)/, '$1.$2')
         .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
-
-      return;
+    } else {
+      formatted = numbers
+        .slice(0, 14)
+        .replace(/(\d{2})(\d)/, '$1.$2')
+        .replace(/(\d{3})(\d)/, '$1.$2')
+        .replace(/(\d{3})(\d)/, '$1/$2')
+        .replace(/(\d{4})(\d{1,2})$/, '$1-$2');
     }
 
-    this.formData.document = numbers
-      .slice(0, 14)
-      .replace(/(\d{2})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d)/, '$1.$2')
-      .replace(/(\d{3})(\d)/, '$1/$2')
-      .replace(/(\d{4})(\d{1,2})$/, '$1-$2');
+    this.formData.document = formatted;
+    input.value = formatted;
   }
 
-  formatPhone(): void {
-    const numbers = this.onlyNumbers(this.formData.phone ?? '').slice(0, 11);
-
-    this.formData.phone = numbers
+  formatPhone(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const numbers = this.onlyNumbers(input.value).slice(0, 11);
+    const formatted = numbers
       .replace(/(\d{2})(\d)/, '($1) $2')
       .replace(/(\d{5})(\d{1,4})$/, '$1-$2');
+
+    this.formData.phone = formatted;
+    input.value = formatted;
   }
 
-  formatZipCode(): void {
-    const numbers = this.onlyNumbers(this.formData.zipCode ?? '').slice(0, 8);
+  formatZipCode(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const numbers = this.onlyNumbers(input.value).slice(0, 8);
+    const formatted = numbers.replace(/(\d{5})(\d{1,3})$/, '$1-$2');
 
-    this.formData.zipCode = numbers.replace(/(\d{5})(\d{1,3})$/, '$1-$2');
+    this.formData.zipCode = formatted;
+    input.value = formatted;
   }
 
   closeDrawer(): void {
