@@ -123,9 +123,9 @@
 
 <div class="drawer-backdrop" *ngIf="isBemFormOpen" (click)="closeBemForm()"></div>
 
-<app-assets-bem-form
+<app-assets-form
   *ngIf="isBemFormOpen"
   [mode]="bemFormMode"
   [bem]="selectedBem"
   (close)="closeBemForm()">
-</app-assets-bem-form>
+</app-assets-form>

@@ -4,12 +4,12 @@ import { HeaderService } from '../../../../core/services/header';
 type MovFormMode = 'create' | 'view';
 
 @Component({
-  selector: 'app-assets-movimentacoes',
+  selector: 'app-assets-movements',
   standalone: false,
-  templateUrl: './assets-movimentacoes.html',
-  styleUrl: './assets-movimentacoes.css',
+  templateUrl: './assets-movements.html',
+  styleUrl: './assets-movements.css',
 })
-export class AssetsMovimentacoes implements OnInit {
+export class AssetsMovements implements OnInit {
   todasMovimentacoes = [
     { id: 'MOV-0028', tipo: 'Transferência', tipoClass: 'tipo-transferencia', bem: 'Notebook Dell Latitude 5420', tombamento: '1', de: 'TI - Sede', para: 'Financeiro', responsavel: 'Ana Paula Ferreira', data: '30/05/2026', os: '—', obs: 'Realocação por solicitação da gerência.' },
     { id: 'MOV-0027', tipo: 'Manutenção', tipoClass: 'tipo-manutencao', bem: 'Ar Condicionado 12k BTU', tombamento: '2', de: 'Vendas', para: 'Vendas', responsavel: 'Bruno Costa', data: '28/05/2026', os: 'OS-0091', obs: 'Manutenção preventiva anual.' },

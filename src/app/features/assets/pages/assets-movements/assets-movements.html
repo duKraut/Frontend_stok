@@ -120,9 +120,9 @@
 
 <div class="drawer-backdrop" *ngIf="isFormOpen" (click)="closeForm()"></div>
 
-<app-assets-movimentacao-form
+<app-assets-movements-form
   *ngIf="isFormOpen"
   [mode]="formMode"
   [movimentacao]="selectedMov"
   (close)="closeForm()">
-</app-assets-movimentacao-form>
+</app-assets-movements-form>

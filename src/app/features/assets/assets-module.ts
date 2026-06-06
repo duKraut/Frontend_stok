@@ -4,17 +4,17 @@ import { RouterModule } from '@angular/router';
 
 import { AssetsRoutingModule } from './assets-routing-module';
 import { AssetsHome } from './pages/assets-home/assets-home';
-import { AssetsBemForm } from './pages/assets-bem-form/assets-bem-form';
-import { AssetsMovimentacoes } from './pages/assets-movimentacoes/assets-movimentacoes';
-import { AssetsMovimentacaoForm } from './pages/assets-movimentacao-form/assets-movimentacao-form';
+import { AssetsForm } from './pages/assets-form/assets-form';
+import { AssetsMovements } from './pages/assets-movements/assets-movements';
+import { AssetsMovementsForm } from './pages/assets-movements-form/assets-movements-form';
 
 
 @NgModule({
   declarations: [
     AssetsHome,
-    AssetsBemForm,
-    AssetsMovimentacoes,
-    AssetsMovimentacaoForm
+    AssetsForm,
+    AssetsMovements,
+    AssetsMovementsForm
   ],
   imports: [
     CommonModule,

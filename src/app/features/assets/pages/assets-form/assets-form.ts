@@ -1,12 +1,12 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
-  selector: 'app-assets-bem-form',
+  selector: 'app-assets-form',
   standalone: false,
-  templateUrl: './assets-bem-form.html',
-  styleUrl: './assets-bem-form.css',
+  templateUrl: './assets-form.html',
+  styleUrl: './assets-form.css',
 })
-export class AssetsBemForm {
+export class AssetsForm {
   @Input() mode: 'create' | 'edit' | 'view' = 'create';
   @Input() bem: any = null;
 
