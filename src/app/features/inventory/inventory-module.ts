@@ -4,17 +4,17 @@ import { RouterModule } from '@angular/router';
 
 import { InventoryRoutingModule } from './inventory-routing-module';
 import { InventoryHome } from './pages/inventory-home/inventory-home';
-import { InventoryItemForm } from './pages/inventory-item-form/inventory-item-form';
-import { InventoryMovimentacoes } from './pages/inventory-movimentacoes/inventory-movimentacoes';
-import { InventoryMovimentacaoForm } from './pages/inventory-movimentacao-form/inventory-movimentacao-form';
+import { InventoryForm } from './pages/inventory-form/inventory-form';
+import { InventoryMovements } from './pages/inventory-movements/inventory-movements';
+import { InventoryMovementsForm } from './pages/inventory-movements-form/inventory-movements-form';
 
 
 @NgModule({
   declarations: [
     InventoryHome,
-    InventoryItemForm,
-    InventoryMovimentacoes,
-    InventoryMovimentacaoForm
+    InventoryForm,
+    InventoryMovements,
+    InventoryMovementsForm
   ],
   imports: [
     CommonModule,

@@ -110,9 +110,9 @@
 
 <div class="drawer-backdrop" *ngIf="isItemFormOpen" (click)="closeItemForm()"></div>
 
-<app-inventory-item-form
+<app-inventory-form
   *ngIf="isItemFormOpen"
   [mode]="itemFormMode"
   [item]="selectedItem"
   (close)="closeItemForm()">
-</app-inventory-item-form>
+</app-inventory-form>

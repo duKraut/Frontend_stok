@@ -114,9 +114,9 @@
 
 <div class="drawer-backdrop" *ngIf="isFormOpen" (click)="closeForm()"></div>
 
-<app-inventory-movimentacao-form
+<app-inventory-movements-form
   *ngIf="isFormOpen"
   [mode]="formMode"
   [movimentacao]="selectedMov"
   (close)="closeForm()">
-</app-inventory-movimentacao-form>
+</app-inventory-movements-form>

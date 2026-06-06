@@ -1,12 +1,12 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 @Component({
-  selector: 'app-inventory-item-form',
+  selector: 'app-inventory-form',
   standalone: false,
-  templateUrl: './inventory-item-form.html',
-  styleUrl: './inventory-item-form.css',
+  templateUrl: './inventory-form.html',
+  styleUrl: './inventory-form.css',
 })
-export class InventoryItemForm {
+export class InventoryForm {
   @Input() mode: 'create' | 'edit' | 'view' = 'create';
   @Input() item: any = null;
 
