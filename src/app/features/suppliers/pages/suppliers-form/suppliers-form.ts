@@ -19,6 +19,7 @@ export class SuppliersForm implements OnChanges {
 
   errorMessage = '';
   toastLeaving = false;
+  showCloseConfirm = false;
 
   submitted = false;
 
@@ -59,7 +60,7 @@ export class SuppliersForm implements OnChanges {
     return false;
   }
 
-  readonly categoriesPJ = ['Hardware', 'Serviços', 'Papelaria', 'Limpeza', 'Representante', 'Outros'];
+  readonly categoriesPJ = ['Hardware', 'Serviços', 'Papelaria', 'Limpeza', 'Equipamentos', 'Manutenção', 'Representante', 'Outros'];
   readonly categoriesPF = ['Representante', 'Outros'];
 
   get categories(): string[] {
@@ -251,11 +252,26 @@ export class SuppliersForm implements OnChanges {
     this.editRequested.emit();
   }
 
-  closeDrawer(skipConfirm = false): void {
-    if (!skipConfirm && this.hasUnsavedChanges && !window.confirm('Você tem alterações não salvas. Deseja descartá-las?')) {
-      return;
+  attemptClose(): void {
+    if (this.hasUnsavedChanges) {
+      this.showCloseConfirm = true;
+    } else {
+      this.closeDrawer();
     }
+  }
+
+  confirmClose(): void {
+    this.showCloseConfirm = false;
+    this.closeDrawer();
+  }
+
+  cancelClose(): void {
+    this.showCloseConfirm = false;
+  }
+
+  closeDrawer(skipConfirm = false): void {
     this.submitted = false;
+    this.showCloseConfirm = false;
     this.close.emit();
   }
 }

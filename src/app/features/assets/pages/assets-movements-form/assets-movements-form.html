@@ -2,36 +2,38 @@
   <div class="drawer-header">
     <div>
       <h2>{{ mode === 'create' ? 'Nova Movimentação' : 'Detalhes da Movimentação' }}</h2>
-      <p>{{ mode === 'view' ? ('Registro ' + movimentacao?.id) : 'Registre uma transferência, manutenção ou baixa de bem.' }}</p>
+      <p>{{ mode === 'view' ? ('Registro ' + (movimentacao?.id | slice:0:8 | uppercase)) : 'Registre uma transferência, manutenção ou baixa de bem.' }}</p>
     </div>
-    <button class="drawer-close" type="button" (click)="closeDrawer()">
+    <button class="drawer-close" type="button" (click)="attemptClose()">
       <i class="ph ph-x"></i>
     </button>
   </div>
 
   <div class="drawer-content">
+    <p class="required-hint" *ngIf="mode === 'create'">Campos com <span class="required-mark">*</span> são obrigatórios</p>
 
     <!-- Toggle tipo (create) -->
     <div class="tipo-toggle" *ngIf="mode === 'create'">
-      <button class="tipo-btn" [class.active-transferencia]="tipoSelecionado === 'Transferência'"
-        (click)="tipoSelecionado = 'Transferência'" type="button">
+      <button class="tipo-btn" [class.active-transferencia]="tipoSelecionado === 'TRANSFERENCIA'"
+        (click)="tipoSelecionado = 'TRANSFERENCIA'" type="button">
         <i class="ph ph-swap"></i> Transferência
       </button>
-      <button class="tipo-btn" [class.active-manutencao]="tipoSelecionado === 'Manutenção'"
-        (click)="tipoSelecionado = 'Manutenção'" type="button">
+      <button class="tipo-btn" [class.active-manutencao]="tipoSelecionado === 'MANUTENCAO'"
+        (click)="tipoSelecionado = 'MANUTENCAO'" type="button">
         <i class="ph ph-wrench"></i> Manutenção
       </button>
-      <button class="tipo-btn" [class.active-baixa]="tipoSelecionado === 'Baixa'"
-        (click)="tipoSelecionado = 'Baixa'" type="button">
-        <i class="ph ph-trash"></i> Baixa
+      <button class="tipo-btn" [class.active-estado]="tipoSelecionado === 'ESTADO'"
+        (click)="tipoSelecionado = 'ESTADO'; novoEstado = ''" type="button">
+        <i class="ph ph-arrows-clockwise"></i> Estado
       </button>
     </div>
 
     <!-- Badge tipo (view) -->
     <div class="tipo-view-badge" *ngIf="mode === 'view'">
-      <span class="tipo-badge" [ngClass]="movimentacao?.tipoClass">
-        <i [ngClass]="movimentacao?.tipo === 'Transferência' ? 'ph ph-swap' : movimentacao?.tipo === 'Manutenção' ? 'ph ph-wrench' : 'ph ph-trash'"></i>
-        {{ movimentacao?.tipo }}
+      <span class="tipo-badge"
+        [ngClass]="tipoSelecionado === 'TRANSFERENCIA' ? 'tipo-transferencia' : tipoSelecionado === 'MANUTENCAO' ? 'tipo-manutencao' : (formData.decommission ? 'tipo-baixa' : 'tipo-estado')">
+        <i [ngClass]="tipoSelecionado === 'TRANSFERENCIA' ? 'ph ph-swap' : tipoSelecionado === 'MANUTENCAO' ? 'ph ph-wrench' : (formData.decommission ? 'ph ph-trash' : 'ph ph-arrows-clockwise')"></i>
+        {{ tipoSelecionado === 'TRANSFERENCIA' ? 'Transferência' : tipoSelecionado === 'MANUTENCAO' ? 'Manutenção' : (formData.decommission ? 'Baixa' : 'Alteração de Estado') }}
       </span>
     </div>
 
@@ -44,29 +46,36 @@
 
       <div class="form-grid">
         <div class="form-group full">
-          <label>Bem Patrimonial</label>
-          <select [disabled]="mode === 'view'">
+          <label>Bem Patrimonial <span class="required-mark" *ngIf="mode === 'create'">*</span></label>
+          <select *ngIf="mode === 'create'" [(ngModel)]="selectedAssetId"
+            (ngModelChange)="onAssetChange()"
+            [class.input-error]="submitted && validationErrors.asset">
             <option value="">Selecione o bem...</option>
-            <option *ngFor="let b of bens"
-              [selected]="movimentacao?.bem && b.startsWith(movimentacao.bem)">{{ b }}</option>
+            <option *ngFor="let a of assets" [value]="a.id">
+              {{ a.name }} (Tomb. {{ a.tombamento }})
+            </option>
           </select>
+          <input *ngIf="mode === 'view'" type="text"
+            [value]="(movimentacao?.asset?.name || '') + ' — Tomb. ' + (movimentacao?.asset?.tombamento || '')"
+            disabled />
         </div>
 
         <div class="form-group">
-          <label>Data da Movimentação</label>
-          <input type="date" [disabled]="mode === 'view'" />
+          <label>Data da Movimentação <span class="required-mark" *ngIf="mode === 'create'">*</span></label>
+          <input type="date" [(ngModel)]="formData.date" [max]="today" [disabled]="mode === 'view'"
+            [class.input-error]="submitted && validationErrors.date" />
         </div>
 
         <div class="form-group">
-          <label>Responsável</label>
-          <input type="text" placeholder="Nome do responsável" [disabled]="mode === 'view'"
-            [value]="movimentacao?.responsavel || ''" />
+          <label>Responsável <span class="required-mark" *ngIf="mode === 'create'">*</span></label>
+          <input type="text" [(ngModel)]="formData.responsible" placeholder="Nome do responsável"
+            [disabled]="mode === 'view'" [class.input-error]="submitted && validationErrors.responsible" />
         </div>
       </div>
     </section>
 
     <!-- Seção 02: Transferência -->
-    <section class="form-card transferencia-card" *ngIf="tipoSelecionado === 'Transferência'">
+    <section class="form-card transferencia-card" *ngIf="tipoSelecionado === 'TRANSFERENCIA'">
       <div class="form-section-header">
         <span class="section-number section-transferencia">02</span>
         <h3 class="header-transferencia">Dados da Transferência</h3>
@@ -75,159 +84,184 @@
       <div class="form-grid">
         <div class="form-group">
           <label>Departamento de Origem</label>
-          <select [disabled]="mode === 'view'">
-            <option value="">Selecione...</option>
-            <option *ngFor="let dep of departamentos" [selected]="movimentacao?.de === dep">{{ dep }}</option>
-          </select>
+          <input type="text" [value]="formData.fromDepartment || ''" placeholder="Preenchido ao selecionar o bem" disabled />
         </div>
 
         <div class="form-group">
-          <label>Departamento de Destino</label>
-          <select [disabled]="mode === 'view'">
+          <label>Departamento de Destino <span class="required-mark" *ngIf="mode === 'create'">*</span></label>
+          <select [(ngModel)]="formData.toDepartment" [disabled]="mode === 'view'"
+            [class.input-error]="submitted && (validationErrors.toDepartment || validationErrors.sameDepartment)">
             <option value="">Selecione...</option>
-            <option *ngFor="let dep of departamentos" [selected]="movimentacao?.para === dep">{{ dep }}</option>
+            <option *ngFor="let dep of departamentos" [value]="dep">{{ dep }}</option>
           </select>
-        </div>
-
-        <div class="form-group full">
-          <label>Novo Responsável (Destino)</label>
-          <input type="text" placeholder="Nome do novo responsável" [disabled]="mode === 'view'" />
-        </div>
-
-        <div class="form-group full">
-          <label>Nova Localização Física</label>
-          <input type="text" placeholder="Ex: Sala 205 – 2º Andar" [disabled]="mode === 'view'" />
+          <span class="field-error" *ngIf="submitted && validationErrors.sameDepartment">
+            <i class="ph ph-warning"></i> Destino não pode ser igual à origem
+          </span>
         </div>
 
         <div class="form-group full">
           <label>Justificativa</label>
-          <select [disabled]="mode === 'view'">
+          <select [(ngModel)]="formData.observations" [disabled]="mode === 'view'">
             <option value="">Selecione...</option>
-            <option>Realocação por reestruturação</option>
-            <option>Solicitação do departamento</option>
-            <option>Empréstimo temporário</option>
-            <option>Reforma ou obras</option>
-            <option>Outro</option>
+            <option *ngFor="let j of justificativasTransferencia" [value]="j">{{ j }}</option>
           </select>
         </div>
       </div>
     </section>
 
     <!-- Seção 02: Manutenção -->
-    <section class="form-card manutencao-card" *ngIf="tipoSelecionado === 'Manutenção'">
+    <section class="form-card manutencao-card" *ngIf="tipoSelecionado === 'MANUTENCAO'">
       <div class="form-section-header">
         <span class="section-number section-manutencao">02</span>
         <h3 class="header-manutencao">Dados da Manutenção</h3>
       </div>
 
       <div class="form-grid">
+        <div class="form-group full">
+          <label>Departamento de Origem</label>
+          <input type="text" [value]="formData.fromDepartment || ''" placeholder="Preenchido ao selecionar o bem" disabled />
+        </div>
+
         <div class="form-group">
-          <label>Tipo de Manutenção</label>
-          <select [disabled]="mode === 'view'">
+          <label>Tipo de Manutenção <span class="required-mark" *ngIf="mode === 'create'">*</span></label>
+          <select [(ngModel)]="formData.maintenanceType" [disabled]="mode === 'view'"
+            [class.input-error]="submitted && validationErrors['maintenanceType']">
             <option value="">Selecione...</option>
-            <option *ngFor="let t of tiposManutencao">{{ t }}</option>
+            <option value="PREVENTIVA">Preventiva</option>
+            <option value="CORRETIVA">Corretiva</option>
+            <option value="PREDITIVA">Preditiva</option>
           </select>
         </div>
 
         <div class="form-group">
           <label>Nº da Ordem de Serviço</label>
-          <input type="text" placeholder="Ex: OS-0091" [disabled]="mode === 'view'"
-            [value]="movimentacao?.os !== '—' ? (movimentacao?.os || '') : ''" />
+          <input type="text" [(ngModel)]="formData.serviceOrder" placeholder="Ex: OS-0091" [disabled]="mode === 'view'" />
         </div>
 
         <div class="form-group full">
           <label>Prestador / Oficina</label>
-          <input type="text" placeholder="Nome da empresa ou técnico responsável" [disabled]="mode === 'view'" />
+          <input type="text" [(ngModel)]="formData.serviceProvider" placeholder="Nome da empresa ou técnico responsável" [disabled]="mode === 'view'" />
         </div>
 
         <div class="form-group">
           <label>Data de Envio</label>
-          <input type="date" [disabled]="mode === 'view'" />
+          <input type="date" [(ngModel)]="formData.sendDate" [disabled]="mode === 'view'" />
         </div>
 
         <div class="form-group">
           <label>Previsão de Retorno</label>
-          <input type="date" [disabled]="mode === 'view'" />
+          <input type="date" [(ngModel)]="formData.expectedReturnDate" [disabled]="mode === 'view'"
+            [class.input-error]="submitted && validationErrors.returnBeforeSend" />
+          <span class="field-error" *ngIf="submitted && validationErrors.returnBeforeSend">
+            <i class="ph ph-warning"></i> Retorno não pode ser anterior ao envio
+          </span>
         </div>
 
         <div class="form-group">
           <label>Custo Estimado (R$)</label>
-          <input type="number" min="0" step="0.01" placeholder="0,00" [disabled]="mode === 'view'" />
+          <input type="number" min="0" step="0.01" [(ngModel)]="formData.estimatedCost" placeholder="0,00" [disabled]="mode === 'view'" />
         </div>
 
         <div class="form-group">
           <label>Custo Final (R$)</label>
-          <input type="number" min="0" step="0.01" placeholder="0,00" [disabled]="mode === 'view'" />
+          <input type="number" min="0" step="0.01" [(ngModel)]="formData.finalCost" placeholder="0,00" [disabled]="mode === 'view'" />
         </div>
 
         <div class="form-group full">
           <label>Descrição do Problema</label>
-          <textarea rows="3" placeholder="Descreva o defeito ou serviço a ser realizado..."
+          <textarea rows="3" [(ngModel)]="formData.problemDescription"
+            placeholder="Descreva o defeito ou serviço a ser realizado..."
             [disabled]="mode === 'view'"></textarea>
+        </div>
+
+        <div class="form-group full">
+          <label>Estado após a Manutenção</label>
+          <select [(ngModel)]="formData.newConservationStatus" [disabled]="mode === 'view'">
+            <option value="">Em Manutenção (serviço não concluído)</option>
+            <option value="EXCELENTE">Excelente — manutenção concluída, bem em ótimo estado</option>
+            <option value="BOM">Bom — manutenção concluída, bem em bom estado</option>
+            <option value="REGULAR">Regular — manutenção concluída, bem em estado regular</option>
+          </select>
         </div>
       </div>
     </section>
 
-    <!-- Seção 02: Baixa -->
-    <section class="form-card baixa-card" *ngIf="tipoSelecionado === 'Baixa'">
+    <!-- Seção 02: Estado -->
+    <section class="form-card estado-card" *ngIf="tipoSelecionado === 'ESTADO'">
       <div class="form-section-header">
-        <span class="section-number section-baixa">02</span>
-        <h3 class="header-baixa">Dados da Baixa Patrimonial</h3>
-      </div>
-
-      <div class="alert-baixa">
-        <i class="ph-fill ph-warning-circle"></i>
-        <span>Esta ação é irreversível. O bem será removido do inventário ativo após a baixa ser confirmada.</span>
+        <span class="section-number section-estado">02</span>
+        <h3 class="header-estado">Alteração de Estado</h3>
       </div>
 
       <div class="form-grid">
         <div class="form-group full">
-          <label>Motivo da Baixa</label>
-          <select [disabled]="mode === 'view'">
-            <option value="">Selecione o motivo...</option>
-            <option *ngFor="let m of motivosBaixa">{{ m }}</option>
+          <label>Novo Estado <span class="required-mark" *ngIf="mode === 'create'">*</span></label>
+          <select [(ngModel)]="novoEstado" [disabled]="mode === 'view'"
+            [class.input-error]="submitted && validationErrors.novoEstado">
+            <option value="">Selecione o novo estado do bem...</option>
+            <option value="EXCELENTE">Excelente</option>
+            <option value="BOM">Bom</option>
+            <option value="REGULAR">Regular</option>
+            <option value="SUBSTITUIR">Substituir — necessita substituição</option>
+            <option value="BAIXAR">Baixar bem — remover do inventário ativo</option>
           </select>
         </div>
 
-        <div class="form-group">
-          <label>Nº do Termo de Baixa</label>
-          <input type="text" placeholder="Ex: TB-2026-041" [disabled]="mode === 'view'" />
-        </div>
+        <!-- Campos de baixa — só aparecem ao selecionar Baixar -->
+        <ng-container *ngIf="novoEstado === 'BAIXAR' || (mode === 'view' && formData.decommission)">
+          <div class="form-group full">
+            <div class="alert-baixa">
+              <i class="ph-fill ph-warning-circle"></i>
+              <span>Esta ação é irreversível. O bem será removido do inventário ativo após confirmação.</span>
+            </div>
+          </div>
 
-        <div class="form-group">
-          <label>Valor de Alienação (R$)</label>
-          <input type="number" min="0" step="0.01" placeholder="0,00 (se aplicável)" [disabled]="mode === 'view'" />
-        </div>
+          <div class="form-group full">
+            <label>Motivo da Baixa <span class="required-mark" *ngIf="mode === 'create'">*</span></label>
+            <select [(ngModel)]="formData.decommissionReason" [disabled]="mode === 'view'"
+              [class.input-error]="submitted && validationErrors.decommissionReason">
+              <option value="">Selecione o motivo...</option>
+              <option *ngFor="let m of motivosBaixa" [value]="m">{{ m }}</option>
+            </select>
+          </div>
 
-        <div class="form-group full">
-          <label>Parecer Técnico / Autorização</label>
-          <input type="text" placeholder="Ex: Parecer nº 12/2026 – Dpto. TI" [disabled]="mode === 'view'" />
-        </div>
+          <div class="form-group">
+            <label>Nº do Termo de Baixa</label>
+            <input type="text" [(ngModel)]="formData.decommissionTerm" placeholder="Ex: TB-2026-041" [disabled]="mode === 'view'" />
+          </div>
 
-        <div class="form-group full">
-          <label>Destinação Final</label>
-          <select [disabled]="mode === 'view'">
-            <option value="">Selecione...</option>
-            <option>Descarte / Sucata</option>
-            <option>Doação a entidade</option>
-            <option>Leilão</option>
-            <option>Devolução ao fornecedor</option>
-            <option>Outro</option>
-          </select>
-        </div>
+          <div class="form-group">
+            <label>Valor de Alienação (R$)</label>
+            <input type="number" min="0" step="0.01" [(ngModel)]="formData.alienationValue" placeholder="0,00 (se aplicável)" [disabled]="mode === 'view'" />
+          </div>
+
+          <div class="form-group full">
+            <label>Parecer Técnico / Autorização</label>
+            <input type="text" [(ngModel)]="formData.technicalOpinion" placeholder="Ex: Parecer nº 12/2026 – Dpto. TI" [disabled]="mode === 'view'" />
+          </div>
+
+          <div class="form-group full">
+            <label>Destinação Final</label>
+            <select [(ngModel)]="formData.finalDestination" [disabled]="mode === 'view'">
+              <option value="">Selecione...</option>
+              <option *ngFor="let d of destinacoesFinal" [value]="d">{{ d }}</option>
+            </select>
+          </div>
+        </ng-container>
       </div>
     </section>
 
     <!-- Seção 03: Observações -->
-    <section class="form-card">
+    <section class="form-card" *ngIf="tipoSelecionado !== 'TRANSFERENCIA' || (mode === 'view' && formData.observations)">
       <div class="form-section-header">
         <span class="section-number">03</span>
         <h3>Observações</h3>
       </div>
 
-      <div class="form-group full">
-        <textarea rows="3" placeholder="Informações adicionais sobre esta movimentação (opcional)..."
-          [disabled]="mode === 'view'">{{ movimentacao?.obs || '' }}</textarea>
+      <div class="form-group">
+        <textarea rows="3" [(ngModel)]="formData.observations"
+          placeholder="Informações adicionais sobre esta movimentação (opcional)..."
+          [disabled]="mode === 'view'"></textarea>
       </div>
     </section>
 
@@ -235,10 +269,26 @@
 
   <div class="drawer-footer" *ngIf="mode === 'create'">
     <button class="btn-save"
-      [ngClass]="{ 'btn-save-manutencao': tipoSelecionado === 'Manutenção', 'btn-save-baixa': tipoSelecionado === 'Baixa' }"
-      type="button">
-      <i [ngClass]="tipoSelecionado === 'Transferência' ? 'ph ph-swap' : tipoSelecionado === 'Manutenção' ? 'ph ph-wrench' : 'ph ph-trash'"></i>
-      Registrar {{ tipoSelecionado }}
+      [ngClass]="{ 'btn-save-manutencao': tipoSelecionado === 'MANUTENCAO', 'btn-save-estado': tipoSelecionado === 'ESTADO' && novoEstado !== 'BAIXAR', 'btn-save-baixa': tipoSelecionado === 'ESTADO' && novoEstado === 'BAIXAR' }"
+      type="button" (click)="save()" [disabled]="isSaving">
+      <i class="ph" [ngClass]="isSaving ? 'ph-circle-notch loading-icon' : (tipoSelecionado === 'TRANSFERENCIA' ? 'ph-swap' : tipoSelecionado === 'MANUTENCAO' ? 'ph-wrench' : novoEstado === 'BAIXAR' ? 'ph-trash' : 'ph-arrows-clockwise')"></i>
+      {{ isSaving ? 'Registrando...' : tipoSelecionado === 'TRANSFERENCIA' ? 'Registrar Transferência' : tipoSelecionado === 'MANUTENCAO' ? 'Registrar Manutenção' : novoEstado === 'BAIXAR' ? 'Confirmar Baixa' : 'Registrar Alteração' }}
     </button>
   </div>
+
+  <div class="confirm-close-overlay" *ngIf="showCloseConfirm">
+    <div class="confirm-close-box">
+      <i class="ph-fill ph-warning"></i>
+      <p>Há dados não salvos. Deseja sair sem registrar a movimentação?</p>
+      <div class="confirm-close-actions">
+        <button class="btn-cancel-close" type="button" (click)="cancelClose()">Continuar editando</button>
+        <button class="btn-confirm-close" type="button" (click)="confirmClose()">Descartar e sair</button>
+      </div>
+    </div>
+  </div>
 </aside>
+
+<div class="toast toast-error" *ngIf="errorMessage" [class.toast-leaving]="toastLeaving">
+  <i class="ph ph-warning-circle"></i>
+  <span>{{ errorMessage }}</span>
+</div>

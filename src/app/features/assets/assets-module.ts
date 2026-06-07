@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
 import { AssetsRoutingModule } from './assets-routing-module';
@@ -18,6 +19,7 @@ import { AssetsMovementsForm } from './pages/assets-movements-form/assets-moveme
   ],
   imports: [
     CommonModule,
+    FormsModule,
     RouterModule,
     AssetsRoutingModule
   ]

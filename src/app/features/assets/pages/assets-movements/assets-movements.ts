@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { HeaderService } from '../../../../core/services/header';
-
-type MovFormMode = 'create' | 'view';
+import { AssetMovement, AssetMovementService } from '../../services/asset-movement.service';
+import { AssetsMovementsForm } from '../assets-movements-form/assets-movements-form';
 
 @Component({
   selector: 'app-assets-movements',
@@ -10,30 +11,31 @@ type MovFormMode = 'create' | 'view';
   styleUrl: './assets-movements.css',
 })
 export class AssetsMovements implements OnInit {
-  todasMovimentacoes = [
-    { id: 'MOV-0028', tipo: 'Transferência', tipoClass: 'tipo-transferencia', bem: 'Notebook Dell Latitude 5420', tombamento: '1', de: 'TI - Sede', para: 'Financeiro', responsavel: 'Ana Paula Ferreira', data: '30/05/2026', os: '—', obs: 'Realocação por solicitação da gerência.' },
-    { id: 'MOV-0027', tipo: 'Manutenção', tipoClass: 'tipo-manutencao', bem: 'Ar Condicionado 12k BTU', tombamento: '2', de: 'Vendas', para: 'Vendas', responsavel: 'Bruno Costa', data: '28/05/2026', os: 'OS-0091', obs: 'Manutenção preventiva anual.' },
-    { id: 'MOV-0026', tipo: 'Transferência', tipoClass: 'tipo-transferencia', bem: 'Cadeira Ergonômica Pro', tombamento: '3', de: 'Financeiro', para: 'Diretoria', responsavel: 'Carla Ribeiro', data: '27/05/2026', os: '—', obs: '' },
-    { id: 'MOV-0025', tipo: 'Baixa', tipoClass: 'tipo-baixa', bem: 'Projetor Epson X41', tombamento: '4', de: 'Adm.', para: '—', responsavel: 'Diego Santana', data: '25/05/2026', os: '—', obs: 'Bem obsoleto. Parecer técnico nº 12/2026.' },
-    { id: 'MOV-0024', tipo: 'Manutenção', tipoClass: 'tipo-manutencao', bem: 'Servidor PowerEdge R740', tombamento: '5', de: 'TI - Infra', para: 'TI - Infra', responsavel: 'Felipe Gomes', data: '22/05/2026', os: 'OS-0088', obs: 'Substituição de fonte redundante.' },
-    { id: 'MOV-0023', tipo: 'Transferência', tipoClass: 'tipo-transferencia', bem: 'Monitor Dell 24"', tombamento: '6', de: 'TI - Infra', para: 'TI - Sede', responsavel: 'Elisa Lima', data: '20/05/2026', os: '—', obs: '' },
-    { id: 'MOV-0022', tipo: 'Baixa', tipoClass: 'tipo-baixa', bem: 'Teclado USB Antigo', tombamento: '12', de: 'Adm.', para: '—', responsavel: 'Carla Ribeiro', data: '18/05/2026', os: '—', obs: 'Descarte por dano irreparável.' },
-  ];
+  @ViewChild('movForm') movForm?: AssetsMovementsForm;
 
-  activeTab: 'Todos' | 'Transferência' | 'Manutenção' | 'Baixa' = 'Todos';
+  todasMovimentacoes: AssetMovement[] = [];
+  filtroAssetId = '';
+  filtroAssetName = '';
+
+  activeTab: 'Todos' | 'Transferência' | 'Manutenção' | 'Estado' = 'Todos';
   paginaAtual = 1;
   itensPorPagina = 5;
 
   isFormOpen = false;
-  formMode: MovFormMode = 'create';
-  selectedMov: any = null;
+  formMode: 'create' | 'view' = 'create';
+  selectedMov: AssetMovement | null = null;
+
+  successMessage = '';
+  successLeaving = false;
 
   get filtradas() {
-    if (this.activeTab !== 'Todos') return this.todasMovimentacoes.filter(m => m.tipo === this.activeTab);
+    if (this.activeTab === 'Transferência') return this.todasMovimentacoes.filter(m => m.type === 'TRANSFERENCIA');
+    if (this.activeTab === 'Manutenção')   return this.todasMovimentacoes.filter(m => m.type === 'MANUTENCAO');
+    if (this.activeTab === 'Estado')       return this.todasMovimentacoes.filter(m => m.type === 'ESTADO');
     return this.todasMovimentacoes;
   }
 
-  get totalPaginas() { return Math.ceil(this.filtradas.length / this.itensPorPagina); }
+  get totalPaginas() { return Math.max(1, Math.ceil(this.filtradas.length / this.itensPorPagina)); }
 
   get itensExibidos() {
     const inicio = (this.paginaAtual - 1) * this.itensPorPagina;
@@ -42,17 +44,35 @@ export class AssetsMovements implements OnInit {
 
   get arrayPaginas() { return Array(this.totalPaginas).fill(0).map((_, i) => i + 1); }
 
-  get totalTransferencias() { return this.todasMovimentacoes.filter(m => m.tipo === 'Transferência').length; }
-  get totalManutencoes() { return this.todasMovimentacoes.filter(m => m.tipo === 'Manutenção').length; }
-  get totalBaixas() { return this.todasMovimentacoes.filter(m => m.tipo === 'Baixa').length; }
+  get totalTransferencias() { return this.todasMovimentacoes.filter(m => m.type === 'TRANSFERENCIA').length; }
+  get totalManutencoes()    { return this.todasMovimentacoes.filter(m => m.type === 'MANUTENCAO').length; }
+  get totalBaixas()         { return this.todasMovimentacoes.filter(m => m.type === 'ESTADO' && m.decommission).length; }
 
-  setTab(tab: 'Todos' | 'Transferência' | 'Manutenção' | 'Baixa') {
+  tipoLabel(mov: any): string {
+    if (mov.type === 'TRANSFERENCIA') return 'Transferência';
+    if (mov.type === 'MANUTENCAO')   return 'Manutenção';
+    return mov.decommission ? 'Baixa' : 'Alt. Estado';
+  }
+
+  tipoClass(mov: any): string {
+    if (mov.type === 'TRANSFERENCIA') return 'tipo-transferencia';
+    if (mov.type === 'MANUTENCAO')   return 'tipo-manutencao';
+    return mov.decommission ? 'tipo-baixa' : 'tipo-estado';
+  }
+
+  tipoIcon(mov: any): string {
+    if (mov.type === 'TRANSFERENCIA') return 'ph ph-swap';
+    if (mov.type === 'MANUTENCAO')   return 'ph ph-wrench';
+    return mov.decommission ? 'ph ph-trash' : 'ph ph-arrows-clockwise';
+  }
+
+  setTab(tab: 'Todos' | 'Transferência' | 'Manutenção' | 'Estado') {
     this.activeTab = tab;
     this.paginaAtual = 1;
   }
 
   irParaPagina(p: number) { this.paginaAtual = p; }
-  proximaPagina() { if (this.paginaAtual < this.totalPaginas) this.paginaAtual++; }
+  proximaPagina()  { if (this.paginaAtual < this.totalPaginas) this.paginaAtual++; }
   paginaAnterior() { if (this.paginaAtual > 1) this.paginaAtual--; }
 
   openCreate() {
@@ -61,7 +81,7 @@ export class AssetsMovements implements OnInit {
     this.isFormOpen = true;
   }
 
-  openView(mov: any) {
+  openView(mov: AssetMovement) {
     this.formMode = 'view';
     this.selectedMov = mov;
     this.isFormOpen = true;
@@ -69,7 +89,37 @@ export class AssetsMovements implements OnInit {
 
   closeForm() { this.isFormOpen = false; }
 
-  constructor(private headerService: HeaderService) {}
+  backdropClick() {
+    if (this.formMode === 'view') {
+      this.closeForm();
+    } else {
+      this.movForm?.attemptClose();
+    }
+  }
+
+  onMovSaved(): void {
+    this.closeForm();
+    setTimeout(() => this.loadMovements(this.filtroAssetId || undefined), 0);
+
+    this.successLeaving = false;
+    this.successMessage = 'Movimentação registrada com sucesso.';
+    setTimeout(() => {
+      this.successLeaving = true;
+      this.cdr.detectChanges();
+      setTimeout(() => {
+        this.successMessage = '';
+        this.successLeaving = false;
+        this.cdr.detectChanges();
+      }, 400);
+    }, 4000);
+  }
+
+  constructor(
+    private headerService: HeaderService,
+    private movService: AssetMovementService,
+    private cdr: ChangeDetectorRef,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
     this.headerService.setConfig({
@@ -77,6 +127,28 @@ export class AssetsMovements implements OnInit {
       showSearch: true,
       primaryButtonLabel: 'Nova Movimentação',
       primaryButtonIcon: 'ph ph-arrows-left-right'
+    });
+
+    this.route.queryParams.subscribe(params => {
+      this.filtroAssetId   = params['assetId']   ?? '';
+      this.filtroAssetName = params['assetName'] ?? '';
+      this.paginaAtual = 1;
+      this.loadMovements(this.filtroAssetId || undefined);
+      this.cdr.detectChanges();
+    });
+  }
+
+  loadMovements(assetId?: string): void {
+    const req$ = assetId
+      ? this.movService.getByAsset(assetId)
+      : this.movService.getAll();
+
+    req$.subscribe({
+      next: (data) => {
+        this.todasMovimentacoes = data;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Erro ao buscar movimentações', err)
     });
   }
 }

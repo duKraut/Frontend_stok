@@ -1,6 +1,7 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { HeaderService } from '../../../../core/services/header';
 import { SupplierService, Supplier } from '../../services/supplier.service';
+import { SuppliersForm } from '../suppliers-form/suppliers-form';
 
 type SupplierFormMode = 'create' | 'edit' | 'view';
 
@@ -11,6 +12,8 @@ type SupplierFormMode = 'create' | 'edit' | 'view';
   styleUrl: './suppliers-home.css',
 })
 export class SuppliersHome implements OnInit {
+  @ViewChild('supplierForm') supplierForm?: SuppliersForm;
+
   allSuppliers: Supplier[] = [];
 
   activeTab: 'Todos' | 'Ativos' | 'Inativos' = 'Todos';
@@ -76,12 +79,21 @@ export class SuppliersHome implements OnInit {
     this.isSupplierFormOpen = false;
   }
 
+  backdropClick(): void {
+    if (this.supplierFormMode === 'view') {
+      this.closeSupplierForm();
+    } else {
+      this.supplierForm?.attemptClose();
+    }
+  }
+
   onSupplierSaved(): void {
+    const wasCreate = this.supplierFormMode === 'create';
     this.closeSupplierForm();
-    this.loadSuppliers();
+    setTimeout(() => this.loadSuppliers(), 0);
 
     this.successLeaving = false;
-    this.successMessage = this.supplierFormMode === 'create'
+    this.successMessage = wasCreate
       ? 'Fornecedor cadastrado com sucesso.'
       : 'Fornecedor atualizado com sucesso.';
 
@@ -102,11 +114,9 @@ export class SuppliersHome implements OnInit {
   }
 
   getAvatarClass(category: string): string {
-    if (category === 'Informática e TI' || category === 'Papelaria' || category === 'Alimentícia') {
-      return 'avatar-company';
-    }
+    if (category === 'Outros') return 'avatar-default';
     if (category === 'Representante') return 'avatar-person';
-    return 'avatar-default';
+    return 'avatar-company';
   }
 
   constructor(

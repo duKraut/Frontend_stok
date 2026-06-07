@@ -49,10 +49,6 @@
             <button class="tab" [class.active]="activeTab === 'Ativos'" (click)="setTab('Ativos')">Ativos</button>
             <button class="tab" [class.active]="activeTab === 'Inativos'" (click)="setTab('Inativos')">Inativos</button>
         </div>
-        <button class="btn-text">
-            <i class="ph ph-faders"></i>
-            Mais filtros
-        </button>
     </div>
 
     <table class="data-table">
@@ -61,6 +57,8 @@
                 <th>ID</th>
                 <th>NOME</th>
                 <th>CNPJ/CPF</th>
+                <th>EMAIL</th>
+                <th>TELEFONE</th>
                 <th>CATEGORIA</th>
                 <th>ATIVO</th>
                 <th>AÇÕES</th>
@@ -81,6 +79,8 @@
                     </div>
                 </td>
                 <td>{{ active.document }}</td>
+                <td>{{ active.email }}</td>
+                <td>{{ active.phone }}</td>
                 <td>{{ active.category }}</td>
                 <td><span class="badge" [ngClass]="active.active ? 'badge-active' : 'badge-inactive'">{{ active.active ? 'Ativo' : 'Inativo' }}</span></td>
                 <td class="actions-td">
@@ -112,10 +112,11 @@
 <div
   class="drawer-backdrop"
   *ngIf="isSupplierFormOpen"
-  (click)="closeSupplierForm()">
+  (click)="backdropClick()">
 </div>
 
 <app-suppliers-form
+  #supplierForm
   *ngIf="isSupplierFormOpen"
   [mode]="supplierFormMode"
   [supplier]="selectedSupplier"
