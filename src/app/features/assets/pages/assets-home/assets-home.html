@@ -138,7 +138,7 @@
         </td>
 
         <td class="font-bold">
-          {{ asset.acquisitionValue | currency:'BRL':'symbol':'1.2-2' }}
+          {{ (asset.currentValue ?? asset.acquisitionValue) | currency:'BRL':'symbol':'1.2-2' }}
         </td>
 
         <td class="actions-td">

@@ -125,8 +125,7 @@ export class AssetsForm implements OnChanges, OnInit {
 
   metodos = [
     { label: 'Linear', value: 'LINEAR' },
-    { label: 'Soma dos Dígitos', value: 'SOMA_DIGITOS' },
-    { label: 'Unidades Produzidas', value: 'UNIDADES_PRODUZIDAS' }
+    { label: 'Soma dos Dígitos dos Anos', value: 'SOMA_DIGITOS' }
   ];
 
   constructor(private assetService: AssetService, private supplierService: SupplierService, private cdr: ChangeDetectorRef) {}

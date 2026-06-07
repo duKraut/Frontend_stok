@@ -25,8 +25,9 @@ export interface Asset {
   usefulLifeYears?: number;
   depreciationRate?: number;
   residualValue?: number;
-  depreciationMethod?: 'LINEAR' | 'SOMA_DIGITOS' | 'UNIDADES_PRODUZIDAS';
+  depreciationMethod?: 'LINEAR' | 'SOMA_DIGITOS';
   active: boolean;
+  currentValue?: number;
 }
 
 @Injectable({
