@@ -61,6 +61,8 @@
                 <th>ID</th>
                 <th>NOME</th>
                 <th>CNPJ/CPF</th>
+                <th>EMAIL</th>
+                <th>TELEFONE</th>
                 <th>CATEGORIA</th>
                 <th>ATIVO</th>
                 <th>AÇÕES</th>
@@ -81,6 +83,8 @@
                     </div>
                 </td>
                 <td>{{ active.document }}</td>
+                <td>{{ active.email }}</td>
+                <td>{{ active.phone }}</td>
                 <td>{{ active.category }}</td>
                 <td><span class="badge" [ngClass]="active.active ? 'badge-active' : 'badge-inactive'">{{ active.active ? 'Ativo' : 'Inativo' }}</span></td>
                 <td class="actions-td">

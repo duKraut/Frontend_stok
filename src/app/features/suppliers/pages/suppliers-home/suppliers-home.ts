@@ -86,11 +86,12 @@ export class SuppliersHome implements OnInit {
   }
 
   onSupplierSaved(): void {
+    const wasCreate = this.supplierFormMode === 'create';
     this.closeSupplierForm();
-    this.loadSuppliers();
+    setTimeout(() => this.loadSuppliers(), 0);
 
     this.successLeaving = false;
-    this.successMessage = this.supplierFormMode === 'create'
+    this.successMessage = wasCreate
       ? 'Fornecedor cadastrado com sucesso.'
       : 'Fornecedor atualizado com sucesso.';
 
