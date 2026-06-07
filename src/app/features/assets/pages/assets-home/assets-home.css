@@ -283,6 +283,21 @@
     color: #b91c1c;
 }
 
+.badge-baixado {
+    background: #1f2937;
+    color: #f9fafb;
+}
+
+.tab-baixado.active {
+    background: #1f2937 !important;
+    color: #f9fafb !important;
+}
+
+.row-baixado td {
+    opacity: 0.5;
+    color: #6b7280;
+}
+
 .actions-td button {
     background: none;
     border: none;

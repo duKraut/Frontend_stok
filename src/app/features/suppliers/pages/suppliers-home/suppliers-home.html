@@ -112,10 +112,11 @@
 <div
   class="drawer-backdrop"
   *ngIf="isSupplierFormOpen"
-  (click)="closeSupplierForm()">
+  (click)="backdropClick()">
 </div>
 
 <app-suppliers-form
+  #supplierForm
   *ngIf="isSupplierFormOpen"
   [mode]="supplierFormMode"
   [supplier]="selectedSupplier"

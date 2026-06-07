@@ -5,7 +5,7 @@
       <p>Insira os dados do parceiro no registro global.</p>
     </div>
 
-    <button class="drawer-close" type="button" (click)="closeDrawer()">
+    <button class="drawer-close" type="button" (click)="attemptClose()">
       <i class="ph ph-x"></i>
     </button>
   </div>
@@ -143,6 +143,17 @@
       <i class="ph" [ngClass]="isSaving ? 'ph-circle-notch loading-icon' : 'ph-floppy-disk'"></i>
       {{ isSaving ? 'Salvando...' : 'Salvar Fornecedor' }}
     </button>
+  </div>
+
+  <div class="confirm-close-overlay" *ngIf="showCloseConfirm">
+    <div class="confirm-close-box">
+      <i class="ph-fill ph-warning"></i>
+      <p>Há dados não salvos. Deseja sair sem salvar as alterações?</p>
+      <div class="confirm-close-actions">
+        <button class="btn-cancel-close" type="button" (click)="cancelClose()">Continuar editando</button>
+        <button class="btn-confirm-close" type="button" (click)="confirmClose()">Descartar e sair</button>
+      </div>
+    </div>
   </div>
 </aside>
 

@@ -63,6 +63,7 @@
       <button class="tab" [class.active]="activeTab === 'Regular'" (click)="setTab('Regular')">Regular</button>
       <button class="tab" [class.active]="activeTab === 'Manutenção'" (click)="setTab('Manutenção')">Em Manutenção</button>
       <button class="tab" [class.active]="activeTab === 'Substituir'" (click)="setTab('Substituir')">Substituir</button>
+      <button class="tab tab-baixado" [class.active]="activeTab === 'Baixado'" (click)="setTab('Baixado')">Baixados</button>
     </div>
 
     <button class="btn-text" type="button">
@@ -86,7 +87,7 @@
     </thead>
 
     <tbody>
-      <tr *ngFor="let asset of itemsDisplayed">
+      <tr *ngFor="let asset of itemsDisplayed" [class.row-baixado]="!asset.active">
         <td class="text-primary font-bold">
           {{ asset.tombamento }}
         </td>
@@ -121,13 +122,15 @@
           <span
             class="badge"
             [ngClass]="{
-              'badge-excelente': asset.conservationStatus === 'EXCELENTE',
-              'badge-bom': asset.conservationStatus === 'BOM',
-              'badge-regular': asset.conservationStatus === 'REGULAR',
-              'badge-manutencao': asset.conservationStatus === 'MANUTENCAO',
-              'badge-substituir': asset.conservationStatus === 'SUBSTITUIR'
+              'badge-baixado':   !asset.active,
+              'badge-excelente':  asset.active && asset.conservationStatus === 'EXCELENTE',
+              'badge-bom':        asset.active && asset.conservationStatus === 'BOM',
+              'badge-regular':    asset.active && asset.conservationStatus === 'REGULAR',
+              'badge-manutencao': asset.active && asset.conservationStatus === 'MANUTENCAO',
+              'badge-substituir': asset.active && asset.conservationStatus === 'SUBSTITUIR'
             }">
             {{
+              !asset.active ? 'BAIXADO' :
               asset.conservationStatus === 'EXCELENTE' ? 'EXCELENTE' :
               asset.conservationStatus === 'BOM' ? 'BOM' :
               asset.conservationStatus === 'REGULAR' ? 'REGULAR' :
@@ -182,9 +185,10 @@
   </div>
 </div>
 
-<div class="drawer-backdrop" *ngIf="isBemFormOpen" (click)="closeBemForm()"></div>
+<div class="drawer-backdrop" *ngIf="isBemFormOpen" (click)="backdropClick()"></div>
 
 <app-assets-form
+  #bemForm
   *ngIf="isBemFormOpen"
   [mode]="bemFormMode"
   [bem]="selectedBem"

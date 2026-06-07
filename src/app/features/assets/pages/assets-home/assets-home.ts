@@ -1,7 +1,8 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { HeaderService } from '../../../../core/services/header';
 import { Asset, AssetService } from '../../services/asset.service';
+import { AssetsForm } from '../assets-form/assets-form';
 
 type BemFormMode = 'create' | 'edit' | 'view';
 
@@ -12,9 +13,11 @@ type BemFormMode = 'create' | 'edit' | 'view';
   styleUrl: './assets-home.css',
 })
 export class AssetsHome implements OnInit {
+  @ViewChild('bemForm') bemForm?: AssetsForm;
+
   allAssets: Asset[] = [];
 
-  activeTab: 'Todos' | 'Excelente' | 'Bom' | 'Regular' | 'Manutenção' | 'Substituir' = 'Todos';
+  activeTab: 'Todos' | 'Excelente' | 'Bom' | 'Regular' | 'Manutenção' | 'Substituir' | 'Baixado' = 'Todos';
   paginaAtual = 1;
   itensPorPagina = 5;
 
@@ -26,11 +29,12 @@ export class AssetsHome implements OnInit {
   successLeaving = false;
 
   get ativosFiltrados() {
-    if (this.activeTab === 'Excelente')  return this.allAssets.filter(a => a.conservationStatus === 'EXCELENTE');
-    if (this.activeTab === 'Bom')        return this.allAssets.filter(a => a.conservationStatus === 'BOM');
-    if (this.activeTab === 'Regular')    return this.allAssets.filter(a => a.conservationStatus === 'REGULAR');
-    if (this.activeTab === 'Manutenção') return this.allAssets.filter(a => a.conservationStatus === 'MANUTENCAO');
-    if (this.activeTab === 'Substituir') return this.allAssets.filter(a => a.conservationStatus === 'SUBSTITUIR');
+    if (this.activeTab === 'Baixado')    return this.allAssets.filter(a => !a.active);
+    if (this.activeTab === 'Excelente')  return this.allAssets.filter(a => a.active && a.conservationStatus === 'EXCELENTE');
+    if (this.activeTab === 'Bom')        return this.allAssets.filter(a => a.active && a.conservationStatus === 'BOM');
+    if (this.activeTab === 'Regular')    return this.allAssets.filter(a => a.active && a.conservationStatus === 'REGULAR');
+    if (this.activeTab === 'Manutenção') return this.allAssets.filter(a => a.active && a.conservationStatus === 'MANUTENCAO');
+    if (this.activeTab === 'Substituir') return this.allAssets.filter(a => a.active && a.conservationStatus === 'SUBSTITUIR');
     return this.allAssets;
   }
 
@@ -43,7 +47,7 @@ export class AssetsHome implements OnInit {
 
   get arrayPaginas() { return Array(this.totalPaginas).fill(0).map((_, i) => i + 1); }
 
-  setTab(tab: 'Todos' | 'Excelente' | 'Bom' | 'Regular' | 'Manutenção' | 'Substituir') {
+  setTab(tab: 'Todos' | 'Excelente' | 'Bom' | 'Regular' | 'Manutenção' | 'Substituir' | 'Baixado') {
     this.activeTab = tab;
     this.paginaAtual = 1;
   }
@@ -71,6 +75,12 @@ export class AssetsHome implements OnInit {
   }
 
   closeBemForm(): void { this.isBemFormOpen = false; }
+
+  backdropClick(): void {
+    if (this.bemFormMode === 'view') {
+      this.closeBemForm();
+    }
+  }
 
   onBemSaved(): void {
     const wasCreate = this.bemFormMode === 'create';

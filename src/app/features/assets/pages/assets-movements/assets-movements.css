@@ -129,6 +129,7 @@
 .badge-transferencia { background: #dbeafe; color: #1e40af; }
 .badge-manutencao    { background: #fef3c7; color: #d97706; }
 .badge-baixa         { background: #fee2e2; color: #b91c1c; }
+.badge-estado        { background: #dcfce7; color: #15803d; }
 
 .table-container {
   padding: 0;
@@ -242,6 +243,7 @@
 .tipo-transferencia { background: #dbeafe; color: #1e40af; }
 .tipo-manutencao    { background: #fef3c7; color: #d97706; }
 .tipo-baixa         { background: #fee2e2; color: #b91c1c; }
+.tipo-estado        { background: #dcfce7; color: #15803d; }
 .tipo-badge i { font-size: 14px; }
 
 .fluxo-cell {
@@ -351,4 +353,45 @@
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+.toast {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 300px;
+  padding: 14px 18px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  z-index: 9999;
+}
+
+.toast i {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.toast-success {
+  background: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+  animation: toastIn 0.25s ease;
+}
+
+.toast-leaving {
+  animation: toastOut 0.4s ease forwards;
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes toastOut {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-6px); }
 }
