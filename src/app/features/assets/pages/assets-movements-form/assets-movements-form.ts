@@ -58,6 +58,7 @@ export class AssetsMovementsForm implements OnChanges, OnInit {
 
   motivosBaixa = [
     'Obsolescência tecnológica',
+    'Fim da vida útil',
     'Dano irreparável',
     'Extravio ou furto',
     'Doação',
@@ -68,6 +69,7 @@ export class AssetsMovementsForm implements OnChanges, OnInit {
 
   destinacoesFinal = [
     'Descarte / Sucata',
+    'Reciclagem',
     'Doação a entidade',
     'Leilão',
     'Devolução ao fornecedor',
@@ -76,6 +78,7 @@ export class AssetsMovementsForm implements OnChanges, OnInit {
 
   justificativasTransferencia = [
     'Realocação por reestruturação',
+    'Substituição de equipamento',
     'Solicitação do departamento',
     'Empréstimo temporário',
     'Reforma ou obras',

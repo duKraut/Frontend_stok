@@ -60,7 +60,7 @@ export class SuppliersForm implements OnChanges {
     return false;
   }
 
-  readonly categoriesPJ = ['Hardware', 'Serviços', 'Papelaria', 'Limpeza', 'Representante', 'Outros'];
+  readonly categoriesPJ = ['Hardware', 'Serviços', 'Papelaria', 'Limpeza', 'Equipamentos', 'Manutenção', 'Representante', 'Outros'];
   readonly categoriesPF = ['Representante', 'Outros'];
 
   get categories(): string[] {

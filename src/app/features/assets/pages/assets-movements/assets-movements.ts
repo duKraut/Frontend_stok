@@ -92,6 +92,8 @@ export class AssetsMovements implements OnInit {
   backdropClick() {
     if (this.formMode === 'view') {
       this.closeForm();
+    } else {
+      this.movForm?.attemptClose();
     }
   }
 

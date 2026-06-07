@@ -79,6 +79,8 @@ export class AssetsHome implements OnInit {
   backdropClick(): void {
     if (this.bemFormMode === 'view') {
       this.closeBemForm();
+    } else {
+      this.bemForm?.attemptClose();
     }
   }
 

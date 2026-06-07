@@ -82,6 +82,8 @@ export class SuppliersHome implements OnInit {
   backdropClick(): void {
     if (this.supplierFormMode === 'view') {
       this.closeSupplierForm();
+    } else {
+      this.supplierForm?.attemptClose();
     }
   }
 
@@ -112,11 +114,9 @@ export class SuppliersHome implements OnInit {
   }
 
   getAvatarClass(category: string): string {
-    if (category === 'Informática e TI' || category === 'Papelaria' || category === 'Alimentícia') {
-      return 'avatar-company';
-    }
+    if (category === 'Outros') return 'avatar-default';
     if (category === 'Representante') return 'avatar-person';
-    return 'avatar-default';
+    return 'avatar-company';
   }
 
   constructor(

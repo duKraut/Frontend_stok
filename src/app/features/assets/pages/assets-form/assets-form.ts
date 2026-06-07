@@ -216,7 +216,7 @@ export class AssetsForm implements OnChanges, OnInit {
       model: '',
       serialNumber: '',
       category: '',
-      conservationStatus: 'EXCELENTE',
+      conservationStatus: '' as any,
       department: '',
       location: '',
       responsible: '',
