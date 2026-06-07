@@ -60,6 +60,7 @@
       <button class="tab" [class.active]="activeTab === 'Todos'" (click)="setTab('Todos')">Todos</button>
       <button class="tab" [class.active]="activeTab === 'Excelente'" (click)="setTab('Excelente')">Excelente</button>
       <button class="tab" [class.active]="activeTab === 'Bom'" (click)="setTab('Bom')">Bom</button>
+      <button class="tab" [class.active]="activeTab === 'Regular'" (click)="setTab('Regular')">Regular</button>
       <button class="tab" [class.active]="activeTab === 'Manutenção'" (click)="setTab('Manutenção')">Em Manutenção</button>
       <button class="tab" [class.active]="activeTab === 'Substituir'" (click)="setTab('Substituir')">Substituir</button>
     </div>
@@ -122,6 +123,7 @@
             [ngClass]="{
               'badge-excelente': asset.conservationStatus === 'EXCELENTE',
               'badge-bom': asset.conservationStatus === 'BOM',
+              'badge-regular': asset.conservationStatus === 'REGULAR',
               'badge-manutencao': asset.conservationStatus === 'MANUTENCAO',
               'badge-substituir': asset.conservationStatus === 'SUBSTITUIR'
             }">
@@ -186,5 +188,12 @@
   *ngIf="isBemFormOpen"
   [mode]="bemFormMode"
   [bem]="selectedBem"
-  (close)="closeBemForm()">
+  (close)="closeBemForm()"
+  (saved)="onBemSaved()"
+  (editRequested)="openEditBem(selectedBem)">
 </app-assets-form>
+
+<div class="toast toast-success" *ngIf="successMessage" [class.toast-leaving]="successLeaving">
+  <i class="ph ph-check-circle"></i>
+  <span>{{ successMessage }}</span>
+</div>

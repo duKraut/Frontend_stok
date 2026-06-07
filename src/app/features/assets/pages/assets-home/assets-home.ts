@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { HeaderService } from '../../../../core/services/header';
-import { Asset, AssetService } from '../../services/asset.servce';
+import { Asset, AssetService } from '../../services/asset.service';
 
 type BemFormMode = 'create' | 'edit' | 'view';
 
@@ -14,7 +14,7 @@ type BemFormMode = 'create' | 'edit' | 'view';
 export class AssetsHome implements OnInit {
   allAssets: Asset[] = [];
 
-  activeTab: 'Todos' | 'Excelente' | 'Bom' | 'Manutenção' | 'Substituir' = 'Todos';
+  activeTab: 'Todos' | 'Excelente' | 'Bom' | 'Regular' | 'Manutenção' | 'Substituir' = 'Todos';
   paginaAtual = 1;
   itensPorPagina = 5;
 
@@ -22,9 +22,13 @@ export class AssetsHome implements OnInit {
   bemFormMode: BemFormMode = 'create';
   selectedBem: any = null;
 
+  successMessage = '';
+  successLeaving = false;
+
   get ativosFiltrados() {
     if (this.activeTab === 'Excelente')  return this.allAssets.filter(a => a.conservationStatus === 'EXCELENTE');
     if (this.activeTab === 'Bom')        return this.allAssets.filter(a => a.conservationStatus === 'BOM');
+    if (this.activeTab === 'Regular')    return this.allAssets.filter(a => a.conservationStatus === 'REGULAR');
     if (this.activeTab === 'Manutenção') return this.allAssets.filter(a => a.conservationStatus === 'MANUTENCAO');
     if (this.activeTab === 'Substituir') return this.allAssets.filter(a => a.conservationStatus === 'SUBSTITUIR');
     return this.allAssets;
@@ -39,7 +43,7 @@ export class AssetsHome implements OnInit {
 
   get arrayPaginas() { return Array(this.totalPaginas).fill(0).map((_, i) => i + 1); }
 
-  setTab(tab: 'Todos' | 'Excelente' | 'Bom' | 'Manutenção' | 'Substituir') {
+  setTab(tab: 'Todos' | 'Excelente' | 'Bom' | 'Regular' | 'Manutenção' | 'Substituir') {
     this.activeTab = tab;
     this.paginaAtual = 1;
   }
@@ -67,6 +71,25 @@ export class AssetsHome implements OnInit {
   }
 
   closeBemForm(): void { this.isBemFormOpen = false; }
+
+  onBemSaved(): void {
+    const wasCreate = this.bemFormMode === 'create';
+    this.closeBemForm();
+    setTimeout(() => this.loadAssets(), 0);
+
+    this.successLeaving = false;
+    this.successMessage = wasCreate ? 'Bem cadastrado com sucesso.' : 'Bem atualizado com sucesso.';
+
+    setTimeout(() => {
+      this.successLeaving = true;
+      this.cdr.detectChanges();
+      setTimeout(() => {
+        this.successMessage = '';
+        this.successLeaving = false;
+        this.cdr.detectChanges();
+      }, 400);
+    }, 4000);
+  }
 
   goToMovimentacoes(): void {
     this.router.navigate(['/assets/movements']);

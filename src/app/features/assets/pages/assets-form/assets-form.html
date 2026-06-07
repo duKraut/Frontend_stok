@@ -1,8 +1,8 @@
-<aside class="bem-drawer">
+<aside class="asset-drawer">
   <div class="drawer-header">
     <div>
       <h2>{{ mode === 'create' ? 'Novo Bem Patrimonial' : mode === 'edit' ? 'Editar Bem' : 'Detalhes do Bem' }}</h2>
-      <p>{{ mode === 'view' ? 'Tombamento Nº ' + (bem?.tombamento || '—') : 'Preencha os dados do bem a ser patrimonializado.' }}</p>
+      <p>{{ mode === 'view' ? 'Tombamento Nº ' + (formData.tombamento || '—') : 'Preencha os dados do bem a ser patrimonializado.' }}</p>
     </div>
     <button class="drawer-close" type="button" (click)="closeDrawer()">
       <i class="ph ph-x"></i>
@@ -10,6 +10,7 @@
   </div>
 
   <div class="drawer-content">
+    <p class="required-hint" *ngIf="mode !== 'view'">Campos com <span class="required-mark">*</span> são obrigatórios</p>
 
     <section class="form-card">
       <div class="form-section-header">
@@ -17,66 +18,73 @@
         <h3>Identificação do Bem</h3>
       </div>
 
-      <div class="form-group checkbox-group">
-        <label class="checkbox-label">
-          <input type="checkbox" checked [disabled]="mode === 'view'" />
-          <span>Bem Ativo</span>
-        </label>
+      <div class="active-switch-group">
+        <span>Bem Ativo</span>
+        <button
+          type="button"
+          class="status-toggle"
+          [class.active]="formData.active"
+          (click)="formData.active = !formData.active"
+          [disabled]="mode === 'view'">
+          <span class="toggle-knob"></span>
+        </button>
       </div>
 
       <div class="form-grid">
         <div class="form-group full">
-          <label>Descrição / Nome do Bem</label>
-          <input type="text" placeholder="Ex: Notebook Dell Latitude 5420" [disabled]="mode === 'view'"
-            [value]="bem?.nome || ''" />
+          <label>Descrição / Nome do Bem <span class="required-mark" *ngIf="mode !== 'view'">*</span></label>
+          <input type="text" [(ngModel)]="formData.name" placeholder="Ex: Notebook Dell Latitude 5420"
+            [disabled]="mode === 'view'" [class.input-error]="submitted && validationErrors.name" />
         </div>
 
-        <div class="form-group">
+        <div class="form-group" *ngIf="mode === 'view'">
           <label>Nº de Tombamento</label>
-          <input type="text" placeholder="Ex: TOMB-00001" [disabled]="mode === 'view'"
-            [value]="bem?.tombamento || ''" />
+          <input type="text" [value]="formData.tombamento || '—'" disabled />
         </div>
 
         <div class="form-group">
-          <label>Categoria</label>
-          <select [disabled]="mode === 'view'">
+          <label>Categoria <span class="required-mark" *ngIf="mode !== 'view'">*</span></label>
+          <select [(ngModel)]="formData.category" [disabled]="mode === 'view'"
+            [class.input-error]="submitted && validationErrors.category">
             <option value="">Selecione...</option>
-            <option *ngFor="let cat of categorias" [selected]="bem?.categoria === cat">{{ cat }}</option>
+            <option *ngFor="let cat of categorias" [value]="cat">{{ cat }}</option>
           </select>
         </div>
 
         <div class="form-group">
-          <label>Marca / Fabricante</label>
-          <input type="text" placeholder="Ex: Dell" [disabled]="mode === 'view'"
-            [value]="bem?.marca || ''" />
+          <label>Marca / Fabricante <span class="required-mark" *ngIf="mode !== 'view'">*</span></label>
+          <input type="text" [(ngModel)]="formData.brand" placeholder="Ex: Dell"
+            [disabled]="mode === 'view'" [class.input-error]="submitted && validationErrors.brand" />
         </div>
 
         <div class="form-group">
-          <label>Modelo</label>
-          <input type="text" placeholder="Ex: Latitude 5420" [disabled]="mode === 'view'" />
+          <label>Modelo <span class="required-mark" *ngIf="mode !== 'view'">*</span></label>
+          <input type="text" [(ngModel)]="formData.model" placeholder="Ex: Latitude 5420"
+            [disabled]="mode === 'view'" [class.input-error]="submitted && validationErrors.model" />
         </div>
 
         <div class="form-group">
           <label>Número de Série</label>
-          <input type="text" placeholder="Ex: SN-4F7X2K9" [disabled]="mode === 'view'" />
+          <input type="text" [(ngModel)]="formData.serialNumber" placeholder="Ex: SN-4F7X2K9" [disabled]="mode === 'view'" />
         </div>
 
         <div class="form-group">
-          <label>Estado de Conservação</label>
-          <select [disabled]="mode === 'view'">
+          <label>Estado de Conservação <span class="required-mark" *ngIf="mode === 'create'">*</span></label>
+          <select [(ngModel)]="formData.conservationStatus" [disabled]="mode !== 'create'"
+            [class.input-error]="submitted && validationErrors.conservationStatus">
             <option value="">Selecione...</option>
-            <option [selected]="bem?.estado === 'EXCELENTE'">Excelente</option>
-            <option [selected]="bem?.estado === 'BOM'">Bom</option>
-            <option [selected]="bem?.estado === 'REGULAR'">Regular</option>
-            <option [selected]="bem?.estado === 'MANUTENÇÃO'">Em Manutenção</option>
-            <option [selected]="bem?.estado === 'SUBSTITUIR'">Substituir</option>
+            <option value="EXCELENTE">Excelente</option>
+            <option value="BOM">Bom</option>
+            <option value="REGULAR">Regular</option>
+            <option *ngIf="mode !== 'create'" value="MANUTENCAO">Em Manutenção</option>
+            <option *ngIf="mode !== 'create'" value="SUBSTITUIR">Substituir</option>
           </select>
         </div>
 
         <div class="form-group full">
           <label>Especificações Técnicas</label>
-          <textarea rows="3" placeholder="Ex: Core i7, 16GB RAM, 512GB SSD..."
-            [disabled]="mode === 'view'">{{ bem?.desc || '' }}</textarea>
+          <textarea rows="3" [(ngModel)]="formData.specs" placeholder="Ex: Core i7, 16GB RAM, 512GB SSD..."
+            [disabled]="mode === 'view'"></textarea>
         </div>
       </div>
     </section>
@@ -89,21 +97,22 @@
 
       <div class="form-grid">
         <div class="form-group">
-          <label>Departamento / Setor</label>
-          <select [disabled]="mode === 'view'">
+          <label>Departamento / Setor <span class="required-mark" *ngIf="mode !== 'view'">*</span></label>
+          <select [(ngModel)]="formData.department" [disabled]="mode === 'view'"
+            [class.input-error]="submitted && validationErrors.department">
             <option value="">Selecione...</option>
-            <option *ngFor="let dep of departamentos" [selected]="bem?.depto === dep">{{ dep }}</option>
+            <option *ngFor="let dep of departamentos" [value]="dep">{{ dep }}</option>
           </select>
         </div>
 
         <div class="form-group">
           <label>Localização Física</label>
-          <input type="text" placeholder="Ex: Sala 302 – 3º Andar" [disabled]="mode === 'view'" />
+          <input type="text" [(ngModel)]="formData.location" placeholder="Ex: Sala 302 – 3º Andar" [disabled]="mode === 'view'" />
         </div>
 
         <div class="form-group full">
           <label>Responsável pelo Bem</label>
-          <input type="text" placeholder="Nome do responsável ou usuário" [disabled]="mode === 'view'" />
+          <input type="text" [(ngModel)]="formData.responsible" placeholder="Nome do responsável ou usuário" [disabled]="mode === 'view'" />
         </div>
       </div>
     </section>
@@ -116,39 +125,44 @@
 
       <div class="form-grid">
         <div class="form-group">
-          <label>Data de Aquisição</label>
-          <input type="date" [disabled]="mode === 'view'" />
+          <label>Data de Aquisição <span class="required-mark" *ngIf="mode !== 'view'">*</span></label>
+          <input type="date" [(ngModel)]="formData.acquisitionDate" [max]="today" [disabled]="mode === 'view'"
+            [class.input-error]="submitted && validationErrors.acquisitionDate" />
         </div>
 
         <div class="form-group">
-          <label>Valor de Aquisição (R$)</label>
-          <input type="number" min="0" step="0.01" placeholder="0,00" [disabled]="mode === 'view'"
-            [value]="bem?.valor ? bem.valor.replace('R$ ', '').replace('.', '').replace(',', '.') : ''" />
+          <label>Valor de Aquisição (R$) <span class="required-mark" *ngIf="mode !== 'view'">*</span></label>
+          <input type="number" min="0" step="0.01" [(ngModel)]="formData.acquisitionValue" placeholder="0,00"
+            [disabled]="mode === 'view'" [class.input-error]="submitted && validationErrors.acquisitionValue" />
         </div>
 
         <div class="form-group full">
-          <label>Fornecedor</label>
-          <input type="text" placeholder="Razão social ou nome do fornecedor" [disabled]="mode === 'view'" />
+          <label>Fornecedor <span class="required-mark" *ngIf="mode !== 'view'">*</span></label>
+          <select [(ngModel)]="selectedSupplierId" [disabled]="mode === 'view'"
+            [class.input-error]="submitted && validationErrors.supplier">
+            <option value="">Selecione...</option>
+            <option *ngFor="let s of suppliers" [value]="s.id">{{ s.name }}</option>
+          </select>
         </div>
 
         <div class="form-group">
           <label>Número da Nota Fiscal</label>
-          <input type="text" placeholder="Ex: NF-000456" [disabled]="mode === 'view'" />
+          <input type="text" [(ngModel)]="formData.nfNumber" placeholder="Ex: NF-000456" [disabled]="mode === 'view'" />
         </div>
 
         <div class="form-group">
           <label>Data de Emissão da NF</label>
-          <input type="date" [disabled]="mode === 'view'" />
+          <input type="date" [(ngModel)]="formData.nfEmissionDate" [disabled]="mode === 'view'" />
         </div>
 
         <div class="form-group">
           <label>Chave de Acesso NF-e</label>
-          <input type="text" placeholder="44 dígitos (opcional)" [disabled]="mode === 'view'" />
+          <input type="text" [(ngModel)]="formData.nfAccessKey" placeholder="44 dígitos (opcional)" [disabled]="mode === 'view'" />
         </div>
 
         <div class="form-group">
           <label>Garantia até</label>
-          <input type="date" [disabled]="mode === 'view'" />
+          <input type="date" [(ngModel)]="formData.warrantyUntil" [disabled]="mode === 'view'" />
         </div>
       </div>
     </section>
@@ -167,45 +181,45 @@
       <div class="form-grid">
         <div class="form-group">
           <label>Vida Útil (anos)</label>
-          <input type="number" min="1" max="50" placeholder="Ex: 5" [disabled]="mode === 'view'" />
+          <input type="number" min="1" max="50" [(ngModel)]="formData.usefulLifeYears" placeholder="Ex: 5" [disabled]="mode === 'view'" />
         </div>
 
         <div class="form-group">
           <label>Taxa de Depreciação (% a.a.)</label>
-          <input type="number" min="0" max="100" step="0.01" placeholder="Ex: 20" [disabled]="mode === 'view'" />
+          <input type="number" min="0" max="100" step="0.01" [(ngModel)]="formData.depreciationRate" placeholder="Ex: 20" [disabled]="mode === 'view'" />
         </div>
 
         <div class="form-group">
           <label>Valor Residual (R$)</label>
-          <input type="number" min="0" step="0.01" placeholder="0,00" [disabled]="mode === 'view'" />
+          <input type="number" min="0" step="0.01" [(ngModel)]="formData.residualValue" placeholder="0,00" [disabled]="mode === 'view'" />
         </div>
 
         <div class="form-group">
           <label>Método de Depreciação</label>
-          <select [disabled]="mode === 'view'">
+          <select [(ngModel)]="formData.depreciationMethod" [disabled]="mode === 'view'">
             <option value="">Selecione...</option>
-            <option *ngFor="let m of metodos">{{ m }}</option>
+            <option *ngFor="let m of metodos" [value]="m.value">{{ m.label }}</option>
           </select>
-        </div>
-
-        <div class="form-group" *ngIf="mode === 'view'">
-          <label>Valor Depreciado Atual (R$)</label>
-          <input type="text" [disabled]="true" value="R$ 3.240,00" />
-        </div>
-
-        <div class="form-group" *ngIf="mode === 'view'">
-          <label>Valor Contábil Atual (R$)</label>
-          <input type="text" [disabled]="true" value="R$ 2.160,00" />
         </div>
       </div>
     </section>
 
   </div>
 
-  <div class="drawer-footer" *ngIf="mode !== 'view'">
-    <button class="btn-save" type="button">
-      <i class="ph ph-floppy-disk"></i>
-      {{ mode === 'create' ? 'Cadastrar Bem' : 'Salvar Alterações' }}
+  <div class="drawer-footer">
+    <button *ngIf="mode === 'view'" class="btn-save" type="button" (click)="requestEdit()">
+      <i class="ph ph-pencil-simple"></i>
+      Editar Bem
+    </button>
+
+    <button *ngIf="mode !== 'view'" class="btn-save" type="button" (click)="saveAsset()" [disabled]="isSaving">
+      <i class="ph" [ngClass]="isSaving ? 'ph-circle-notch loading-icon' : 'ph-floppy-disk'"></i>
+      {{ isSaving ? 'Salvando...' : mode === 'create' ? 'Cadastrar Bem' : 'Salvar Alterações' }}
     </button>
   </div>
 </aside>
+
+<div class="toast toast-error" *ngIf="errorMessage" [class.toast-leaving]="toastLeaving">
+  <i class="ph ph-warning-circle"></i>
+  <span>{{ errorMessage }}</span>
+</div>
