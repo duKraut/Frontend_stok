@@ -17,6 +17,12 @@
   </div>
 </div>
 
+<div class="filtro-ativo-banner" *ngIf="filtroAssetId">
+  <i class="ph ph-funnel"></i>
+  <span>Exibindo movimentações de <strong>{{ filtroAssetName }}</strong></span>
+  <a class="btn-limpar-filtro" routerLink="/assets/movements">Ver todas</a>
+</div>
+
 <div class="stats-grid">
   <div class="card stat-box">
     <div class="stat-top"><span>TOTAL DE MOVIMENTAÇÕES</span><i class="ph ph-list-numbers" style="color:#1a56db;"></i></div>

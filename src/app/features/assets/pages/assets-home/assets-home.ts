@@ -105,6 +105,12 @@ export class AssetsHome implements OnInit {
     this.router.navigate(['/assets/movements']);
   }
 
+  goToHistorico(asset: Asset): void {
+    this.router.navigate(['/assets/movements'], {
+      queryParams: { assetId: asset.id, assetName: asset.name }
+    });
+  }
+
   constructor(private headerService: HeaderService, private router: Router, private assetService: AssetService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {

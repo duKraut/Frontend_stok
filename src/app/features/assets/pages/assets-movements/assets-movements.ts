@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { HeaderService } from '../../../../core/services/header';
 import { AssetMovement, AssetMovementService } from '../../services/asset-movement.service';
 import { AssetsMovementsForm } from '../assets-movements-form/assets-movements-form';
@@ -13,6 +14,8 @@ export class AssetsMovements implements OnInit {
   @ViewChild('movForm') movForm?: AssetsMovementsForm;
 
   todasMovimentacoes: AssetMovement[] = [];
+  filtroAssetId = '';
+  filtroAssetName = '';
 
   activeTab: 'Todos' | 'Transferência' | 'Manutenção' | 'Estado' = 'Todos';
   paginaAtual = 1;
@@ -94,7 +97,7 @@ export class AssetsMovements implements OnInit {
 
   onMovSaved(): void {
     this.closeForm();
-    setTimeout(() => this.loadMovements(), 0);
+    setTimeout(() => this.loadMovements(this.filtroAssetId || undefined), 0);
 
     this.successLeaving = false;
     this.successMessage = 'Movimentação registrada com sucesso.';
@@ -109,7 +112,12 @@ export class AssetsMovements implements OnInit {
     }, 4000);
   }
 
-  constructor(private headerService: HeaderService, private movService: AssetMovementService, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private headerService: HeaderService,
+    private movService: AssetMovementService,
+    private cdr: ChangeDetectorRef,
+    private route: ActivatedRoute
+  ) {}
 
   ngOnInit(): void {
     this.headerService.setConfig({
@@ -118,11 +126,22 @@ export class AssetsMovements implements OnInit {
       primaryButtonLabel: 'Nova Movimentação',
       primaryButtonIcon: 'ph ph-arrows-left-right'
     });
-    this.loadMovements();
+
+    this.route.queryParams.subscribe(params => {
+      this.filtroAssetId   = params['assetId']   ?? '';
+      this.filtroAssetName = params['assetName'] ?? '';
+      this.paginaAtual = 1;
+      this.loadMovements(this.filtroAssetId || undefined);
+      this.cdr.detectChanges();
+    });
   }
 
-  loadMovements(): void {
-    this.movService.getAll().subscribe({
+  loadMovements(assetId?: string): void {
+    const req$ = assetId
+      ? this.movService.getByAsset(assetId)
+      : this.movService.getAll();
+
+    req$.subscribe({
       next: (data) => {
         this.todasMovimentacoes = data;
         this.cdr.detectChanges();
