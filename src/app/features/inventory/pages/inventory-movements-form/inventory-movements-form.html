@@ -1,10 +1,20 @@
 <aside class="mov-drawer">
+  <div class="confirm-close-overlay" *ngIf="showCloseConfirm">
+    <div class="confirm-close-box">
+      <p>Deseja fechar sem salvar?</p>
+      <div class="confirm-close-actions">
+        <button class="btn-cancel-close" type="button" (click)="cancelClose()">Continuar editando</button>
+        <button class="btn-confirm-close" type="button" (click)="confirmClose()">Fechar</button>
+      </div>
+    </div>
+  </div>
+
   <div class="drawer-header">
     <div>
       <h2>{{ mode === 'create' ? 'Nova Movimentação' : 'Detalhes da Movimentação' }}</h2>
-      <p>{{ mode === 'view' ? ('Registro ' + movimentacao?.id) : 'Registre uma entrada ou saída de estoque.' }}</p>
+      <p>{{ mode === 'view' ? 'Registro de movimentação de estoque.' : 'Registre uma entrada ou saída de estoque.' }}</p>
     </div>
-    <button class="drawer-close" type="button" (click)="closeDrawer()">
+    <button class="drawer-close" type="button" (click)="attemptClose()">
       <i class="ph ph-x"></i>
     </button>
   </div>
@@ -13,13 +23,13 @@
 
     <!-- Toggle Tipo -->
     <div class="tipo-toggle" *ngIf="mode === 'create'">
-      <button class="tipo-btn" [class.active-entrada]="tipoSelecionado === 'Entrada'"
-        (click)="tipoSelecionado = 'Entrada'" type="button">
+      <button class="tipo-btn" [class.active-entrada]="tipoSelecionado === 'ENTRADA'"
+        (click)="tipoSelecionado = 'ENTRADA'" type="button">
         <i class="ph ph-arrow-circle-down"></i>
         Entrada
       </button>
-      <button class="tipo-btn" [class.active-saida]="tipoSelecionado === 'Saída'"
-        (click)="tipoSelecionado = 'Saída'" type="button">
+      <button class="tipo-btn" [class.active-saida]="tipoSelecionado === 'SAIDA'"
+        (click)="tipoSelecionado = 'SAIDA'" type="button">
         <i class="ph ph-arrow-circle-up"></i>
         Saída
       </button>
@@ -27,9 +37,9 @@
 
     <!-- View: tipo badge -->
     <div class="tipo-view-badge" *ngIf="mode === 'view'">
-      <span class="tipo-badge" [ngClass]="movimentacao?.tipoClass">
-        <i [ngClass]="movimentacao?.tipo === 'Entrada' ? 'ph ph-arrow-circle-down' : 'ph ph-arrow-circle-up'"></i>
-        {{ movimentacao?.tipo }}
+      <span class="tipo-badge" [ngClass]="movimentacao?.type === 'ENTRADA' ? 'tipo-entrada' : 'tipo-saida'">
+        <i [ngClass]="movimentacao?.type === 'ENTRADA' ? 'ph ph-arrow-circle-down' : 'ph ph-arrow-circle-up'"></i>
+        {{ movimentacao?.type === 'ENTRADA' ? 'Entrada' : 'Saída' }}
       </span>
     </div>
 
@@ -42,41 +52,56 @@
 
       <div class="form-grid">
         <div class="form-group full">
-          <label>Item do Almoxarifado</label>
-          <select [disabled]="mode === 'view'">
+          <label>Item do Almoxarifado <span class="required-mark" *ngIf="mode === 'create'">*</span></label>
+          <select *ngIf="mode === 'create'" [(ngModel)]="selectedItemId"
+            [class.input-error]="submitted && validationErrors.item">
             <option value="">Selecione o item...</option>
-            <option *ngFor="let item of itens"
-              [selected]="movimentacao?.item && item.startsWith(movimentacao.item)">{{ item }}</option>
+            <option *ngFor="let item of itens" [value]="item.id">
+              {{ item.name }} ({{ item.sku }}) — Saldo: {{ item.currentStock ?? 0 }} {{ item.unit }}
+            </option>
           </select>
+          <input *ngIf="mode === 'view'" type="text" [disabled]="true"
+            [value]="movimentacao?.item?.name + ' (' + movimentacao?.item?.sku + ')'" />
+          <span class="field-error" *ngIf="submitted && validationErrors.item">Item obrigatório</span>
         </div>
 
         <div class="form-group">
-          <label>Quantidade</label>
-          <input type="number" min="1" placeholder="0" [disabled]="mode === 'view'"
-            [value]="movimentacao?.qtd || ''" />
+          <label>Quantidade <span class="required-mark" *ngIf="mode === 'create'">*</span></label>
+          <input type="number" min="1" placeholder="0"
+            [(ngModel)]="formData.quantity" [disabled]="mode === 'view'"
+            [value]="mode === 'view' ? movimentacao?.quantity : null"
+            [class.input-error]="submitted && validationErrors.quantity" />
+          <span class="field-error" *ngIf="submitted && validationErrors.quantity">Quantidade deve ser maior que zero</span>
         </div>
 
         <div class="form-group">
           <label>Unidade de Medida</label>
-          <input type="text" placeholder="Ex: UN, CX, PCT" [disabled]="mode === 'view'"
-            [value]="movimentacao?.unid || ''" />
+          <input type="text" [disabled]="true"
+            [value]="mode === 'view' ? movimentacao?.item?.unit : (selectedItem?.unit || '')" />
         </div>
 
         <div class="form-group">
-          <label>Data da Movimentação</label>
-          <input type="date" [disabled]="mode === 'view'" />
+          <label>Data da Movimentação <span class="required-mark" *ngIf="mode === 'create'">*</span></label>
+          <input type="date" [(ngModel)]="formData.date" [disabled]="mode === 'view'"
+            [max]="today"
+            [value]="mode === 'view' ? movimentacao?.date : null"
+            [class.input-error]="submitted && validationErrors.date" />
+          <span class="field-error" *ngIf="submitted && validationErrors.date">Data obrigatória</span>
         </div>
 
         <div class="form-group">
-          <label>Responsável</label>
-          <input type="text" placeholder="Nome do responsável" [disabled]="mode === 'view'"
-            [value]="movimentacao?.responsavel || ''" />
+          <label>Responsável <span class="required-mark" *ngIf="mode === 'create'">*</span></label>
+          <input type="text" placeholder="Nome do responsável"
+            [(ngModel)]="formData.responsible" [disabled]="mode === 'view'"
+            [value]="mode === 'view' ? movimentacao?.responsible : null"
+            [class.input-error]="submitted && validationErrors.responsible" />
+          <span class="field-error" *ngIf="submitted && validationErrors.responsible">Responsável obrigatório</span>
         </div>
       </div>
     </section>
 
     <!-- Seção 02: Dados de Entrada -->
-    <section class="form-card entrada-card" *ngIf="tipoSelecionado === 'Entrada'">
+    <section class="form-card entrada-card" *ngIf="tipoSelecionado === 'ENTRADA'">
       <div class="form-section-header">
         <span class="section-number section-entrada">02</span>
         <h3 class="header-entrada">Dados da Nota Fiscal</h3>
@@ -85,76 +110,65 @@
       <div class="form-grid">
         <div class="form-group">
           <label>Número da Nota Fiscal</label>
-          <input type="text" placeholder="Ex: NF-004521" [disabled]="mode === 'view'"
-            [value]="movimentacao?.nf !== '—' ? (movimentacao?.nf || '') : ''" />
+          <input type="text" placeholder="Ex: NF-004521"
+            [(ngModel)]="formData.nfNumber" [disabled]="mode === 'view'"
+            [value]="mode === 'view' ? (movimentacao?.nfNumber || '—') : null" />
         </div>
 
         <div class="form-group">
           <label>Data de Emissão</label>
-          <input type="date" [disabled]="mode === 'view'" />
+          <input type="date"
+            [(ngModel)]="formData.nfEmissionDate" [disabled]="mode === 'view'"
+            [value]="mode === 'view' ? movimentacao?.nfEmissionDate : null" />
         </div>
 
         <div class="form-group full">
           <label>Fornecedor</label>
-          <input type="text" placeholder="Nome ou razão social" [disabled]="mode === 'view'" />
+          <input type="text" placeholder="Nome ou razão social"
+            [(ngModel)]="formData.supplierName" [disabled]="mode === 'view'"
+            [value]="mode === 'view' ? (movimentacao?.supplierName || '') : null" />
         </div>
 
         <div class="form-group">
           <label>Valor Unitário (R$)</label>
-          <input type="number" min="0" step="0.01" placeholder="0,00" [disabled]="mode === 'view'" />
+          <input type="number" min="0" step="0.01" placeholder="0,00"
+            [(ngModel)]="formData.unitValue" [disabled]="mode === 'view'"
+            [value]="mode === 'view' ? movimentacao?.unitValue : null" />
         </div>
 
         <div class="form-group">
           <label>Valor Total (R$)</label>
-          <input type="number" min="0" step="0.01" placeholder="0,00" [disabled]="true" />
+          <input type="number" min="0" step="0.01" placeholder="0,00" [disabled]="true"
+            [value]="mode === 'view' ? movimentacao?.totalValue : totalValue" />
         </div>
 
         <div class="form-group">
           <label>Chave de Acesso NF-e</label>
-          <input type="text" placeholder="44 dígitos (opcional)" [disabled]="mode === 'view'" />
-        </div>
-
-        <div class="form-group">
-          <label>Local de Armazenamento</label>
-          <input type="text" placeholder="Ex: Prateleira B2" [disabled]="mode === 'view'" />
+          <input type="text" placeholder="44 dígitos (opcional)"
+            [(ngModel)]="formData.nfAccessKey" [disabled]="mode === 'view'"
+            [value]="mode === 'view' ? (movimentacao?.nfAccessKey || '') : null" />
         </div>
       </div>
     </section>
 
     <!-- Seção 02: Dados de Saída -->
-    <section class="form-card saida-card" *ngIf="tipoSelecionado === 'Saída'">
+    <section class="form-card saida-card" *ngIf="tipoSelecionado === 'SAIDA'">
       <div class="form-section-header">
         <span class="section-number section-saida">02</span>
-        <h3 class="header-saida">Destino e Justificativa</h3>
+        <h3 class="header-saida">Destino da Saída</h3>
       </div>
 
       <div class="form-grid">
         <div class="form-group full">
-          <label>Setor / Destino</label>
-          <select [disabled]="mode === 'view'">
+          <label>Setor / Destino <span class="required-mark" *ngIf="mode === 'create'">*</span></label>
+          <select *ngIf="mode === 'create'" [(ngModel)]="formData.sector"
+            [class.input-error]="submitted && validationErrors.sector">
             <option value="">Selecione o setor...</option>
-            <option *ngFor="let setor of setores"
-              [selected]="movimentacao?.setor === setor">{{ setor }}</option>
+            <option *ngFor="let setor of setores" [value]="setor">{{ setor }}</option>
           </select>
-        </div>
-
-        <div class="form-group full">
-          <label>Solicitante</label>
-          <input type="text" placeholder="Nome de quem solicitou" [disabled]="mode === 'view'" />
-        </div>
-
-        <div class="form-group full">
-          <label>Motivo / Justificativa</label>
-          <select [disabled]="mode === 'view'">
-            <option value="">Selecione o motivo...</option>
-            <option>Uso interno</option>
-            <option>Distribuição periódica</option>
-            <option>Requisição de setor</option>
-            <option>Manutenção corretiva</option>
-            <option>Manutenção preventiva</option>
-            <option>Descarte / baixa</option>
-            <option>Outro</option>
-          </select>
+          <input *ngIf="mode === 'view'" type="text" [disabled]="true"
+            [value]="movimentacao?.sector || '—'" />
+          <span class="field-error" *ngIf="submitted && validationErrors.sector">Setor obrigatório para Saída</span>
         </div>
       </div>
     </section>
@@ -168,16 +182,22 @@
 
       <div class="form-group full">
         <textarea rows="3" placeholder="Informações adicionais sobre esta movimentação (opcional)..."
-          [disabled]="mode === 'view'">{{ movimentacao?.obs || '' }}</textarea>
+          [(ngModel)]="formData.observations" [disabled]="mode === 'view'">{{ mode === 'view' ? (movimentacao?.observations || '') : '' }}</textarea>
       </div>
     </section>
 
   </div>
 
   <div class="drawer-footer" *ngIf="mode === 'create'">
-    <button class="btn-save" [ngClass]="tipoSelecionado === 'Saída' ? 'btn-save-saida' : ''" type="button">
-      <i [ngClass]="tipoSelecionado === 'Entrada' ? 'ph ph-arrow-circle-down' : 'ph ph-arrow-circle-up'"></i>
-      Registrar {{ tipoSelecionado }}
+    <button class="btn-save" [ngClass]="tipoSelecionado === 'SAIDA' ? 'btn-save-saida' : ''"
+      type="button" (click)="save()" [disabled]="isSaving">
+      <i [ngClass]="tipoSelecionado === 'ENTRADA' ? 'ph ph-arrow-circle-down' : 'ph ph-arrow-circle-up'"></i>
+      Registrar {{ tipoSelecionado === 'ENTRADA' ? 'Entrada' : 'Saída' }}
     </button>
+  </div>
+
+  <div class="toast toast-error" *ngIf="errorMessage" [class.toast-leaving]="toastLeaving">
+    <i class="ph ph-warning-circle"></i>
+    <span>{{ errorMessage }}</span>
   </div>
 </aside>

@@ -2,14 +2,15 @@
   <div class="drawer-header">
     <div>
       <h2>{{ mode === 'create' ? 'Novo Item' : mode === 'edit' ? 'Editar Item' : 'Detalhes do Item' }}</h2>
-      <p>{{ mode === 'view' ? 'Visualizando dados cadastrais do item.' : 'Preencha os dados do item de estoque.' }}</p>
+      <p>{{ mode === 'view' ? 'Código Nº ' + (item?.codigo || '—') : 'Preencha os dados do item de estoque.' }}</p>
     </div>
-    <button class="drawer-close" type="button" (click)="closeDrawer()">
+    <button class="drawer-close" type="button" (click)="attemptClose()">
       <i class="ph ph-x"></i>
     </button>
   </div>
 
   <div class="drawer-content">
+    <p class="required-hint" *ngIf="mode !== 'view'">Campos com <span class="required-mark">*</span> são obrigatórios</p>
 
     <section class="form-card">
       <div class="form-section-header">
@@ -17,49 +18,58 @@
         <h3>Identificação do Item</h3>
       </div>
 
-      <div class="form-group checkbox-group">
-        <label class="checkbox-label">
-          <input type="checkbox" checked [disabled]="mode === 'view'" />
-          <span>Item Ativo</span>
-        </label>
+      <div class="active-switch-group" *ngIf="mode !== 'create'">
+        <span>Item Ativo</span>
+        <button
+          type="button"
+          class="status-toggle"
+          [class.active]="formData.active"
+          (click)="formData.active = !formData.active"
+          [disabled]="mode === 'view'">
+          <span class="toggle-knob"></span>
+        </button>
       </div>
 
       <div class="form-grid">
         <div class="form-group full">
-          <label>Nome do Item</label>
-          <input type="text" placeholder="Ex: Papel A4 Sulfite 75g" [disabled]="mode === 'view'"
-            [value]="item?.nome || ''" />
+          <label>Nome do Item <span class="required-mark" *ngIf="mode !== 'view'">*</span></label>
+          <input type="text" placeholder="Ex: Papel A4 Sulfite 75g"
+            [(ngModel)]="formData.name" [disabled]="mode === 'view'"
+            [class.input-error]="submitted && validationErrors.name" />
+          <span class="field-error" *ngIf="submitted && validationErrors.name">Nome obrigatório</span>
         </div>
 
-        <div class="form-group">
-          <label>SKU / Código</label>
-          <input type="text" placeholder="Ex: SUP-OFF-001" [disabled]="mode === 'view'"
-            [value]="item?.sku || ''" />
+        <div class="form-group" *ngIf="mode === 'view'">
+          <label>Código</label>
+          <input type="text" [disabled]="true" [value]="item?.codigo" />
         </div>
 
         <div class="form-group">
           <label>Marca / Fabricante</label>
-          <input type="text" placeholder="Ex: Chamex" [disabled]="mode === 'view'"
-            [value]="item?.marca || ''" />
+          <input type="text" placeholder="Ex: Chamex"
+            [(ngModel)]="formData.brand" [disabled]="mode === 'view'" />
         </div>
 
         <div class="form-group">
-          <label>Categoria</label>
-          <select [disabled]="mode === 'view'">
+          <label>Categoria <span class="required-mark" *ngIf="mode !== 'view'">*</span></label>
+          <select [(ngModel)]="formData.category" [disabled]="mode === 'view'"
+            [class.input-error]="submitted && validationErrors.category">
             <option value="">Selecione...</option>
-            <option *ngFor="let cat of categorias" [selected]="item?.categoria === cat">{{ cat }}</option>
+            <option *ngFor="let cat of categorias" [value]="cat">{{ cat }}</option>
           </select>
+          <span class="field-error" *ngIf="submitted && validationErrors.category">Categoria obrigatória</span>
         </div>
 
         <div class="form-group">
           <label>Localização no Almoxarifado</label>
-          <input type="text" placeholder="Ex: Prateleira A3 – Seção 2" [disabled]="mode === 'view'" />
+          <input type="text" placeholder="Ex: Prateleira A3 – Seção 2"
+            [(ngModel)]="formData.location" [disabled]="mode === 'view'" />
         </div>
 
         <div class="form-group full">
           <label>Descrição / Especificações</label>
-          <textarea rows="3" placeholder="Detalhes técnicos, especificações ou observações do item..."
-            [disabled]="mode === 'view'"></textarea>
+          <textarea rows="3" placeholder="Detalhes técnicos ou observações do item..."
+            [(ngModel)]="formData.description" [disabled]="mode === 'view'"></textarea>
         </div>
       </div>
     </section>
@@ -72,35 +82,38 @@
 
       <div class="form-grid">
         <div class="form-group">
-          <label>Unidade de Medida</label>
-          <select [disabled]="mode === 'view'">
+          <label>Unidade de Medida <span class="required-mark" *ngIf="mode !== 'view'">*</span></label>
+          <select [(ngModel)]="formData.unit" [disabled]="mode === 'view'"
+            [class.input-error]="submitted && validationErrors.unit">
             <option value="">Selecione...</option>
-            <option *ngFor="let un of unidades" [selected]="item?.unid === un">{{ un }}</option>
+            <option *ngFor="let un of unidades" [value]="un">{{ un }}</option>
           </select>
+          <span class="field-error" *ngIf="submitted && validationErrors.unit">Unidade obrigatória</span>
         </div>
 
         <div class="form-group">
           <label>Estoque Mínimo</label>
-          <input type="number" min="0" placeholder="0" [disabled]="mode === 'view'"
-            [value]="item?.min || ''" />
+          <input type="number" min="0" placeholder="0"
+            [(ngModel)]="formData.minStock" [disabled]="mode === 'view'" />
         </div>
 
         <div class="form-group" *ngIf="mode === 'view'">
           <label>Saldo Atual</label>
-          <input type="number" [disabled]="true" [value]="item?.saldo || 0" />
+          <input type="number" [disabled]="true" [value]="item?.currentStock ?? 0" />
         </div>
 
         <div class="form-group" *ngIf="mode === 'view'">
           <label>Status</label>
-          <input type="text" [disabled]="true" [value]="item?.status || ''" />
+          <input type="text" [disabled]="true"
+            [value]="(item?.currentStock ?? 0) === 0 ? 'ESGOTADO' : (item?.currentStock ?? 0) < item!.minStock ? 'ESTOQUE BAIXO' : 'EM ESTOQUE'" />
         </div>
       </div>
     </section>
 
-    <section class="form-card" *ngIf="mode !== 'view'">
+    <section class="form-card" *ngIf="mode === 'create'">
       <div class="form-section-header">
         <span class="section-number">03</span>
-        <h3>Nota Fiscal de Origem</h3>
+        <h3>Estoque Inicial (opcional)</h3>
       </div>
 
       <div class="info-tip">
@@ -110,38 +123,38 @@
 
       <div class="form-grid">
         <div class="form-group">
+          <label>Quantidade Inicial</label>
+          <input type="number" min="0" placeholder="0" [(ngModel)]="nfData.initialQuantity" />
+        </div>
+
+        <div class="form-group">
           <label>Número da Nota Fiscal</label>
-          <input type="text" placeholder="Ex: NF-000123" />
+          <input type="text" placeholder="Ex: NF-000123" [(ngModel)]="nfData.nfNumber" />
         </div>
 
         <div class="form-group">
           <label>Data de Emissão</label>
-          <input type="date" />
+          <input type="date" [(ngModel)]="nfData.nfEmissionDate" [max]="today" />
         </div>
 
         <div class="form-group full">
           <label>Fornecedor</label>
-          <input type="text" placeholder="Nome ou razão social do fornecedor" />
-        </div>
-
-        <div class="form-group">
-          <label>Quantidade Inicial</label>
-          <input type="number" min="0" placeholder="0" />
+          <input type="text" placeholder="Nome ou razão social do fornecedor" [(ngModel)]="nfData.supplierName" />
         </div>
 
         <div class="form-group">
           <label>Valor Unitário (R$)</label>
-          <input type="number" min="0" step="0.01" placeholder="0,00" />
+          <input type="number" min="0" step="0.01" placeholder="0,00" [(ngModel)]="nfData.unitValue" />
         </div>
 
         <div class="form-group">
           <label>Valor Total da NF (R$)</label>
-          <input type="number" min="0" step="0.01" placeholder="0,00" [disabled]="true" />
+          <input type="number" min="0" step="0.01" placeholder="0,00" [disabled]="true" [value]="totalValue" />
         </div>
 
         <div class="form-group">
           <label>Chave de Acesso NF-e</label>
-          <input type="text" placeholder="44 dígitos (opcional)" />
+          <input type="text" placeholder="44 dígitos (opcional)" [(ngModel)]="nfData.nfAccessKey" />
         </div>
       </div>
     </section>
@@ -149,9 +162,32 @@
   </div>
 
   <div class="drawer-footer" *ngIf="mode !== 'view'">
-    <button class="btn-save" type="button">
-      <i class="ph ph-floppy-disk"></i>
-      {{ mode === 'create' ? 'Cadastrar Item' : 'Salvar Alterações' }}
+    <button class="btn-save" type="button" (click)="save()" [disabled]="isSaving">
+      <i class="ph" [ngClass]="isSaving ? 'ph-circle-notch loading-icon' : 'ph-floppy-disk'"></i>
+      {{ isSaving ? 'Salvando...' : mode === 'create' ? 'Cadastrar Item' : 'Salvar Alterações' }}
     </button>
+  </div>
+
+  <div class="drawer-footer" *ngIf="mode === 'view'">
+    <button class="btn-save" type="button" (click)="requestEdit()">
+      <i class="ph ph-pencil-simple"></i>
+      Editar Item
+    </button>
+  </div>
+
+  <div class="toast toast-error" *ngIf="errorMessage" [class.toast-leaving]="toastLeaving">
+    <i class="ph ph-warning-circle"></i>
+    <span>{{ errorMessage }}</span>
+  </div>
+
+  <div class="confirm-close-overlay" *ngIf="showCloseConfirm">
+    <div class="confirm-close-box">
+      <i class="ph-fill ph-warning"></i>
+      <p>Há dados não salvos. Deseja sair sem salvar as alterações?</p>
+      <div class="confirm-close-actions">
+        <button class="btn-cancel-close" type="button" (click)="cancelClose()">Continuar editando</button>
+        <button class="btn-confirm-close" type="button" (click)="confirmClose()">Descartar e sair</button>
+      </div>
+    </div>
   </div>
 </aside>

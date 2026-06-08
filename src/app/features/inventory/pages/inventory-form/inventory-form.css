@@ -1,5 +1,6 @@
 .item-drawer {
   position: fixed;
+  overflow: hidden;
   top: 0;
   right: 0;
   width: 600px;
@@ -146,27 +147,61 @@
   cursor: not-allowed;
 }
 
-.checkbox-group {
+.active-switch-group {
   display: flex;
   justify-content: flex-end;
-  margin-bottom: 12px;
-}
-
-.checkbox-label {
-  display: flex;
   align-items: center;
-  gap: 10px;
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  color: #334155;
+  gap: 14px;
+  margin-bottom: 20px;
 }
 
-.checkbox-label input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  accent-color: #2563eb;
+.active-switch-group span {
+  color: #063b75;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.status-toggle {
+  width: 46px;
+  height: 24px;
+  border: none;
+  border-radius: 999px;
+  background: #cbd5e1;
+  position: relative;
   cursor: pointer;
+  padding: 0;
+  transition: 0.2s ease;
+}
+
+.status-toggle.active { background: #063b75; }
+
+.status-toggle:disabled { cursor: not-allowed; opacity: 0.7; }
+
+.toggle-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: white;
+  transition: 0.2s ease;
+}
+
+.status-toggle:not(.active) .toggle-knob { left: 4px; }
+.status-toggle.active .toggle-knob { transform: translateX(22px); }
+
+.loading-icon { animation: spin 0.8s linear infinite; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.required-hint {
+  margin: 8px 10px 0;
+  margin-bottom: 5px;
+  font-size: 12px;
+  color: #e53e3e;
 }
 
 .info-tip {
@@ -223,4 +258,123 @@
 @keyframes slideInRight {
   from { transform: translateX(100%); opacity: 0.7; }
   to { transform: translateX(0); opacity: 1; }
+}
+
+.confirm-close-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  backdrop-filter: blur(2px);
+}
+
+.confirm-close-box {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 28px 28px 24px;
+  max-width: 320px;
+  width: calc(100% - 48px);
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.confirm-close-box p {
+  margin: 0;
+  font-size: 14px;
+  color: #374151;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.confirm-close-actions {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.btn-cancel-close {
+  flex: 1;
+  height: 42px;
+  border: 1.5px solid #d1d5db;
+  border-radius: 8px;
+  background: #f9fafb;
+  color: #374151;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: background 0.15s;
+}
+
+.btn-cancel-close:hover { background: #e5e7eb; }
+
+.btn-confirm-close {
+  flex: 1;
+  height: 42px;
+  border: none;
+  border-radius: 8px;
+  background: #b91c1c;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: background 0.15s;
+}
+
+.btn-confirm-close:hover { background: #991b1b; }
+
+.field-error {
+  display: block;
+  font-size: 12px;
+  color: #dc2626;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.required-mark { color: #dc2626; margin-left: 2px; }
+
+.input-error { border-color: #ef4444 !important; }
+
+.toast {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 300px;
+  padding: 14px 18px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  z-index: 9999;
+}
+
+.toast i { font-size: 18px; flex-shrink: 0; }
+
+.toast-error {
+  background: #fef2f2;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
+  animation: toastIn 0.25s ease;
+}
+
+.toast-leaving { animation: toastOut 0.4s ease forwards; }
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes toastOut {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-6px); }
 }
