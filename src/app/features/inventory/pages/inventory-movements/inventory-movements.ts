@@ -28,7 +28,7 @@ export class InventoryMovements implements OnInit {
   formMode: MovFormMode = 'create';
   selectedMov: InventoryMovement | null = null;
 
-  readonly today = new Date().toISOString().split('T')[0];
+  readonly today = new Date().toLocaleDateString('en-CA');
 
   get filtradas() {
     if (this.activeTab === 'Entrada') return this.todasMovimentacoes.filter(m => m.type === 'ENTRADA');
@@ -85,7 +85,7 @@ export class InventoryMovements implements OnInit {
 
   onMovSaved(): void {
     this.closeForm();
-    setTimeout(() => this.loadMovements(this.filtroItemId || undefined), 0);
+    this.loadMovements(this.filtroItemId || undefined);
   }
 
   loadMovements(itemId?: string): void {

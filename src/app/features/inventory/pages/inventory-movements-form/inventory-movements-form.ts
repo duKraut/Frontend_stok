@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { InventoryItem, InventoryService } from '../../services/inventory.service';
 import { InventoryMovement, InventoryMovementService } from '../../services/inventory-movement.service';
+import { Supplier, SupplierService } from '../../../suppliers/services/supplier.service';
 
 @Component({
   selector: 'app-inventory-movements-form',
@@ -17,7 +18,9 @@ export class InventoryMovementsForm implements OnChanges, OnInit {
 
   tipoSelecionado: 'ENTRADA' | 'SAIDA' = 'ENTRADA';
   selectedItemId = '';
+  selectedSupplierId = '';
   itens: InventoryItem[] = [];
+  suppliers: Supplier[] = [];
 
   submitted = false;
   isSaving = false;
@@ -25,13 +28,24 @@ export class InventoryMovementsForm implements OnChanges, OnInit {
   toastLeaving = false;
   showCloseConfirm = false;
 
-  readonly today = new Date().toISOString().split('T')[0];
+  readonly today = new Date().toLocaleDateString('en-CA');
 
   setores = [
-    'TI / Suporte', 'Almoxarifado', 'Administrativo',
-    'Copa / Térreo', 'Copa / 2º Andar', 'Limpeza / Térreo',
-    'Manutenção', 'Banheiros / 1º Andar', 'Banheiros / 2º Andar',
-    'Recepção', 'Diretoria',
+    'TI - Sede',
+    'TI - Infra',
+    'Administrativo',
+    'Financeiro',
+    'Almoxarifado',
+    'Vendas',
+    'Recursos Humanos',
+    'Diretoria',
+    'Manutenção',
+    'Recepção',
+    'Copa - Térreo',
+    'Copa - 2º Andar',
+    'Limpeza - Térreo',
+    'Banheiros - 1º Andar',
+    'Banheiros - 2º Andar',
   ];
 
   formData: {
@@ -43,7 +57,6 @@ export class InventoryMovementsForm implements OnChanges, OnInit {
     nfNumber: string;
     nfEmissionDate: string;
     nfAccessKey: string;
-    supplierName: string;
     unitValue: number | null;
   } = this.emptyForm();
 
@@ -73,6 +86,7 @@ export class InventoryMovementsForm implements OnChanges, OnInit {
       responsible: !this.formData.responsible?.trim(),
       date: !this.formData.date,
       sector: this.tipoSelecionado === 'SAIDA' && !this.formData.sector,
+      supplier: this.tipoSelecionado === 'ENTRADA' && !this.selectedSupplierId,
     };
   }
 
@@ -83,16 +97,18 @@ export class InventoryMovementsForm implements OnChanges, OnInit {
   constructor(
     private movService: InventoryMovementService,
     private inventoryService: InventoryService,
+    private supplierService: SupplierService,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.inventoryService.getAll().subscribe({
-      next: (data) => {
-        this.itens = data.filter(i => i.active);
-        this.cdr.detectChanges();
-      },
+      next: (data) => { this.itens = data.filter(i => i.active); this.cdr.detectChanges(); },
       error: (err) => console.error('Erro ao carregar itens', err)
+    });
+    this.supplierService.getAll().subscribe({
+      next: (data) => { this.suppliers = data.filter(s => s.active); this.cdr.detectChanges(); },
+      error: (err) => console.error('Erro ao carregar fornecedores', err)
     });
   }
 
@@ -100,11 +116,23 @@ export class InventoryMovementsForm implements OnChanges, OnInit {
     if (this.movimentacao && this.mode === 'view') {
       this.tipoSelecionado = this.movimentacao.type;
       this.selectedItemId = this.movimentacao.item?.id ?? '';
+      this.formData = {
+        quantity: this.movimentacao.quantity ?? 0,
+        responsible: this.movimentacao.responsible ?? '',
+        date: this.movimentacao.date ?? '',
+        sector: this.movimentacao.sector ?? '',
+        observations: this.movimentacao.observations ?? '',
+        nfNumber: this.movimentacao.nfNumber ?? '',
+        nfEmissionDate: this.movimentacao.nfEmissionDate ?? '',
+        nfAccessKey: this.movimentacao.nfAccessKey ?? '',
+        unitValue: this.movimentacao.unitValue ?? null,
+      };
       return;
     }
     if (this.mode === 'create') {
       this.tipoSelecionado = 'ENTRADA';
       this.selectedItemId = '';
+      this.selectedSupplierId = '';
       this.submitted = false;
       this.formData = this.emptyForm();
     }
@@ -127,7 +155,7 @@ export class InventoryMovementsForm implements OnChanges, OnInit {
       nfNumber: this.tipoSelecionado === 'ENTRADA' ? (this.formData.nfNumber || undefined) : undefined,
       nfEmissionDate: this.tipoSelecionado === 'ENTRADA' ? (this.formData.nfEmissionDate || undefined) : undefined,
       nfAccessKey: this.tipoSelecionado === 'ENTRADA' ? (this.formData.nfAccessKey || undefined) : undefined,
-      supplierName: this.tipoSelecionado === 'ENTRADA' ? (this.formData.supplierName || undefined) : undefined,
+      supplierName: this.tipoSelecionado === 'ENTRADA' ? (this.suppliers.find(s => s.id === this.selectedSupplierId)?.name || undefined) : undefined,
       unitValue: this.tipoSelecionado === 'ENTRADA' ? (this.formData.unitValue ?? undefined) : undefined,
       totalValue: this.tipoSelecionado === 'ENTRADA' && this.totalValue > 0 ? this.totalValue : undefined,
     };
@@ -166,7 +194,7 @@ export class InventoryMovementsForm implements OnChanges, OnInit {
     return {
       quantity: 0, responsible: '', date: '', sector: '',
       observations: '', nfNumber: '', nfEmissionDate: '',
-      nfAccessKey: '', supplierName: '', unitValue: null as number | null
+      nfAccessKey: '', unitValue: null as number | null
     };
   }
 

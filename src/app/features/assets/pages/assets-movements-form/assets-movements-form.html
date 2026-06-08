@@ -10,7 +10,6 @@
   </div>
 
   <div class="drawer-content">
-    <p class="required-hint" *ngIf="mode === 'create'">Campos com <span class="required-mark">*</span> são obrigatórios</p>
 
     <!-- Toggle tipo (create) -->
     <div class="tipo-toggle" *ngIf="mode === 'create'">
@@ -36,6 +35,8 @@
         {{ tipoSelecionado === 'TRANSFERENCIA' ? 'Transferência' : tipoSelecionado === 'MANUTENCAO' ? 'Manutenção' : (formData.decommission ? 'Baixa' : 'Alteração de Estado') }}
       </span>
     </div>
+
+    <p class="required-hint" *ngIf="mode === 'create'">Campos com <span class="required-mark">*</span> são obrigatórios</p>
 
     <!-- Seção 01: Bem e data -->
     <section class="form-card">
@@ -126,7 +127,7 @@
           <label>Tipo de Manutenção <span class="required-mark" *ngIf="mode === 'create'">*</span></label>
           <select [(ngModel)]="formData.maintenanceType" [disabled]="mode === 'view'"
             [class.input-error]="submitted && validationErrors['maintenanceType']">
-            <option value="">Selecione...</option>
+            <option [ngValue]="undefined">Selecione...</option>
             <option value="PREVENTIVA">Preventiva</option>
             <option value="CORRETIVA">Corretiva</option>
             <option value="PREDITIVA">Preditiva</option>
@@ -177,6 +178,7 @@
         <div class="form-group full">
           <label>Estado após a Manutenção</label>
           <select [(ngModel)]="formData.newConservationStatus" [disabled]="mode === 'view'">
+            <option [ngValue]="undefined">Selecione...</option>
             <option value="">Em Manutenção (serviço não concluído)</option>
             <option value="EXCELENTE">Excelente — manutenção concluída, bem em ótimo estado</option>
             <option value="BOM">Bom — manutenção concluída, bem em bom estado</option>

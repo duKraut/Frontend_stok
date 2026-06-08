@@ -1,6 +1,7 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { InventoryItem, InventoryService } from '../../services/inventory.service';
 import { InventoryMovementService } from '../../services/inventory-movement.service';
+import { Supplier, SupplierService } from '../../../suppliers/services/supplier.service';
 
 @Component({
   selector: 'app-inventory-form',
@@ -8,7 +9,7 @@ import { InventoryMovementService } from '../../services/inventory-movement.serv
   templateUrl: './inventory-form.html',
   styleUrl: './inventory-form.css',
 })
-export class InventoryForm implements OnChanges {
+export class InventoryForm implements OnChanges, OnInit {
   @Input() mode: 'create' | 'edit' | 'view' = 'create';
   @Input() item: InventoryItem | null = null;
 
@@ -22,7 +23,7 @@ export class InventoryForm implements OnChanges {
   toastLeaving = false;
   showCloseConfirm = false;
 
-  readonly today = new Date().toISOString().split('T')[0];
+  readonly today = new Date().toLocaleDateString('en-CA');
 
   unidades = ['UN', 'CX', 'PCT', 'KG', 'LT', 'RL', 'M', 'M2', 'PAR', 'FD', 'GL', 'SC'];
 
@@ -36,9 +37,12 @@ export class InventoryForm implements OnChanges {
     description: '', unit: '', minStock: 0, active: true
   };
 
+  selectedSupplierId = '';
+  suppliers: Supplier[] = [];
+
   nfData = {
     initialQuantity: 0, nfNumber: '', nfEmissionDate: '',
-    supplierName: '', unitValue: null as number | null, nfAccessKey: ''
+    unitValue: null as number | null, nfAccessKey: ''
   };
 
   get totalValue(): number {
@@ -79,8 +83,16 @@ export class InventoryForm implements OnChanges {
   constructor(
     private inventoryService: InventoryService,
     private movementService: InventoryMovementService,
+    private supplierService: SupplierService,
     private cdr: ChangeDetectorRef
   ) {}
+
+  ngOnInit(): void {
+    this.supplierService.getAll().subscribe({
+      next: (data) => { this.suppliers = data.filter(s => s.active); this.cdr.detectChanges(); },
+      error: (err) => console.error('Erro ao carregar fornecedores', err)
+    });
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.item && (this.mode === 'edit' || this.mode === 'view')) {
@@ -98,7 +110,8 @@ export class InventoryForm implements OnChanges {
     }
     if (this.mode === 'create') {
       this.formData = { name: '', brand: '', category: '', location: '', description: '', unit: '', minStock: 0, active: true };
-      this.nfData = { initialQuantity: 0, nfNumber: '', nfEmissionDate: '', supplierName: '', unitValue: null, nfAccessKey: '' };
+      this.nfData = { initialQuantity: 0, nfNumber: '', nfEmissionDate: '', unitValue: null, nfAccessKey: '' };
+      this.selectedSupplierId = '';
       this.submitted = false;
     }
   }
@@ -122,7 +135,7 @@ export class InventoryForm implements OnChanges {
               date: this.today,
               nfNumber: this.nfData.nfNumber || undefined,
               nfEmissionDate: this.nfData.nfEmissionDate || undefined,
-              supplierName: this.nfData.supplierName || undefined,
+              supplierName: this.suppliers.find(s => s.id === this.selectedSupplierId)?.name || undefined,
               unitValue: this.nfData.unitValue ?? undefined,
               totalValue: this.totalValue || undefined,
               nfAccessKey: this.nfData.nfAccessKey || undefined,

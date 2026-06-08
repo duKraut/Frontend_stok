@@ -36,7 +36,6 @@
           <input type="text" placeholder="Ex: Papel A4 Sulfite 75g"
             [(ngModel)]="formData.name" [disabled]="mode === 'view'"
             [class.input-error]="submitted && validationErrors.name" />
-          <span class="field-error" *ngIf="submitted && validationErrors.name">Nome obrigatório</span>
         </div>
 
         <div class="form-group" *ngIf="mode === 'view'">
@@ -57,7 +56,6 @@
             <option value="">Selecione...</option>
             <option *ngFor="let cat of categorias" [value]="cat">{{ cat }}</option>
           </select>
-          <span class="field-error" *ngIf="submitted && validationErrors.category">Categoria obrigatória</span>
         </div>
 
         <div class="form-group">
@@ -88,7 +86,6 @@
             <option value="">Selecione...</option>
             <option *ngFor="let un of unidades" [value]="un">{{ un }}</option>
           </select>
-          <span class="field-error" *ngIf="submitted && validationErrors.unit">Unidade obrigatória</span>
         </div>
 
         <div class="form-group">
@@ -139,7 +136,10 @@
 
         <div class="form-group full">
           <label>Fornecedor</label>
-          <input type="text" placeholder="Nome ou razão social do fornecedor" [(ngModel)]="nfData.supplierName" />
+          <select [(ngModel)]="selectedSupplierId">
+            <option value="">Selecione...</option>
+            <option *ngFor="let s of suppliers" [value]="s.id">{{ s.name }}</option>
+          </select>
         </div>
 
         <div class="form-group">

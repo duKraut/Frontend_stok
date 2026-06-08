@@ -34,7 +34,7 @@ export class AssetsMovementsForm implements OnChanges, OnInit {
   errorMessage = '';
   toastLeaving = false;
   showCloseConfirm = false;
-  readonly today = new Date().toISOString().split('T')[0];
+  readonly today = new Date().toLocaleDateString('en-CA');
 
   get isDirty(): boolean {
     if (this.mode !== 'create') return false;

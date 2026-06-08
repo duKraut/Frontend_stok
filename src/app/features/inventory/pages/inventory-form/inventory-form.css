@@ -285,6 +285,11 @@
   gap: 16px;
 }
 
+.confirm-close-box i {
+  font-size: 36px;
+  color: #f59e0b;
+}
+
 .confirm-close-box p {
   margin: 0;
   font-size: 14px;
@@ -341,7 +346,7 @@
 
 .required-mark { color: #dc2626; margin-left: 2px; }
 
-.input-error { border-color: #ef4444 !important; }
+.input-error { box-shadow: 0 0 0 2px #ed8e8e !important; }
 
 .toast {
   position: fixed;
