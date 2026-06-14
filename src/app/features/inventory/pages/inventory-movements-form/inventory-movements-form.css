@@ -28,7 +28,7 @@
 .drawer-header h2 {
   margin: 0;
   color: #0f2f68;
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 700;
 }
 
@@ -53,49 +53,54 @@
   padding: 28px;
 }
 
+.toggle-area {
+  padding: 20px 28px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.toggle-label {
+  color: #1f2937;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
 /* Toggle tipo */
 .tipo-toggle {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 24px;
+  display: flex;
+  width: 100%;
+  background: #dbe5ff;
+  border-radius: 8px;
+  padding: 4px;
+  gap: 4px;
 }
 
 .tipo-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  height: 52px;
-  border: 2px solid #e2e8f0;
-  border-radius: 10px;
-  background: #ffffff;
-  color: #64748b;
-  font-size: 15px;
-  font-weight: 700;
+  flex: 1;
+  height: 38px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #334155;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
   cursor: pointer;
-  transition: 0.2s;
+  transition: 0.2s ease;
   font-family: 'Inter', sans-serif;
 }
 
-.tipo-btn i { font-size: 20px; }
-
-.tipo-btn:hover {
-  background: #f1f5f9;
-  border-color: #94a3b8;
-  color: #0f172a;
-}
-
-.tipo-btn.active-entrada {
-  background: #dcfce7;
-  border-color: #6ee7b7;
-  color: #047857;
-}
-
+.tipo-btn.active-entrada,
 .tipo-btn.active-saida {
-  background: #fee2e2;
-  border-color: #fca5a5;
-  color: #b91c1c;
+  background: #063b75;
+  color: #ffffff;
+  box-shadow: 0 8px 18px rgba(6, 59, 117, 0.22);
 }
 
 /* View badge */
@@ -238,8 +243,8 @@
   height: 56px;
   border: none;
   border-radius: 8px;
-  background: #047857;
-  color: #d1fae5;
+  background: #063b75;
+  color: #ffffff;
   font-size: 15px;
   font-weight: 800;
   text-transform: uppercase;
@@ -249,20 +254,20 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  box-shadow: 0 12px 24px rgba(4, 120, 87, 0.22);
+  box-shadow: 0 12px 24px rgba(6, 59, 117, 0.22);
   font-family: 'Inter', sans-serif;
   transition: background 0.2s;
 }
 
-.btn-save:hover { background: #065f46; }
+.btn-save:hover { background: #042a55; }
 
 .btn-save-saida {
-  background: #047857;
-  color: #d1fae5;
-  box-shadow: 0 12px 24px rgba(4, 120, 87, 0.22);
+  background: #063b75;
+  color: #ffffff;
+  box-shadow: 0 12px 24px rgba(6, 59, 117, 0.22);
 }
 
-.btn-save-saida:hover { background: #065f46; }
+.btn-save-saida:hover { background: #042a55; }
 
 @keyframes slideInRight {
   from { transform: translateX(100%); opacity: 0.7; }

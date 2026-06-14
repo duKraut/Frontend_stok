@@ -143,14 +143,14 @@
   height: 56px;
   border: none;
   border-radius: 8px;
-  background: #047857;
-  color: #d1fae5;
+  background: #063b75;
+  color: #ffffff;
   font-size: 15px;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.14em;
   cursor: pointer;
-  box-shadow: 0 12px 24px rgba(4, 120, 87, 0.22);
+  box-shadow: 0 12px 24px rgba(6, 59, 117, 0.22);
 }
 
 .drawer-footer span {

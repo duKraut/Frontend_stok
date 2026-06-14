@@ -9,29 +9,27 @@
     </button>
   </div>
 
-  <div class="drawer-content">
-
-    <!-- Toggle Tipo -->
+  <div class="toggle-area">
+    <label class="toggle-label">Tipo de Movimentação</label>
     <div class="tipo-toggle" *ngIf="mode === 'create'">
       <button class="tipo-btn" [class.active-entrada]="tipoSelecionado === 'ENTRADA'"
         (click)="tipoSelecionado = 'ENTRADA'" type="button">
-        <i class="ph ph-arrow-circle-down"></i>
         Entrada
       </button>
       <button class="tipo-btn" [class.active-saida]="tipoSelecionado === 'SAIDA'"
         (click)="tipoSelecionado = 'SAIDA'" type="button">
-        <i class="ph ph-arrow-circle-up"></i>
         Saída
       </button>
     </div>
-
-    <!-- View: tipo badge -->
     <div class="tipo-view-badge" *ngIf="mode === 'view'">
       <span class="tipo-badge" [ngClass]="movimentacao?.type === 'ENTRADA' ? 'tipo-entrada' : 'tipo-saida'">
         <i [ngClass]="movimentacao?.type === 'ENTRADA' ? 'ph ph-arrow-circle-down' : 'ph ph-arrow-circle-up'"></i>
         {{ movimentacao?.type === 'ENTRADA' ? 'Entrada' : 'Saída' }}
       </span>
     </div>
+  </div>
+
+  <div class="drawer-content">
 
     <p class="required-hint" *ngIf="mode === 'create'">Campos com <span class="required-mark">*</span> são obrigatórios</p>
 

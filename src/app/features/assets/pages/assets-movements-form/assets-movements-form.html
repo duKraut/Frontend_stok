@@ -9,25 +9,22 @@
     </button>
   </div>
 
-  <div class="drawer-content">
-
-    <!-- Toggle tipo (create) -->
+  <div class="toggle-area">
+    <label class="toggle-label">Tipo de Movimentação</label>
     <div class="tipo-toggle" *ngIf="mode === 'create'">
       <button class="tipo-btn" [class.active-transferencia]="tipoSelecionado === 'TRANSFERENCIA'"
         (click)="tipoSelecionado = 'TRANSFERENCIA'" type="button">
-        <i class="ph ph-swap"></i> Transferência
+        Transferência
       </button>
       <button class="tipo-btn" [class.active-manutencao]="tipoSelecionado === 'MANUTENCAO'"
         (click)="tipoSelecionado = 'MANUTENCAO'" type="button">
-        <i class="ph ph-wrench"></i> Manutenção
+        Manutenção
       </button>
       <button class="tipo-btn" [class.active-estado]="tipoSelecionado === 'ESTADO'"
         (click)="tipoSelecionado = 'ESTADO'; novoEstado = ''" type="button">
-        <i class="ph ph-arrows-clockwise"></i> Estado
+        Estado
       </button>
     </div>
-
-    <!-- Badge tipo (view) -->
     <div class="tipo-view-badge" *ngIf="mode === 'view'">
       <span class="tipo-badge"
         [ngClass]="tipoSelecionado === 'TRANSFERENCIA' ? 'tipo-transferencia' : tipoSelecionado === 'MANUTENCAO' ? 'tipo-manutencao' : (formData.decommission ? 'tipo-baixa' : 'tipo-estado')">
@@ -35,6 +32,9 @@
         {{ tipoSelecionado === 'TRANSFERENCIA' ? 'Transferência' : tipoSelecionado === 'MANUTENCAO' ? 'Manutenção' : (formData.decommission ? 'Baixa' : 'Alteração de Estado') }}
       </span>
     </div>
+  </div>
+
+  <div class="drawer-content">
 
     <p class="required-hint" *ngIf="mode === 'create'">Campos com <span class="required-mark">*</span> são obrigatórios</p>
 
@@ -76,10 +76,10 @@
     </section>
 
     <!-- Seção 02: Transferência -->
-    <section class="form-card transferencia-card" *ngIf="tipoSelecionado === 'TRANSFERENCIA'">
+    <section class="form-card" *ngIf="tipoSelecionado === 'TRANSFERENCIA'">
       <div class="form-section-header">
-        <span class="section-number section-transferencia">02</span>
-        <h3 class="header-transferencia">Dados da Transferência</h3>
+        <span class="section-number">02</span>
+        <h3>Dados da Transferência</h3>
       </div>
 
       <div class="form-grid">
@@ -111,10 +111,10 @@
     </section>
 
     <!-- Seção 02: Manutenção -->
-    <section class="form-card manutencao-card" *ngIf="tipoSelecionado === 'MANUTENCAO'">
+    <section class="form-card" *ngIf="tipoSelecionado === 'MANUTENCAO'">
       <div class="form-section-header">
-        <span class="section-number section-manutencao">02</span>
-        <h3 class="header-manutencao">Dados da Manutenção</h3>
+        <span class="section-number">02</span>
+        <h3>Dados da Manutenção</h3>
       </div>
 
       <div class="form-grid">
@@ -189,10 +189,10 @@
     </section>
 
     <!-- Seção 02: Estado -->
-    <section class="form-card estado-card" *ngIf="tipoSelecionado === 'ESTADO'">
+    <section class="form-card" *ngIf="tipoSelecionado === 'ESTADO'">
       <div class="form-section-header">
-        <span class="section-number section-estado">02</span>
-        <h3 class="header-estado">Alteração de Estado</h3>
+        <span class="section-number">02</span>
+        <h3>Alteração de Estado</h3>
       </div>
 
       <div class="form-grid">
@@ -270,9 +270,7 @@
   </div>
 
   <div class="drawer-footer" *ngIf="mode === 'create'">
-    <button class="btn-save"
-      [ngClass]="{ 'btn-save-manutencao': tipoSelecionado === 'MANUTENCAO', 'btn-save-estado': tipoSelecionado === 'ESTADO' && novoEstado !== 'BAIXAR', 'btn-save-baixa': tipoSelecionado === 'ESTADO' && novoEstado === 'BAIXAR' }"
-      type="button" (click)="save()" [disabled]="isSaving">
+    <button class="btn-save" type="button" (click)="save()" [disabled]="isSaving">
       <i class="ph" [ngClass]="isSaving ? 'ph-circle-notch loading-icon' : (tipoSelecionado === 'TRANSFERENCIA' ? 'ph-swap' : tipoSelecionado === 'MANUTENCAO' ? 'ph-wrench' : novoEstado === 'BAIXAR' ? 'ph-trash' : 'ph-arrows-clockwise')"></i>
       {{ isSaving ? 'Registrando...' : tipoSelecionado === 'TRANSFERENCIA' ? 'Registrar Transferência' : tipoSelecionado === 'MANUTENCAO' ? 'Registrar Manutenção' : novoEstado === 'BAIXAR' ? 'Confirmar Baixa' : 'Registrar Alteração' }}
     </button>
