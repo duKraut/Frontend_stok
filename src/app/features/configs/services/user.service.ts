@@ -24,6 +24,12 @@ export interface UserRequest {
   modules: string[];
 }
 
+export interface UpdateSelfRequest {
+  email?: string;
+  currentPassword?: string;
+  newPassword?: string;
+}
+
 export interface UserSummary {
   id: string;
   fullName: string;
@@ -57,5 +63,9 @@ export class UserService {
 
   deactivate(id: string): Observable<void> {
     return this.http.delete<void>(`${this.API}/${id}`);
+  }
+
+  updateSelf(req: UpdateSelfRequest): Observable<User> {
+    return this.http.put<User>(`${this.API}/me`, req);
   }
 }

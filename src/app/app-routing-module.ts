@@ -59,6 +59,11 @@ const routes: Routes = [
         data: { requireAdmin: true },
         loadChildren: () =>
           import('./features/configs/configs-module').then(m => m.ConfigsModule),
+      },
+      {
+        path: 'profile',
+        loadChildren: () =>
+          import('./features/profile/profile-module').then(m => m.ProfileModule),
       }
     ]
   },

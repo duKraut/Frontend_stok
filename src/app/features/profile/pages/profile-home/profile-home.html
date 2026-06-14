@@ -1,0 +1,101 @@
+<div class="profile-page">
+
+  <div class="toast success" *ngIf="successMessage" [class.leaving]="successLeaving">
+    <i class="ph ph-check-circle"></i> {{ successMessage }}
+  </div>
+  <div class="toast error" *ngIf="errorMessage" [class.leaving]="errorLeaving">
+    <i class="ph ph-x-circle"></i> {{ errorMessage }}
+  </div>
+
+  <div class="page-header">
+    <div class="user-avatar-lg">{{ userInitials }}</div>
+    <div class="user-meta">
+      <h1>{{ user?.fullName }}</h1>
+      <div class="user-tags">
+        <span class="tag role">{{ roleLabel }}</span>
+      </div>
+      <p class="user-email">{{ user?.email }}</p>
+    </div>
+  </div>
+
+  <div class="cards-grid">
+
+    <div class="card">
+      <div class="card-header">
+        <i class="ph ph-envelope"></i>
+        <h2>Alterar E-mail</h2>
+      </div>
+      <form [formGroup]="emailForm" (ngSubmit)="saveEmail()" novalidate>
+        <div class="field">
+          <label>Novo e-mail</label>
+          <input
+            type="email"
+            formControlName="email"
+            placeholder="nome@exemplo.com"
+            [class.invalid]="emailInvalid"
+          />
+          <span class="field-error" *ngIf="emailInvalid">E-mail inválido.</span>
+        </div>
+        <button type="submit" class="btn-primary" [disabled]="emailLoading">
+          <span *ngIf="!emailLoading">Salvar e-mail</span>
+          <span *ngIf="emailLoading" class="spinner"></span>
+        </button>
+      </form>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <i class="ph ph-lock-key"></i>
+        <h2>Alterar Senha</h2>
+      </div>
+      <form [formGroup]="passwordForm" (ngSubmit)="savePassword()" novalidate>
+        <div class="field">
+          <label>Senha atual</label>
+          <div class="input-wrapper">
+            <input
+              [type]="showCurrentPassword ? 'text' : 'password'"
+              formControlName="currentPassword"
+              placeholder="••••••"
+            />
+            <button type="button" class="toggle-pw" (click)="showCurrentPassword = !showCurrentPassword" tabindex="-1">
+              <i [class]="showCurrentPassword ? 'ph ph-eye-slash' : 'ph ph-eye'"></i>
+            </button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Nova senha</label>
+          <div class="input-wrapper">
+            <input
+              [type]="showNewPassword ? 'text' : 'password'"
+              formControlName="newPassword"
+              placeholder="Mínimo 6 caracteres"
+            />
+            <button type="button" class="toggle-pw" (click)="showNewPassword = !showNewPassword" tabindex="-1">
+              <i [class]="showNewPassword ? 'ph ph-eye-slash' : 'ph ph-eye'"></i>
+            </button>
+          </div>
+        </div>
+        <div class="field">
+          <label>Confirmar nova senha</label>
+          <div class="input-wrapper">
+            <input
+              [type]="showConfirmPassword ? 'text' : 'password'"
+              formControlName="confirm"
+              placeholder="Repita a nova senha"
+              [class.invalid]="passwordMismatch"
+            />
+            <button type="button" class="toggle-pw" (click)="showConfirmPassword = !showConfirmPassword" tabindex="-1">
+              <i [class]="showConfirmPassword ? 'ph ph-eye-slash' : 'ph ph-eye'"></i>
+            </button>
+          </div>
+          <span class="field-error" *ngIf="passwordMismatch">As senhas não coincidem.</span>
+        </div>
+        <button type="submit" class="btn-primary" [disabled]="passwordLoading">
+          <span *ngIf="!passwordLoading">Alterar senha</span>
+          <span *ngIf="passwordLoading" class="spinner"></span>
+        </button>
+      </form>
+    </div>
+
+  </div>
+</div>

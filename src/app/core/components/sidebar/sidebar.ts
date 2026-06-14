@@ -16,6 +16,23 @@ export class Sidebar implements OnInit {
     this.user = this.auth.getUser();
   }
 
+  get userInitials(): string {
+    const name = this.user?.fullName ?? '';
+    const parts = name.trim().split(/\s+/);
+    if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    return name.slice(0, 2).toUpperCase();
+  }
+
+  get roleLabel(): string {
+    const map: Record<string, string> = {
+      ADMINISTRADOR: 'Administrador',
+      GERENTE: 'Gerente',
+      OPERADOR: 'Operador',
+      VISUALIZADOR: 'Visualizador',
+    };
+    return map[this.user?.role ?? ''] ?? (this.user?.role ?? '');
+  }
+
   hasModule(module: string): boolean {
     if (!this.user) return false;
     if (this.user.role === 'ADMINISTRADOR') return true;
