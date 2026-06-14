@@ -139,7 +139,7 @@ export class SuppliersHome implements OnInit {
   loadSuppliers(): void {
     this.supplierService.getAll().subscribe({
       next: (data) => {
-        this.allSuppliers = data;
+        this.allSuppliers = data.sort((a, b) => (b.code ?? 0) - (a.code ?? 0));
         this.cdr.detectChanges();
       },
       error: (error) => {

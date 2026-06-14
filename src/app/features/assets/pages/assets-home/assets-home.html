@@ -30,7 +30,7 @@
     <div class="stat-bottom">
       <h2>
         {{
-          allAssets.reduce((total, asset) => total + (asset.currentValue ?? asset.acquisitionValue ?? 0), 0)
+          allAssets.filter(a => a.active).reduce((total, asset) => total + (asset.currentValue ?? asset.acquisitionValue), 0)
             | currency:'BRL':'symbol':'1.2-2'
         }}
       </h2>
@@ -58,12 +58,13 @@
   <div class="filters-row">
     <div class="table-tabs">
       <button class="tab" [class.active]="activeTab === 'Todos'" (click)="setTab('Todos')">Todos</button>
-      <button class="tab" [class.active]="activeTab === 'Excelente'" (click)="setTab('Excelente')">Excelente</button>
-      <button class="tab" [class.active]="activeTab === 'Bom'" (click)="setTab('Bom')">Bom</button>
-      <button class="tab" [class.active]="activeTab === 'Regular'" (click)="setTab('Regular')">Regular</button>
-      <button class="tab" [class.active]="activeTab === 'Manutenção'" (click)="setTab('Manutenção')">Em Manutenção</button>
-      <button class="tab" [class.active]="activeTab === 'Substituir'" (click)="setTab('Substituir')">Substituir</button>
+      <button class="tab tab-excelente" [class.active]="activeTab === 'Excelente'" (click)="setTab('Excelente')">Excelente</button>
+      <button class="tab tab-bom" [class.active]="activeTab === 'Bom'" (click)="setTab('Bom')">Bom</button>
+      <button class="tab tab-regular" [class.active]="activeTab === 'Regular'" (click)="setTab('Regular')">Regular</button>
+      <button class="tab tab-manutencao" [class.active]="activeTab === 'Manutenção'" (click)="setTab('Manutenção')">Em Manutenção</button>
+      <button class="tab tab-substituir" [class.active]="activeTab === 'Substituir'" (click)="setTab('Substituir')">Substituir</button>
       <button class="tab tab-baixado" [class.active]="activeTab === 'Baixado'" (click)="setTab('Baixado')">Baixados</button>
+      <button class="tab tab-ativos" [class.active]="activeTab === 'Ativos'" (click)="setTab('Ativos')">Ativos</button>
     </div>
 
   </div>

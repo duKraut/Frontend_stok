@@ -176,6 +176,11 @@
   color: #1d4ed8;
 }
 
+.tab-em-estoque.active { background: #dcfce7; color: #166534; }
+.tab-baixo.active      { background: #ffedd5; color: #c2410c; }
+.tab-esgotado.active   { background: #fee2e2; color: #b91c1c; }
+.tab-ativos.active     { background: #d1fae5; color: #065f46; }
+
 .btn-text {
   display: flex;
   align-items: center;

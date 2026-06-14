@@ -31,7 +31,45 @@
 }
 
 .icon-box.warning { color: #f59e0b; background-color: #fef3c7; }
-.icon-box.info { color: #3b82f6; background-color: #eff6ff; }
+.icon-box.info    { color: #3b82f6; background-color: #eff6ff; }
+.icon-box.danger  { color: #ef4444; background-color: #fee2e2; }
+
+.no-alerts {
+  font-size: 13px;
+  color: #94a3b8;
+  text-align: center;
+  padding: 24px 0;
+}
+
+.pagination-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 4px 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.pagination-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-page {
+  background: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  color: #334155;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.btn-page:hover:not(:disabled) { background: #f1f5f9; }
+.btn-page.active { background: #1a56db; color: #ffffff; }
+.btn-page:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .text-content {
   flex: 1;

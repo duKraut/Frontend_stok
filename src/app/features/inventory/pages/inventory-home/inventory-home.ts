@@ -17,7 +17,7 @@ export class InventoryHome implements OnInit {
 
   todosItens: InventoryItem[] = [];
 
-  activeTab: 'Todos' | 'Em Estoque' | 'Estoque Baixo' | 'Esgotados' = 'Todos';
+  activeTab: 'Todos' | 'Em Estoque' | 'Estoque Baixo' | 'Esgotados' | 'Ativos' = 'Todos';
   paginaAtual = 1;
   itensPorPagina = 5;
 
@@ -29,9 +29,10 @@ export class InventoryHome implements OnInit {
   successLeaving = false;
 
   get itensFiltrados() {
-    if (this.activeTab === 'Em Estoque') return this.todosItens.filter(i => (i.currentStock ?? 0) >= i.minStock && (i.currentStock ?? 0) > 0);
+    if (this.activeTab === 'Ativos')      return this.todosItens.filter(i => i.active);
+    if (this.activeTab === 'Em Estoque')  return this.todosItens.filter(i => (i.currentStock ?? 0) >= i.minStock && (i.currentStock ?? 0) > 0);
     if (this.activeTab === 'Estoque Baixo') return this.todosItens.filter(i => (i.currentStock ?? 0) > 0 && (i.currentStock ?? 0) < i.minStock);
-    if (this.activeTab === 'Esgotados') return this.todosItens.filter(i => (i.currentStock ?? 0) === 0);
+    if (this.activeTab === 'Esgotados')   return this.todosItens.filter(i => (i.currentStock ?? 0) === 0);
     return this.todosItens;
   }
 
@@ -61,7 +62,7 @@ export class InventoryHome implements OnInit {
     return 'success-outline';
   }
 
-  setTab(tab: 'Todos' | 'Em Estoque' | 'Estoque Baixo' | 'Esgotados') {
+  setTab(tab: 'Todos' | 'Em Estoque' | 'Estoque Baixo' | 'Esgotados' | 'Ativos') {
     this.activeTab = tab;
     this.paginaAtual = 1;
   }
@@ -149,7 +150,7 @@ export class InventoryHome implements OnInit {
   loadItens(): void {
     this.inventoryService.getAll().subscribe({
       next: (data) => {
-        this.todosItens = data;
+        this.todosItens = data.sort((a, b) => (b.codigo ?? 0) - (a.codigo ?? 0));
         this.cdr.detectChanges();
       },
       error: (err) => console.error('Erro ao carregar itens', err)

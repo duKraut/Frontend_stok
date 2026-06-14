@@ -197,6 +197,11 @@
 .tab:hover { background: #f1f5f9; color: #0f172a; }
 .tab.active { background: #eef2ff; color: #1d4ed8; }
 
+.tab-transferencia.active { background: #dbeafe; color: #1e40af; }
+.tab-manutencao.active    { background: #fef3c7; color: #d97706; }
+.tab-estado.active        { background: #dcfce7; color: #15803d; }
+.tab-baixas.active        { background: #fee2e2; color: #b91c1c; }
+
 .btn-text {
   display: flex;
   align-items: center;

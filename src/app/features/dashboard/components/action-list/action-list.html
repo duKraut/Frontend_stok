@@ -1,39 +1,40 @@
 <div class="actions-container">
-  
-  <div class="action-item">
-    <div class="icon-box warning"><i class="ph-fill ph-warning"></i></div>
-    <div class="text-content">
-      <h4>Resma Papel A4</h4>
-      <p>Estoque: 5 un. (Min: 20)</p>
-    </div>
-    <div class="arrow"><i class="ph ph-caret-right"></i></div>
-  </div>
 
-  <div class="action-item">
-    <div class="icon-box info"><i class="ph-fill ph-gear"></i></div>
-    <div class="text-content">
-      <h4>Servidor Dell R740</h4>
-      <p>Manutenção preventiva pendente</p>
+  <ng-container *ngIf="actions.length > 0; else empty">
+    <div class="action-item" *ngFor="let action of displayed" (click)="actionClicked.emit(action)">
+      <div class="icon-box" [ngClass]="action.type">
+        <i [class]="action.icon"></i>
+      </div>
+      <div class="text-content">
+        <h4>{{ action.title }}</h4>
+        <p>{{ action.desc }}</p>
+      </div>
+      <div class="arrow"><i class="ph ph-caret-right"></i></div>
     </div>
-    <div class="arrow"><i class="ph ph-caret-right"></i></div>
-  </div>
 
-  <div class="action-item">
-    <div class="icon-box warning"><i class="ph-fill ph-warning"></i></div>
-    <div class="text-content">
-      <h4>Toner HP 508A</h4>
-      <p>Estoque zerado no setor 4</p>
+    <div class="pagination-footer" *ngIf="totalPages > 1">
+      <span>Mostrando página {{ currentPage }} de {{ totalPages }}</span>
+      <div class="pagination-buttons">
+        <button class="btn-page" type="button" (click)="prev()" [disabled]="currentPage === 1">
+          <i class="ph ph-caret-left"></i>
+        </button>
+        <button
+          class="btn-page"
+          type="button"
+          *ngFor="let p of pageNumbers"
+          [class.active]="p === currentPage"
+          (click)="goToPage(p)">
+          {{ p }}
+        </button>
+        <button class="btn-page" type="button" (click)="next()" [disabled]="currentPage === totalPages">
+          <i class="ph ph-caret-right"></i>
+        </button>
+      </div>
     </div>
-    <div class="arrow"><i class="ph ph-caret-right"></i></div>
-  </div>
+  </ng-container>
 
-  <div class="action-item">
-    <div class="icon-box info"><i class="ph-fill ph-gear"></i></div>
-    <div class="text-content">
-      <h4>Ar Condicionado 12k</h4>
-      <p>Troca de filtros necessária</p>
-    </div>
-    <div class="arrow"><i class="ph ph-caret-right"></i></div>
-  </div>
+  <ng-template #empty>
+    <p class="no-alerts">Nenhum alerta crítico no momento.</p>
+  </ng-template>
 
 </div>
