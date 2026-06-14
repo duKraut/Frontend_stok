@@ -1,1 +1,308 @@
-<p>reports-home works!</p>
+<div class="reports-header">
+  <div class="title-area">
+    <h1>Relatórios</h1>
+    <p>Selecione um relatório, configure os filtros e clique em Gerar.</p>
+  </div>
+</div>
+
+<!-- Cards de seleção -->
+<div class="report-cards">
+
+  <div class="report-card" [class.selected]="selectedReport === 'movements'"
+    (click)="selectReport('movements')">
+    <div class="card-check" *ngIf="selectedReport === 'movements'">
+      <i class="ph-fill ph-check-circle"></i>
+    </div>
+    <div class="card-icon icon-blue">
+      <i class="ph ph-chart-bar"></i>
+    </div>
+    <div class="card-info">
+      <h3>Mensal de Movimentações</h3>
+      <p>Transferências, manutenções e baixas no período selecionado.</p>
+      <span class="card-tag">Requer período</span>
+    </div>
+  </div>
+
+  <div class="report-card" [class.selected]="selectedReport === 'departments'"
+    (click)="selectReport('departments')">
+    <div class="card-check" *ngIf="selectedReport === 'departments'">
+      <i class="ph-fill ph-check-circle"></i>
+    </div>
+    <div class="card-icon icon-green">
+      <i class="ph ph-buildings"></i>
+    </div>
+    <div class="card-info">
+      <h3>Patrimonial por Departamento</h3>
+      <p>Distribuição do patrimônio ativo entre os setores da organização.</p>
+      <span class="card-tag card-tag-neutral">Sem filtro de período</span>
+    </div>
+  </div>
+
+  <div class="report-card" [class.selected]="selectedReport === 'critical'"
+    (click)="selectReport('critical')">
+    <div class="card-check" *ngIf="selectedReport === 'critical'">
+      <i class="ph-fill ph-check-circle"></i>
+    </div>
+    <div class="card-icon icon-red">
+      <i class="ph ph-warning-circle"></i>
+    </div>
+    <div class="card-info">
+      <h3>Bens em Situação Crítica</h3>
+      <p>Bens em manutenção ou que precisam de substituição imediata.</p>
+      <span class="card-tag card-tag-neutral">Sem filtro de período</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- Controles -->
+<div class="report-controls">
+  <div class="period-row" *ngIf="selectedReport === 'movements'">
+    <label>Período</label>
+    <div class="period-selects">
+      <select [(ngModel)]="month">
+        <option *ngFor="let m of months" [value]="m.value">{{ m.label }}</option>
+      </select>
+      <select [(ngModel)]="year">
+        <option *ngFor="let y of years" [value]="y">{{ y }}</option>
+      </select>
+    </div>
+  </div>
+
+  <button class="btn-gerar" [disabled]="!canGenerate || isLoading" (click)="generate()">
+    <i class="ph" [ngClass]="isLoading ? 'ph-circle-notch spin' : 'ph-file-text'"></i>
+    {{ isLoading ? 'Gerando...' : 'Gerar Relatório' }}
+  </button>
+</div>
+
+<!-- Relatório gerado -->
+<div class="report-output" *ngIf="generatedReport && !isLoading">
+
+  <div class="output-toolbar">
+    <span class="output-title">
+      <i class="ph ph-file-text"></i>
+      {{ generatedReport === 'movements' ? 'Mensal de Movimentações' :
+         generatedReport === 'departments' ? 'Patrimonial por Departamento' :
+         'Bens em Situação Crítica' }}
+    </span>
+    <button class="btn-print" (click)="printReport()" [disabled]="isExporting">
+      <i class="ph" [ngClass]="isExporting ? 'ph-circle-notch spin' : 'ph-file-arrow-down'"></i>
+      {{ isExporting ? 'Gerando...' : 'Baixar PDF' }}
+    </button>
+  </div>
+
+  <div class="report-doc" id="print-area">
+
+    <!-- RELATÓRIO 1: MOVIMENTAÇÕES -->
+    <ng-container *ngIf="generatedReport === 'movements' && movementsData">
+      <div class="doc-header">
+        <span class="doc-org">STOK — Sistema de Gestão Patrimonial</span>
+        <h2 class="doc-title">Relatório Mensal de Movimentações</h2>
+        <p class="doc-period">Período: {{ getMonthName(month) }} / {{ year }}</p>
+        <p class="doc-emitted">Emitido em: {{ today | date:'dd/MM/yyyy HH:mm' }}</p>
+      </div>
+
+      <div class="doc-section">
+        <h3><span class="section-num">1</span> Resumo do Período</h3>
+        <div class="kpi-row">
+          <div class="kpi">
+            <span class="kpi-label">Total</span>
+            <span class="kpi-value">{{ movementsData.total }}</span>
+          </div>
+          <div class="kpi">
+            <span class="kpi-label">Transferências</span>
+            <span class="kpi-value kpi-blue">{{ movementsData.transfers }}</span>
+          </div>
+          <div class="kpi">
+            <span class="kpi-label">Manutenções</span>
+            <span class="kpi-value kpi-orange">{{ movementsData.maintenances }}</span>
+          </div>
+          <div class="kpi">
+            <span class="kpi-label">Baixas</span>
+            <span class="kpi-value kpi-red">{{ movementsData.decommissions }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="doc-section">
+        <h3><span class="section-num">2</span> Detalhamento das Movimentações</h3>
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Tipo</th>
+              <th>Bem Patrimonial</th>
+              <th>Departamento</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of movementsData.rows">
+              <td>{{ formatDate(row.date) }}</td>
+              <td>
+                <span class="type-badge"
+                  [ngClass]="row.type === 'Transferência' ? 'badge-blue' :
+                             row.type === 'Manutenção' ? 'badge-orange' :
+                             row.type === 'Baixa' ? 'badge-red' : 'badge-gray'">
+                  {{ row.type }}
+                </span>
+              </td>
+              <td>{{ row.assetName }} <span class="tomb">#{{ row.tombamento }}</span></td>
+              <td>{{ row.department }}</td>
+            </tr>
+            <tr *ngIf="movementsData.rows.length === 0">
+              <td colspan="4" class="empty-cell">Nenhuma movimentação registrada no período.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="doc-section doc-obs">
+        <h3><span class="section-num">3</span> Observações</h3>
+        <p>
+          No período de <strong>{{ getMonthName(month) }}/{{ year }}</strong>,
+          foram registradas <strong>{{ movementsData.total }}</strong> movimentação(ões) patrimonial(is),
+          sendo <strong>{{ movementsData.transfers }}</strong> transferência(s) entre departamentos,
+          <strong>{{ movementsData.maintenances }}</strong> envio(s) para manutenção e
+          <strong>{{ movementsData.decommissions }}</strong> baixa(s) definitiva(s) de bens.
+        </p>
+      </div>
+    </ng-container>
+
+    <!-- RELATÓRIO 2: DEPARTAMENTOS -->
+    <ng-container *ngIf="generatedReport === 'departments' && departmentsData">
+      <div class="doc-header">
+        <span class="doc-org">STOK — Sistema de Gestão Patrimonial</span>
+        <h2 class="doc-title">Relatório Patrimonial por Departamento</h2>
+        <p class="doc-emitted">Emitido em: {{ today | date:'dd/MM/yyyy HH:mm' }}</p>
+      </div>
+
+      <div class="doc-section">
+        <h3><span class="section-num">1</span> Resumo Geral</h3>
+        <div class="kpi-row">
+          <div class="kpi">
+            <span class="kpi-label">Total de Bens Ativos</span>
+            <span class="kpi-value kpi-blue">{{ departmentsData.totalAssets }}</span>
+          </div>
+          <div class="kpi kpi-wide">
+            <span class="kpi-label">Valor Patrimonial Total</span>
+            <span class="kpi-value kpi-green">{{ formatCurrency(departmentsData.totalValue) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="doc-section">
+        <h3><span class="section-num">2</span> Distribuição por Departamento</h3>
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Departamento</th>
+              <th class="text-right">Qtde. Bens</th>
+              <th class="text-right">Valor Total (R$)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of departmentsData.rows">
+              <td>{{ row.name }}</td>
+              <td class="text-right">{{ row.count }}</td>
+              <td class="text-right">{{ formatCurrency(row.value) }}</td>
+            </tr>
+            <tr *ngIf="departmentsData.rows.length === 0">
+              <td colspan="3" class="empty-cell">Nenhum bem ativo cadastrado.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="doc-section doc-obs" *ngIf="getLargestDept() as largest">
+        <h3><span class="section-num">3</span> Conclusão</h3>
+        <p>
+          O departamento com maior concentração de bens ativos é
+          <strong>"{{ largest.name }}"</strong>, representando
+          <strong>{{ largest.percentage }}%</strong>
+          do total do patrimônio ativo da organização.
+        </p>
+      </div>
+    </ng-container>
+
+    <!-- RELATÓRIO 3: CRÍTICOS -->
+    <ng-container *ngIf="generatedReport === 'critical' && criticalData">
+      <div class="doc-header">
+        <span class="doc-org">STOK — Sistema de Gestão Patrimonial</span>
+        <h2 class="doc-title">Relatório de Bens em Situação Crítica</h2>
+        <p class="doc-emitted">Emitido em: {{ today | date:'dd/MM/yyyy HH:mm' }}</p>
+      </div>
+
+      <div class="doc-section">
+        <h3><span class="section-num">1</span> Resumo</h3>
+        <div class="kpi-row">
+          <div class="kpi">
+            <span class="kpi-label">Em Manutenção</span>
+            <span class="kpi-value kpi-orange">{{ criticalData.inMaintenance.length }}</span>
+          </div>
+          <div class="kpi">
+            <span class="kpi-label">Para Substituição</span>
+            <span class="kpi-value kpi-red">{{ criticalData.forReplacement.length }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="doc-section">
+        <h3><span class="section-num">2</span> Bens em Manutenção</h3>
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Tombamento</th>
+              <th>Bem Patrimonial</th>
+              <th>Departamento</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let a of criticalData.inMaintenance">
+              <td class="tomb-col">#{{ a.tombamento }}</td>
+              <td>{{ a.name }}</td>
+              <td>{{ a.department }}</td>
+            </tr>
+            <tr *ngIf="criticalData.inMaintenance.length === 0">
+              <td colspan="3" class="empty-cell">Nenhum bem em manutenção.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="doc-section">
+        <h3><span class="section-num">3</span> Bens para Substituição</h3>
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Tombamento</th>
+              <th>Bem Patrimonial</th>
+              <th>Departamento</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let a of criticalData.forReplacement">
+              <td class="tomb-col">#{{ a.tombamento }}</td>
+              <td>{{ a.name }}</td>
+              <td>{{ a.department }}</td>
+            </tr>
+            <tr *ngIf="criticalData.forReplacement.length === 0">
+              <td colspan="3" class="empty-cell">Nenhum bem para substituição.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="doc-section doc-obs">
+        <h3><span class="section-num">4</span> Recomendação</h3>
+        <p>
+          Recomenda-se a revisão imediata dos
+          <strong>{{ criticalData.inMaintenance.length }}</strong> bem(ns) atualmente em manutenção
+          e a priorização de aquisições ou descarte dos
+          <strong>{{ criticalData.forReplacement.length }}</strong> bem(ns)
+          identificados para substituição, a fim de preservar a integridade do patrimônio ativo.
+        </p>
+      </div>
+    </ng-container>
+
+  </div>
+</div>
