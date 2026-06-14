@@ -12,7 +12,7 @@ import {
 import { AuthService } from '../../../../core/services/auth.service';
 import { Asset, AssetService } from '../../services/asset.service';
 import { Supplier, SupplierService } from '../../../suppliers/services/supplier.service';
-import { User, UserService } from '../../../configs/services/user.service';
+import { UserSummary, UserService } from '../../../configs/services/user.service';
 
 @Component({
   selector: 'app-assets-form',
@@ -39,7 +39,7 @@ export class AssetsForm implements OnChanges, OnInit {
   selectedSupplierId = '';
   supplierDisplay = (s: any) => s.name;
 
-  users: User[] = [];
+  users: UserSummary[] = [];
   userNameFn = (u: any) => u.fullName;
 
   get validationErrors() {
@@ -145,8 +145,8 @@ export class AssetsForm implements OnChanges, OnInit {
       next: (data) => { this.suppliers = data.filter(s => s.active); this.cdr.detectChanges(); },
       error: (err) => console.error('Erro ao carregar fornecedores', err)
     });
-    this.userService.getAll().subscribe({
-      next: (data) => { this.users = data.filter(u => u.active); this.cdr.detectChanges(); },
+    this.userService.getActive().subscribe({
+      next: (data) => { this.users = data; this.cdr.detectChanges(); },
       error: (err) => console.error('Erro ao carregar usuários', err)
     });
   }

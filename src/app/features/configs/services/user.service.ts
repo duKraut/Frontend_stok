@@ -24,6 +24,11 @@ export interface UserRequest {
   modules: string[];
 }
 
+export interface UserSummary {
+  id: string;
+  fullName: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class UserService {
   private readonly API = 'http://localhost:8080/users';
@@ -32,6 +37,10 @@ export class UserService {
 
   getAll(): Observable<User[]> {
     return this.http.get<User[]>(this.API);
+  }
+
+  getActive(): Observable<UserSummary[]> {
+    return this.http.get<UserSummary[]>(`${this.API}/active`);
   }
 
   getById(id: string): Observable<User> {

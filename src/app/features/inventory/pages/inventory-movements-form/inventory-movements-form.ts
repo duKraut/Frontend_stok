@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, O
 import { InventoryItem, InventoryService } from '../../services/inventory.service';
 import { InventoryMovement, InventoryMovementService } from '../../services/inventory-movement.service';
 import { Supplier, SupplierService } from '../../../suppliers/services/supplier.service';
+import { UserSummary, UserService } from '../../../configs/services/user.service';
 
 @Component({
   selector: 'app-inventory-movements-form',
@@ -21,8 +22,10 @@ export class InventoryMovementsForm implements OnChanges, OnInit {
   selectedSupplierId = '';
   itens: InventoryItem[] = [];
   suppliers: Supplier[] = [];
+  users: UserSummary[] = [];
   itemDisplay = (i: any) => `${i.name} (Cód. ${i.codigo}) — Saldo: ${i.currentStock ?? 0} ${i.unit}`;
   supplierDisplay = (s: any) => s.name;
+  userNameFn = (u: any) => u.fullName;
 
   submitted = false;
   isSaving = false;
@@ -48,6 +51,7 @@ export class InventoryMovementsForm implements OnChanges, OnInit {
     'Limpeza - Térreo',
     'Banheiros - 1º Andar',
     'Banheiros - 2º Andar',
+    'Outros'
   ];
 
   formData: {
@@ -100,6 +104,7 @@ export class InventoryMovementsForm implements OnChanges, OnInit {
     private movService: InventoryMovementService,
     private inventoryService: InventoryService,
     private supplierService: SupplierService,
+    private userService: UserService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -111,6 +116,10 @@ export class InventoryMovementsForm implements OnChanges, OnInit {
     this.supplierService.getAll().subscribe({
       next: (data) => { this.suppliers = data.filter(s => s.active); this.cdr.detectChanges(); },
       error: (err) => console.error('Erro ao carregar fornecedores', err)
+    });
+    this.userService.getActive().subscribe({
+      next: (data) => { this.users = data; this.cdr.detectChanges(); },
+      error: (err) => console.error('Erro ao carregar usuários', err)
     });
   }
 

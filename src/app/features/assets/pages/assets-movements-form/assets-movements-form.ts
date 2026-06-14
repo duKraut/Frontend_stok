@@ -11,7 +11,7 @@ import {
 import { AuthService } from '../../../../core/services/auth.service';
 import { AssetMovement, AssetMovementService } from '../../services/asset-movement.service';
 import { Asset, AssetService } from '../../services/asset.service';
-import { User, UserService } from '../../../configs/services/user.service';
+import { UserSummary, UserService } from '../../../configs/services/user.service';
 
 @Component({
   selector: 'app-assets-movements-form',
@@ -32,7 +32,7 @@ export class AssetsMovementsForm implements OnChanges, OnInit {
   assets: Asset[] = [];
   assetDisplay = (a: any) => `${a.name} (Tomb. ${a.tombamento})`;
 
-  users: User[] = [];
+  users: UserSummary[] = [];
   userNameFn = (u: any) => u.fullName;
 
   submitted = false;
@@ -128,8 +128,8 @@ export class AssetsMovementsForm implements OnChanges, OnInit {
       next: (data) => { this.assets = data.filter(a => a.active); this.cdr.detectChanges(); },
       error: (err) => console.error('Erro ao carregar bens', err)
     });
-    this.userService.getAll().subscribe({
-      next: (data) => { this.users = data.filter(u => u.active); this.cdr.detectChanges(); },
+    this.userService.getActive().subscribe({
+      next: (data) => { this.users = data; this.cdr.detectChanges(); },
       error: (err) => console.error('Erro ao carregar usuários', err)
     });
   }
