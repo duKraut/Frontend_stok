@@ -31,7 +31,7 @@ export class AssetsForm implements OnChanges, OnInit {
   errorMessage = '';
   toastLeaving = false;
   showCloseConfirm = false;
-  readonly today = new Date().toISOString().split('T')[0];
+  readonly today = new Date().toLocaleDateString('en-CA');
 
   suppliers: Supplier[] = [];
   selectedSupplierId = '';

@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
 import { InventoryRoutingModule } from './inventory-routing-module';
@@ -18,6 +19,7 @@ import { InventoryMovementsForm } from './pages/inventory-movements-form/invento
   ],
   imports: [
     CommonModule,
+    FormsModule,
     RouterModule,
     InventoryRoutingModule
   ]

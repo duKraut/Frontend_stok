@@ -17,6 +17,12 @@
   </div>
 </div>
 
+<div class="filtro-ativo-banner" *ngIf="filtroItemId">
+  <i class="ph ph-funnel"></i>
+  <span>Exibindo movimentações de <strong>{{ filtroItemName }}</strong></span>
+  <a class="btn-limpar-filtro" routerLink="/inventory/movements">Ver todas</a>
+</div>
+
 <div class="stats-grid">
   <div class="card stat-box">
     <div class="stat-top"><span>TOTAL DE MOVIMENTAÇÕES</span><i class="ph ph-list-numbers" style="color:#1a56db;"></i></div>
@@ -32,7 +38,7 @@
   </div>
   <div class="card stat-box">
     <div class="stat-top"><span>HOJE</span><i class="ph ph-calendar-check" style="color:#7c3aed;"></i></div>
-    <div class="stat-bottom"><h2>2</h2></div>
+    <div class="stat-bottom"><h2>{{ totalHoje }}</h2></div>
   </div>
 </div>
 
@@ -48,7 +54,6 @@
   <table class="data-table">
     <thead>
       <tr>
-        <th>ID</th>
         <th>TIPO</th>
         <th>ITEM</th>
         <th>QUANTIDADE</th>
@@ -60,30 +65,29 @@
     </thead>
     <tbody>
       <tr *ngFor="let mov of itensExibidos">
-        <td><span class="mov-id">{{ mov.id }}</span></td>
         <td>
-          <span class="tipo-badge" [ngClass]="mov.tipoClass">
-            <i [ngClass]="mov.tipo === 'Entrada' ? 'ph ph-arrow-circle-down' : 'ph ph-arrow-circle-up'"></i>
-            {{ mov.tipo }}
+          <span class="tipo-badge" [ngClass]="mov.type === 'ENTRADA' ? 'tipo-entrada' : 'tipo-saida'">
+            <i [ngClass]="mov.type === 'ENTRADA' ? 'ph ph-arrow-circle-down' : 'ph ph-arrow-circle-up'"></i>
+            {{ mov.type === 'ENTRADA' ? 'Entrada' : 'Saída' }}
           </span>
         </td>
         <td>
-          <strong>{{ mov.item }}</strong>
-          <span>SKU: {{ mov.sku }}</span>
+          <strong>{{ mov.item?.name }}</strong>
+          <span>Cód. {{ mov.item?.codigo }}</span>
         </td>
         <td>
-          <span class="qtd-cell">{{ mov.qtd }} <em>{{ mov.unid }}</em></span>
+          <span class="qtd-cell">{{ mov.quantity }} <em>{{ mov.item?.unit }}</em></span>
         </td>
-        <td>{{ mov.responsavel }}</td>
+        <td>{{ mov.responsible }}</td>
         <td>
-          <span *ngIf="mov.tipo === 'Entrada'" class="nf-tag">
-            <i class="ph ph-receipt"></i> {{ mov.nf }}
+          <span *ngIf="mov.type === 'ENTRADA'" class="nf-tag">
+            <i class="ph ph-receipt"></i> {{ mov.nfNumber || '—' }}
           </span>
-          <span *ngIf="mov.tipo === 'Saída'" class="setor-tag">
-            <i class="ph ph-door-open"></i> {{ mov.setor }}
+          <span *ngIf="mov.type === 'SAIDA'" class="setor-tag">
+            <i class="ph ph-door-open"></i> {{ mov.sector || '—' }}
           </span>
         </td>
-        <td>{{ mov.data }}</td>
+        <td>{{ mov.date | date:'dd/MM/yyyy' }}</td>
         <td class="actions-td">
           <button type="button" title="Visualizar" (click)="openView(mov)">
             <i class="ph ph-eye"></i>
@@ -108,11 +112,13 @@
   </div>
 </div>
 
-<div class="drawer-backdrop" *ngIf="isFormOpen" (click)="closeForm()"></div>
+<div class="drawer-backdrop" *ngIf="isFormOpen" (click)="backdropClick()"></div>
 
 <app-inventory-movements-form
+  #movForm
   *ngIf="isFormOpen"
   [mode]="formMode"
   [movimentacao]="selectedMov"
-  (close)="closeForm()">
+  (close)="closeForm()"
+  (saved)="onMovSaved()">
 </app-inventory-movements-form>

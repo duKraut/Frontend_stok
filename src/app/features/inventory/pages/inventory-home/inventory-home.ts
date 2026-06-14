@@ -1,6 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { HeaderService } from '../../../../core/services/header';
+import { InventoryItem, InventoryService } from '../../services/inventory.service';
+import { InventoryForm } from '../inventory-form/inventory-form';
 
 type ItemFormMode = 'create' | 'edit' | 'view';
 
@@ -11,18 +13,9 @@ type ItemFormMode = 'create' | 'edit' | 'view';
   styleUrl: './inventory-home.css',
 })
 export class InventoryHome implements OnInit {
-  todosItens = [
-    { id: '1', nome: 'Papel A4 Sulfite 75g', sku: 'SUP-OFF-001', marca: 'Chamex', categoria: 'Escritório', saldo: 5, unid: 'CX', min: 10, status: 'ESTOQUE BAIXO', statusClass: 'warning-outline' },
-    { id: '2', nome: 'Detergente Líquido 5L', sku: 'CLN-LIQ-042', marca: 'Ypê', categoria: 'Limpeza', saldo: 24, unid: 'UN', min: 5, status: 'EM ESTOQUE', statusClass: 'success-outline' },
-    { id: '3', nome: 'Cabo HDMI 2.0 3m', sku: 'IT-ACC-119', marca: 'ELG', categoria: 'Informática', saldo: 0, unid: 'UN', min: 2, status: 'ESGOTADO', statusClass: 'danger-outline' },
-    { id: '4', nome: 'Lâmpada LED 9W Bivolt', sku: 'MAINT-LIG-004', marca: 'Elgin', categoria: 'Manutenção', saldo: 45, unid: 'UN', min: 12, status: 'EM ESTOQUE', statusClass: 'success-outline' },
-    { id: '5', nome: 'Café Torrado e Moído 500g', sku: 'KIT-FNB-008', marca: 'Mellita', categoria: 'Copa & Cozinha', saldo: 8, unid: 'PCT', min: 15, status: 'ESTOQUE BAIXO', statusClass: 'warning-outline' },
-    { id: '6', nome: 'Caneta Esferográfica Azul', sku: 'SUP-OFF-015', marca: 'BIC', categoria: 'Escritório', saldo: 50, unid: 'CX', min: 10, status: 'EM ESTOQUE', statusClass: 'success-outline' },
-    { id: '7', nome: 'Desinfetante Pinho 2L', sku: 'CLN-LIQ-055', marca: 'Pinho Sol', categoria: 'Limpeza', saldo: 12, unid: 'UN', min: 10, status: 'EM ESTOQUE', statusClass: 'success-outline' },
-    { id: '8', nome: 'Teclado USB Padrão', sku: 'IT-PER-099', marca: 'Multilaser', categoria: 'Informática', saldo: 0, unid: 'UN', min: 5, status: 'ESGOTADO', statusClass: 'danger-outline' },
-    { id: '9', nome: 'Fita Crepe 18mm', sku: 'SUP-OFF-088', marca: 'TekBond', categoria: 'Escritório', saldo: 15, unid: 'RL', min: 10, status: 'EM ESTOQUE', statusClass: 'success-outline' },
-    { id: '10', nome: 'Sabonete Líquido 1L', sku: 'CLN-LIQ-012', marca: 'Granado', categoria: 'Limpeza', saldo: 3, unid: 'UN', min: 10, status: 'ESTOQUE BAIXO', statusClass: 'warning-outline' }
-  ];
+  @ViewChild('itemForm') itemForm?: InventoryForm;
+
+  todosItens: InventoryItem[] = [];
 
   activeTab: 'Todos' | 'Em Estoque' | 'Estoque Baixo' | 'Esgotados' = 'Todos';
   paginaAtual = 1;
@@ -30,16 +23,22 @@ export class InventoryHome implements OnInit {
 
   isItemFormOpen = false;
   itemFormMode: ItemFormMode = 'create';
-  selectedItem: any = null;
+  selectedItem: InventoryItem | null = null;
+
+  successMessage = '';
+  successLeaving = false;
 
   get itensFiltrados() {
-    if (this.activeTab === 'Em Estoque') return this.todosItens.filter(i => i.saldo >= i.min);
-    if (this.activeTab === 'Estoque Baixo') return this.todosItens.filter(i => i.saldo > 0 && i.saldo < i.min);
-    if (this.activeTab === 'Esgotados') return this.todosItens.filter(i => i.saldo === 0);
+    if (this.activeTab === 'Em Estoque') return this.todosItens.filter(i => (i.currentStock ?? 0) >= i.minStock && (i.currentStock ?? 0) > 0);
+    if (this.activeTab === 'Estoque Baixo') return this.todosItens.filter(i => (i.currentStock ?? 0) > 0 && (i.currentStock ?? 0) < i.minStock);
+    if (this.activeTab === 'Esgotados') return this.todosItens.filter(i => (i.currentStock ?? 0) === 0);
     return this.todosItens;
   }
 
-  get totalPaginas() { return Math.ceil(this.itensFiltrados.length / this.itensPorPagina); }
+  get totalEmBaixa() { return this.todosItens.filter(i => (i.currentStock ?? 0) > 0 && (i.currentStock ?? 0) < i.minStock).length; }
+  get totalEsgotados() { return this.todosItens.filter(i => (i.currentStock ?? 0) === 0).length; }
+
+  get totalPaginas() { return Math.max(1, Math.ceil(this.itensFiltrados.length / this.itensPorPagina)); }
 
   get itensExibidos() {
     const inicio = (this.paginaAtual - 1) * this.itensPorPagina;
@@ -47,6 +46,20 @@ export class InventoryHome implements OnInit {
   }
 
   get arrayPaginas() { return Array(this.totalPaginas).fill(0).map((_, i) => i + 1); }
+
+  getStatus(item: InventoryItem): string {
+    const stock = item.currentStock ?? 0;
+    if (stock === 0) return 'ESGOTADO';
+    if (stock < item.minStock) return 'ESTOQUE BAIXO';
+    return 'EM ESTOQUE';
+  }
+
+  getStatusClass(item: InventoryItem): string {
+    const stock = item.currentStock ?? 0;
+    if (stock === 0) return 'danger-outline';
+    if (stock < item.minStock) return 'warning-outline';
+    return 'success-outline';
+  }
 
   setTab(tab: 'Todos' | 'Em Estoque' | 'Estoque Baixo' | 'Esgotados') {
     this.activeTab = tab;
@@ -63,13 +76,13 @@ export class InventoryHome implements OnInit {
     this.isItemFormOpen = true;
   }
 
-  openEditItem(item: any): void {
+  openEditItem(item: InventoryItem): void {
     this.itemFormMode = 'edit';
     this.selectedItem = item;
     this.isItemFormOpen = true;
   }
 
-  openViewItem(item: any): void {
+  openViewItem(item: InventoryItem): void {
     this.itemFormMode = 'view';
     this.selectedItem = item;
     this.isItemFormOpen = true;
@@ -77,11 +90,51 @@ export class InventoryHome implements OnInit {
 
   closeItemForm(): void { this.isItemFormOpen = false; }
 
+  backdropClick(): void {
+    if (this.itemFormMode === 'view') {
+      this.closeItemForm();
+    } else {
+      this.itemForm?.attemptClose();
+    }
+  }
+
+  onItemSaved(): void {
+    const wasCreate = this.itemFormMode === 'create';
+    this.closeItemForm();
+    this.loadItens();
+
+    this.successLeaving = false;
+    this.successMessage = wasCreate
+      ? 'Item cadastrado com sucesso.'
+      : 'Item atualizado com sucesso.';
+
+    setTimeout(() => {
+      this.successLeaving = true;
+      this.cdr.detectChanges();
+      setTimeout(() => {
+        this.successMessage = '';
+        this.successLeaving = false;
+        this.cdr.detectChanges();
+      }, 400);
+    }, 4000);
+  }
+
   goToMovimentacoes(): void {
     this.router.navigate(['/inventory/movements']);
   }
 
-  constructor(private headerService: HeaderService, private router: Router) {}
+  goToHistoricoItem(item: InventoryItem): void {
+    this.router.navigate(['/inventory/movements'], {
+      queryParams: { itemId: item.id, itemName: item.name }
+    });
+  }
+
+  constructor(
+    private headerService: HeaderService,
+    private inventoryService: InventoryService,
+    private router: Router,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.headerService.setConfig({
@@ -89,6 +142,17 @@ export class InventoryHome implements OnInit {
       showSearch: true,
       primaryButtonLabel: 'Novo Item',
       primaryButtonIcon: 'ph ph-plus'
+    });
+    this.loadItens();
+  }
+
+  loadItens(): void {
+    this.inventoryService.getAll().subscribe({
+      next: (data) => {
+        this.todosItens = data;
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Erro ao carregar itens', err)
     });
   }
 }

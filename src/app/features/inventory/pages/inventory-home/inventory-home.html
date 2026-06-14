@@ -15,25 +15,32 @@
 
 <div class="stats-grid inventory-cards">
   <div class="card stat-box">
-    <div class="stat-top"><span>TOTAL DE SKUs</span></div>
-    <div class="stat-bottom"><h2>1.240</h2> <span class="text-success text-sm font-bold">+2.4% este mês</span></div>
+    <div class="stat-top"><span>ITENS CADASTRADOS</span></div>
+    <div class="stat-bottom"><h2>{{ todosItens.length }}</h2></div>
   </div>
   <div class="card stat-box border-left-warning">
     <div class="stat-top"><span>ITENS EM BAIXA</span></div>
-    <div class="stat-bottom"><h2>42</h2> <i class="ph-fill ph-warning" style="color: #f59e0b; font-size: 24px;"></i></div>
+    <div class="stat-bottom">
+      <h2>{{ totalEmBaixa }}</h2>
+      <i class="ph-fill ph-warning" style="color: #f59e0b; font-size: 24px;"></i>
+    </div>
   </div>
   <div class="card stat-box border-left-danger">
     <div class="stat-top"><span>ESGOTADOS</span></div>
-    <div class="stat-bottom"><h2>12</h2> <i class="ph-fill ph-warning-circle" style="color: #ef4444; font-size: 24px;"></i></div>
+    <div class="stat-bottom">
+      <h2>{{ totalEsgotados }}</h2>
+      <i class="ph-fill ph-warning-circle" style="color: #ef4444; font-size: 24px;"></i>
+    </div>
   </div>
   <div class="card stat-box">
-    <div class="stat-top"><span>SAÍDAS HOJE</span></div>
-    <div class="stat-bottom"><h2>156</h2> <span class="text-sm font-bold" style="color: #8b5cf6;">Estável</span></div>
+    <div class="stat-top"><span>ATIVOS</span></div>
+    <div class="stat-bottom">
+      <h2>{{ todosItens.filter(i => i.active).length }}</h2>
+    </div>
   </div>
 </div>
 
 <div class="card table-container">
-
   <div class="filters-row">
     <div class="table-tabs">
       <button class="tab" [class.active]="activeTab === 'Todos'" (click)="setTab('Todos')">Todos</button>
@@ -58,20 +65,24 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let item of itensExibidos">
-        <td>{{ item.id }}</td>
+      <tr *ngFor="let item of itensExibidos" [class.row-inativo]="!item.active">
+        <td class="text-primary font-bold">{{ item.codigo }}</td>
         <td>
-          <strong>{{ item.nome }}</strong>
-          <span>SKU: {{ item.sku }}</span>
+          <strong>{{ item.name }}</strong>
         </td>
-        <td>{{ item.marca }}</td>
-        <td>{{ item.categoria }}</td>
-        <td [ngClass]="{'text-warning font-bold': item.saldo < item.min && item.saldo > 0, 'text-danger font-bold': item.saldo === 0, 'font-bold': item.saldo >= item.min}">
-          {{ item.saldo }} <i *ngIf="item.saldo < item.min && item.saldo > 0" class="ph ph-arrow-down"></i>
+        <td>{{ item.brand || '—' }}</td>
+        <td>{{ item.category }}</td>
+        <td [ngClass]="{
+          'text-warning font-bold': (item.currentStock ?? 0) > 0 && (item.currentStock ?? 0) < item.minStock,
+          'text-danger font-bold': (item.currentStock ?? 0) === 0,
+          'font-bold': (item.currentStock ?? 0) >= item.minStock
+        }">
+          {{ item.currentStock ?? 0 }}
+          <i *ngIf="(item.currentStock ?? 0) > 0 && (item.currentStock ?? 0) < item.minStock" class="ph ph-arrow-down"></i>
         </td>
-        <td>{{ item.unid }}</td>
-        <td>{{ item.min }}</td>
-        <td><span class="badge" [ngClass]="item.statusClass">{{ item.status }}</span></td>
+        <td>{{ item.unit }}</td>
+        <td>{{ item.minStock }}</td>
+        <td><span class="badge" [ngClass]="getStatusClass(item)">{{ getStatus(item) }}</span></td>
         <td class="actions-td">
           <button type="button" title="Visualizar" (click)="openViewItem(item)">
             <i class="ph ph-eye"></i>
@@ -79,7 +90,7 @@
           <button type="button" title="Editar" (click)="openEditItem(item)">
             <i class="ph ph-pencil-simple"></i>
           </button>
-          <button type="button" title="Movimentações" (click)="goToMovimentacoes()">
+          <button type="button" title="Ver Histórico" (click)="goToHistoricoItem(item)">
             <i class="ph ph-clock-counter-clockwise"></i>
           </button>
         </td>
@@ -104,11 +115,19 @@
   </div>
 </div>
 
-<div class="drawer-backdrop" *ngIf="isItemFormOpen" (click)="closeItemForm()"></div>
+<div class="drawer-backdrop" *ngIf="isItemFormOpen" (click)="backdropClick()"></div>
 
 <app-inventory-form
+  #itemForm
   *ngIf="isItemFormOpen"
   [mode]="itemFormMode"
   [item]="selectedItem"
-  (close)="closeItemForm()">
+  (close)="closeItemForm()"
+  (saved)="onItemSaved()"
+  (editRequested)="openEditItem(selectedItem!)">
 </app-inventory-form>
+
+<div class="toast toast-success" *ngIf="successMessage" [class.toast-leaving]="successLeaving">
+  <i class="ph ph-check-circle"></i>
+  <span>{{ successMessage }}</span>
+</div>

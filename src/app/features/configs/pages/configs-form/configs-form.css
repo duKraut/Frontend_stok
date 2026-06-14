@@ -115,7 +115,7 @@
   height: 46px;
   border: none;
   border-radius: 6px;
-  background: #dbe5ff;
+  background: #ffffff;
   padding: 0 12px;
   font-size: 14px;
   color: #334155;
@@ -126,6 +126,13 @@
 .form-group input:focus,
 .form-group select:focus {
   box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.18);
+}
+
+.form-group input:disabled,
+.form-group select:disabled {
+  background: #dbe5ff;
+  opacity: 0.7;
+  cursor: not-allowed;
 }
 
 .checkbox-group {
@@ -267,8 +274,8 @@
   height: 56px;
   border: none;
   border-radius: 8px;
-  background: #047857;
-  color: #d1fae5;
+  background: #063b75;
+  color: #ffffff;
   font-size: 15px;
   font-weight: 800;
   text-transform: uppercase;
@@ -278,12 +285,12 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  box-shadow: 0 12px 24px rgba(4, 120, 87, 0.22);
+  box-shadow: 0 12px 24px rgba(6, 59, 117, 0.22);
   font-family: 'Inter', sans-serif;
 }
 
 .btn-save:hover {
-  background: #065f46;
+  background: #042a55;
 }
 
 @keyframes slideInRight {

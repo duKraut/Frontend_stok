@@ -18,7 +18,7 @@
         <h3>Identificação do Bem</h3>
       </div>
 
-      <div class="active-switch-group">
+      <div class="active-switch-group" *ngIf="mode !== 'create'">
         <span>Bem Ativo</span>
         <button
           type="button"
@@ -197,7 +197,7 @@
         <div class="form-group">
           <label>Método de Depreciação</label>
           <select [(ngModel)]="formData.depreciationMethod" [disabled]="mode === 'view'">
-            <option value="">Selecione...</option>
+            <option [ngValue]="undefined">Selecione...</option>
             <option *ngFor="let m of metodos" [value]="m.value">{{ m.label }}</option>
           </select>
         </div>
