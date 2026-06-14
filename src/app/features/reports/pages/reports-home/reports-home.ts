@@ -1,4 +1,5 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { HeaderService } from '../../../../core/services/header';
 import { AssetService, Asset } from '../../../assets/services/asset.service';
 import { AssetMovementService, AssetMovement } from '../../../assets/services/asset-movement.service';
 import pdfMake from 'pdfmake/build/pdfmake';
@@ -35,7 +36,7 @@ interface CriticalData {
   templateUrl: './reports-home.html',
   styleUrl: './reports-home.css',
 })
-export class ReportsHome {
+export class ReportsHome implements OnInit {
   selectedReport: 'movements' | 'departments' | 'critical' | null = null;
   generatedReport: 'movements' | 'departments' | 'critical' | null = null;
   isLoading = false;
@@ -72,8 +73,13 @@ export class ReportsHome {
   constructor(
     private assetService: AssetService,
     private movService: AssetMovementService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private headerService: HeaderService
   ) {}
+
+  ngOnInit(): void {
+    this.headerService.setConfig({ showSearch: false, searchPlaceholder: '' });
+  }
 
   selectReport(type: 'movements' | 'departments' | 'critical'): void {
     this.selectedReport = type;

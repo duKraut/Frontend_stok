@@ -31,11 +31,13 @@
     </nav>
 
     <div class="user-profile">
-        <img src="assets/images/pessoa.png" alt="Avatar do Usuário" class="avatar">
-        <div class="user-info">
-            <span class="user-name">{{ user?.fullName || 'Usuário' }}</span>
-            <span class="user-role">{{ user?.role || '' }}</span>
-        </div>
+        <a routerLink="/profile" routerLinkActive="profile-active" class="user-info-area">
+            <div class="user-avatar">{{ userInitials }}</div>
+            <div class="user-info">
+                <span class="user-name">{{ user?.fullName || 'Usuário' }}</span>
+                <span class="user-role">{{ roleLabel }}</span>
+            </div>
+        </a>
         <button (click)="logout()" class="btn-logout" title="Sair">
             <i class="ph ph-sign-out"></i>
         </button>
