@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 
 @Component({
   selector: 'app-searchable-select',
@@ -18,6 +18,8 @@ export class SearchableSelect implements OnChanges {
   searchText = '';
   isOpen = false;
   filteredOptions: any[] = [];
+
+  constructor(private cdr: ChangeDetectorRef) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['options']) {
@@ -59,6 +61,7 @@ export class SearchableSelect implements OnChanges {
     setTimeout(() => {
       this.isOpen = false;
       this.syncDisplayText();
+      this.cdr.detectChanges();
     }, 150);
   }
 
