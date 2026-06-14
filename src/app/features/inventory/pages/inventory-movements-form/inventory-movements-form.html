@@ -43,13 +43,13 @@
       <div class="form-grid">
         <div class="form-group full">
           <label>Item do Almoxarifado <span class="required-mark" *ngIf="mode === 'create'">*</span></label>
-          <select *ngIf="mode === 'create'" [(ngModel)]="selectedItemId"
-            [class.input-error]="submitted && validationErrors.item">
-            <option value="">Selecione o item...</option>
-            <option *ngFor="let item of itens" [value]="item.id">
-              {{ item.name }} (Cód. {{ item.codigo }}) — Saldo: {{ item.currentStock ?? 0 }} {{ item.unit }}
-            </option>
-          </select>
+          <app-searchable-select *ngIf="mode === 'create'"
+            [options]="itens"
+            [displayFn]="itemDisplay"
+            [(selectedId)]="selectedItemId"
+            [errorClass]="submitted && validationErrors.item"
+            placeholder="Buscar item do almoxarifado..."
+          ></app-searchable-select>
           <input *ngIf="mode === 'view'" type="text" [disabled]="true"
             [value]="movimentacao?.item?.name" />
         </div>
@@ -105,11 +105,13 @@
 
         <div class="form-group full">
           <label>Fornecedor <span class="required-mark" *ngIf="mode === 'create'">*</span></label>
-          <select *ngIf="mode === 'create'" [(ngModel)]="selectedSupplierId"
-            [class.input-error]="submitted && validationErrors.supplier">
-            <option value="">Selecione...</option>
-            <option *ngFor="let s of suppliers" [value]="s.id">{{ s.name }}</option>
-          </select>
+          <app-searchable-select *ngIf="mode === 'create'"
+            [options]="suppliers"
+            [displayFn]="supplierDisplay"
+            [(selectedId)]="selectedSupplierId"
+            [errorClass]="submitted && validationErrors.supplier"
+            placeholder="Buscar fornecedor..."
+          ></app-searchable-select>
           <input *ngIf="mode === 'view'" type="text" [disabled]="true"
             [value]="movimentacao?.supplierName || '—'" />
         </div>

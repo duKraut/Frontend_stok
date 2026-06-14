@@ -36,6 +36,7 @@ export class AssetsForm implements OnChanges, OnInit {
 
   suppliers: Supplier[] = [];
   selectedSupplierId = '';
+  supplierDisplay = (s: any) => s.name;
 
   get validationErrors() {
     return {

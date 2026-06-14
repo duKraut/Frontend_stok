@@ -48,14 +48,14 @@
       <div class="form-grid">
         <div class="form-group full">
           <label>Bem Patrimonial <span class="required-mark" *ngIf="mode === 'create'">*</span></label>
-          <select *ngIf="mode === 'create'" [(ngModel)]="selectedAssetId"
-            (ngModelChange)="onAssetChange()"
-            [class.input-error]="submitted && validationErrors.asset">
-            <option value="">Selecione o bem...</option>
-            <option *ngFor="let a of assets" [value]="a.id">
-              {{ a.name }} (Tomb. {{ a.tombamento }})
-            </option>
-          </select>
+          <app-searchable-select *ngIf="mode === 'create'"
+            [options]="assets"
+            [displayFn]="assetDisplay"
+            [selectedId]="selectedAssetId"
+            (selectedIdChange)="selectedAssetId = $event; onAssetChange()"
+            [errorClass]="submitted && validationErrors.asset"
+            placeholder="Buscar bem patrimonial..."
+          ></app-searchable-select>
           <input *ngIf="mode === 'view'" type="text"
             [value]="(movimentacao?.asset?.name || '') + ' — Tomb. ' + (movimentacao?.asset?.tombamento || '')"
             disabled />

@@ -40,6 +40,7 @@ export class InventoryForm implements OnChanges, OnInit {
 
   selectedSupplierId = '';
   suppliers: Supplier[] = [];
+  supplierDisplay = (s: any) => s.name;
 
   nfData = {
     initialQuantity: 0, nfNumber: '', nfEmissionDate: '',

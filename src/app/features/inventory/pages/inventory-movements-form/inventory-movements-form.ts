@@ -21,6 +21,8 @@ export class InventoryMovementsForm implements OnChanges, OnInit {
   selectedSupplierId = '';
   itens: InventoryItem[] = [];
   suppliers: Supplier[] = [];
+  itemDisplay = (i: any) => `${i.name} (Cód. ${i.codigo}) — Saldo: ${i.currentStock ?? 0} ${i.unit}`;
+  supplierDisplay = (s: any) => s.name;
 
   submitted = false;
   isSaving = false;

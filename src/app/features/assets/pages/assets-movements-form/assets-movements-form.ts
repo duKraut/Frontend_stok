@@ -29,6 +29,7 @@ export class AssetsMovementsForm implements OnChanges, OnInit {
   novoEstado: 'EXCELENTE' | 'BOM' | 'REGULAR' | 'SUBSTITUIR' | 'BAIXAR' | '' = '';
   selectedAssetId = '';
   assets: Asset[] = [];
+  assetDisplay = (a: any) => `${a.name} (Tomb. ${a.tombamento})`;
 
   submitted = false;
   isSaving = false;
