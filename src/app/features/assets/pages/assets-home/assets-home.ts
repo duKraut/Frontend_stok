@@ -1,5 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from '../../../../core/services/auth.service';
 import { HeaderService } from '../../../../core/services/header';
 import { Asset, AssetService } from '../../services/asset.service';
 import { AssetsForm } from '../assets-form/assets-form';
@@ -114,7 +115,9 @@ export class AssetsHome implements OnInit {
     });
   }
 
-  constructor(private headerService: HeaderService, private router: Router, private assetService: AssetService, private cdr: ChangeDetectorRef) {}
+  get canEdit(): boolean { return this.auth.canEdit(); }
+
+  constructor(private headerService: HeaderService, private router: Router, private assetService: AssetService, private cdr: ChangeDetectorRef, private auth: AuthService) {}
 
   ngOnInit(): void {
     this.headerService.setConfig({

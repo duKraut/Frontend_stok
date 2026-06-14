@@ -97,17 +97,27 @@
   display: flex;
   flex-direction: column;
   flex: 1;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .user-name {
   font-size: 14px;
   font-weight: 600;
   color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.user-email {
-  font-size: 12px;
+.user-role {
+  font-size: 11px;
   color: #64748b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: capitalize;
+  letter-spacing: 0.03em;
 }
 
 .btn-logout {

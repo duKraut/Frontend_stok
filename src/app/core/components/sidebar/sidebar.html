@@ -13,28 +13,30 @@
         <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-item">
             <i class="ph ph-squares-four"></i> Dashboard
         </a>
-        <a routerLink="/inventory" routerLinkActive="active" class="nav-item">
+        <a *ngIf="hasModule('ALMOXARIFADO')" routerLink="/inventory" routerLinkActive="active" class="nav-item">
             <i class="ph ph-archive-box"></i> Almoxarifado
         </a>
-        <a routerLink="/assets" routerLinkActive="active" class="nav-item">
+        <a *ngIf="hasModule('PATRIMONIO')" routerLink="/assets" routerLinkActive="active" class="nav-item">
             <i class="ph ph-buildings"></i> Patrimônio
         </a>
-        <a routerLink="/suppliers" routerLinkActive="active" class="nav-item">
+        <a *ngIf="hasModule('FORNECEDORES')" routerLink="/suppliers" routerLinkActive="active" class="nav-item">
             <i class="ph ph-handshake"></i> Fornecedores
         </a>
-        <a routerLink="/reports" routerLinkActive="active" class="nav-item">
-            <i class="ph ph-chart-bar"></i> Consultas</a>
-        <a routerLink="/configs" routerLinkActive="active" class="nav-item">
-            <i class="ph ph-gear"></i> Configurações</a>
+        <a *ngIf="hasModule('RELATORIOS')" routerLink="/reports" routerLinkActive="active" class="nav-item">
+            <i class="ph ph-chart-bar"></i> Consultas
+        </a>
+        <a *ngIf="isAdmin()" routerLink="/configs" routerLinkActive="active" class="nav-item">
+            <i class="ph ph-gear"></i> Configurações
+        </a>
     </nav>
 
     <div class="user-profile">
         <img src="assets/images/pessoa.png" alt="Avatar do Usuário" class="avatar">
         <div class="user-info">
-            <span class="user-name">Admin User</span>
-            <span class="user-mail" >admin@mail.com</span>
+            <span class="user-name">{{ user?.fullName || 'Usuário' }}</span>
+            <span class="user-role">{{ user?.role || '' }}</span>
         </div>
-        <button routerLink="/login" routerLinkActive="active" class="btn-logout" title="Sair">
+        <button (click)="logout()" class="btn-logout" title="Sair">
             <i class="ph ph-sign-out"></i>
         </button>
     </div>

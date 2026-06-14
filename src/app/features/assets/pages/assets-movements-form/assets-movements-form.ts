@@ -8,8 +8,10 @@ import {
   Output,
   SimpleChanges
 } from '@angular/core';
+import { AuthService } from '../../../../core/services/auth.service';
 import { AssetMovement, AssetMovementService } from '../../services/asset-movement.service';
 import { Asset, AssetService } from '../../services/asset.service';
+import { UserSummary, UserService } from '../../../configs/services/user.service';
 
 @Component({
   selector: 'app-assets-movements-form',
@@ -28,6 +30,10 @@ export class AssetsMovementsForm implements OnChanges, OnInit {
   novoEstado: 'EXCELENTE' | 'BOM' | 'REGULAR' | 'SUBSTITUIR' | 'BAIXAR' | '' = '';
   selectedAssetId = '';
   assets: Asset[] = [];
+  assetDisplay = (a: any) => `${a.name} (Tomb. ${a.tombamento})`;
+
+  users: UserSummary[] = [];
+  userNameFn = (u: any) => u.fullName;
 
   submitted = false;
   isSaving = false;
@@ -107,19 +113,24 @@ export class AssetsMovementsForm implements OnChanges, OnInit {
     return Object.values(this.validationErrors).some(v => v);
   }
 
+  get canDelete(): boolean { return this.auth.canDelete(); }
+
   constructor(
     private movService: AssetMovementService,
     private assetService: AssetService,
-    private cdr: ChangeDetectorRef
+    private userService: UserService,
+    private cdr: ChangeDetectorRef,
+    private auth: AuthService
   ) {}
 
   ngOnInit(): void {
     this.assetService.getAll().subscribe({
-      next: (data) => {
-        this.assets = data.filter(a => a.active);
-        this.cdr.detectChanges();
-      },
+      next: (data) => { this.assets = data.filter(a => a.active); this.cdr.detectChanges(); },
       error: (err) => console.error('Erro ao carregar bens', err)
+    });
+    this.userService.getActive().subscribe({
+      next: (data) => { this.users = data; this.cdr.detectChanges(); },
+      error: (err) => console.error('Erro ao carregar usuários', err)
     });
   }
 

@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { AuthService } from '../../../../core/services/auth.service';
 import { HeaderService } from '../../../../core/services/header';
 import { AssetMovement, AssetMovementService } from '../../services/asset-movement.service';
 import { AssetsMovementsForm } from '../assets-movements-form/assets-movements-form';
@@ -115,11 +116,14 @@ export class AssetsMovements implements OnInit {
     }, 4000);
   }
 
+  get canEdit(): boolean { return this.auth.canEdit(); }
+
   constructor(
     private headerService: HeaderService,
     private movService: AssetMovementService,
     private cdr: ChangeDetectorRef,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private auth: AuthService
   ) {}
 
   ngOnInit(): void {

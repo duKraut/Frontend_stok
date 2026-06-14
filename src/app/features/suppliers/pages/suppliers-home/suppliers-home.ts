@@ -1,4 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { AuthService } from '../../../../core/services/auth.service';
 import { HeaderService } from '../../../../core/services/header';
 import { SupplierService, Supplier } from '../../services/supplier.service';
 import { SuppliersForm } from '../suppliers-form/suppliers-form';
@@ -119,10 +120,13 @@ export class SuppliersHome implements OnInit {
     return 'avatar-company';
   }
 
+  get canEdit(): boolean { return this.auth.canEdit(); }
+
   constructor(
     private headerService: HeaderService,
     private supplierService: SupplierService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private auth: AuthService
   ) {}
 
   ngOnInit(): void {

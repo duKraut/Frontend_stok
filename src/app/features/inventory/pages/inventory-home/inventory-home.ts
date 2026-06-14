@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from '../../../../core/services/auth.service';
 import { HeaderService } from '../../../../core/services/header';
 import { InventoryItem, InventoryService } from '../../services/inventory.service';
 import { InventoryForm } from '../inventory-form/inventory-form';
@@ -130,11 +131,14 @@ export class InventoryHome implements OnInit {
     });
   }
 
+  get canEdit(): boolean { return this.auth.canEdit(); }
+
   constructor(
     private headerService: HeaderService,
     private inventoryService: InventoryService,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private auth: AuthService
   ) {}
 
   ngOnInit(): void {

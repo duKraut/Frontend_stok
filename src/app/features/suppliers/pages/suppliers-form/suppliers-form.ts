@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { AuthService } from '../../../../core/services/auth.service';
 import { Supplier, SupplierService } from '../../services/supplier.service';
 
 @Component({
@@ -86,7 +87,10 @@ export class SuppliersForm implements OnChanges {
     active: true
   };
 
-  constructor(private supplierService: SupplierService, private cdr: ChangeDetectorRef) {}
+  get canEdit(): boolean { return this.auth.canEdit(); }
+  get canDelete(): boolean { return this.auth.canDelete(); }
+
+  constructor(private supplierService: SupplierService, private cdr: ChangeDetectorRef, private auth: AuthService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.supplier && (this.mode === 'edit' || this.mode === 'view')) {

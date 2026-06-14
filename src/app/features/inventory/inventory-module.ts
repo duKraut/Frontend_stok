@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
 import { InventoryRoutingModule } from './inventory-routing-module';
+import { SharedModule } from '../../shared/shared-module';
 import { InventoryHome } from './pages/inventory-home/inventory-home';
 import { InventoryForm } from './pages/inventory-form/inventory-form';
 import { InventoryMovements } from './pages/inventory-movements/inventory-movements';
@@ -21,7 +22,8 @@ import { InventoryMovementsForm } from './pages/inventory-movements-form/invento
     CommonModule,
     FormsModule,
     RouterModule,
-    InventoryRoutingModule
+    InventoryRoutingModule,
+    SharedModule
   ]
 })
 export class InventoryModule { }

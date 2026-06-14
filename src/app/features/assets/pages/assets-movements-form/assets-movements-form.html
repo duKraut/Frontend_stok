@@ -48,14 +48,14 @@
       <div class="form-grid">
         <div class="form-group full">
           <label>Bem Patrimonial <span class="required-mark" *ngIf="mode === 'create'">*</span></label>
-          <select *ngIf="mode === 'create'" [(ngModel)]="selectedAssetId"
-            (ngModelChange)="onAssetChange()"
-            [class.input-error]="submitted && validationErrors.asset">
-            <option value="">Selecione o bem...</option>
-            <option *ngFor="let a of assets" [value]="a.id">
-              {{ a.name }} (Tomb. {{ a.tombamento }})
-            </option>
-          </select>
+          <app-searchable-select *ngIf="mode === 'create'"
+            [options]="assets"
+            [displayFn]="assetDisplay"
+            [selectedId]="selectedAssetId"
+            (selectedIdChange)="selectedAssetId = $event; onAssetChange()"
+            [errorClass]="submitted && validationErrors.asset"
+            placeholder="Buscar bem patrimonial..."
+          ></app-searchable-select>
           <input *ngIf="mode === 'view'" type="text"
             [value]="(movimentacao?.asset?.name || '') + ' — Tomb. ' + (movimentacao?.asset?.tombamento || '')"
             disabled />
@@ -69,8 +69,15 @@
 
         <div class="form-group">
           <label>Responsável <span class="required-mark" *ngIf="mode === 'create'">*</span></label>
-          <input type="text" [(ngModel)]="formData.responsible" placeholder="Nome do responsável"
-            [disabled]="mode === 'view'" [class.input-error]="submitted && validationErrors.responsible" />
+          <app-searchable-select
+            [options]="users"
+            [displayFn]="userNameFn"
+            [valueFn]="userNameFn"
+            [(selectedId)]="formData.responsible"
+            [disabled]="mode === 'view'"
+            [errorClass]="submitted && validationErrors.responsible"
+            placeholder="Buscar usuário..."
+          ></app-searchable-select>
         </div>
       </div>
     </section>
@@ -205,7 +212,7 @@
             <option value="BOM">Bom</option>
             <option value="REGULAR">Regular</option>
             <option value="SUBSTITUIR">Substituir — necessita substituição</option>
-            <option value="BAIXAR">Baixar bem — remover do inventário ativo</option>
+            <option *ngIf="canDelete" value="BAIXAR">Baixar bem — remover do inventário ativo</option>
           </select>
         </div>
 

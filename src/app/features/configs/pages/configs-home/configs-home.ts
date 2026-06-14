@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { HeaderService } from '../../../../core/services/header';
+import { UserService, User } from '../../services/user.service';
+import { ConfigsForm } from '../configs-form/configs-form';
 
 type UserFormMode = 'create' | 'edit' | 'view';
 
@@ -10,16 +12,9 @@ type UserFormMode = 'create' | 'edit' | 'view';
   styleUrl: './configs-home.css',
 })
 export class ConfigsHome implements OnInit {
-  allUsers = [
-    { id: '1', name: 'Ana Paula Ferreira', email: 'ana.ferreira@sistema.com', role: 'Administrador', department: 'TI', status: 'Ativo', statusClass: 'badge-Ativo' },
-    { id: '2', name: 'Bruno Henrique Costa', email: 'bruno.costa@sistema.com', role: 'Gerente', department: 'Almoxarifado', status: 'Ativo', statusClass: 'badge-Ativo' },
-    { id: '3', name: 'Carla Mendes Ribeiro', email: 'carla.ribeiro@sistema.com', role: 'Operador', department: 'Patrimônio', status: 'Ativo', statusClass: 'badge-Ativo' },
-    { id: '4', name: 'Diego Alves Santana', email: 'diego.santana@sistema.com', role: 'Visualizador', department: 'Compras', status: 'Inativo', statusClass: 'badge-Inativo' },
-    { id: '5', name: 'Elisa Rodrigues Lima', email: 'elisa.lima@sistema.com', role: 'Operador', department: 'Almoxarifado', status: 'Ativo', statusClass: 'badge-Ativo' },
-    { id: '6', name: 'Felipe Torres Gomes', email: 'felipe.gomes@sistema.com', role: 'Gerente', department: 'TI', status: 'Ativo', statusClass: 'badge-Ativo' },
-    { id: '7', name: 'Gabriela Nunes Pinto', email: 'gabriela.pinto@sistema.com', role: 'Visualizador', department: 'Financeiro', status: 'Pendente', statusClass: 'badge-Pendente' },
-    { id: '8', name: 'Henrique Souza Barros', email: 'henrique.barros@sistema.com', role: 'Operador', department: 'Patrimônio', status: 'Inativo', statusClass: 'badge-Inativo' },
-  ];
+  @ViewChild('userForm') userForm?: ConfigsForm;
+
+  allUsers: User[] = [];
 
   activeTab: 'Todos' | 'Ativos' | 'Inativos' = 'Todos';
   paginaAtual = 1;
@@ -27,16 +22,19 @@ export class ConfigsHome implements OnInit {
 
   isUserFormOpen = false;
   userFormMode: UserFormMode = 'create';
-  selectedUser: any = null;
+  selectedUser: User | null = null;
+
+  successMessage = '';
+  successLeaving = false;
 
   get filteredUsers() {
-    if (this.activeTab === 'Ativos') return this.allUsers.filter(u => u.status === 'Ativo');
-    if (this.activeTab === 'Inativos') return this.allUsers.filter(u => u.status === 'Inativo');
+    if (this.activeTab === 'Ativos') return this.allUsers.filter(u => u.active === true);
+    if (this.activeTab === 'Inativos') return this.allUsers.filter(u => u.active === false);
     return this.allUsers;
   }
 
   get totalPaginas() {
-    return Math.ceil(this.filteredUsers.length / this.itensPorPagina);
+    return Math.max(1, Math.ceil(this.filteredUsers.length / this.itensPorPagina));
   }
 
   get itemsDisplayed() {
@@ -48,13 +46,8 @@ export class ConfigsHome implements OnInit {
     return Array(this.totalPaginas).fill(0).map((_, i) => i + 1);
   }
 
-  get totalAtivos() {
-    return this.allUsers.filter(u => u.status === 'Ativo').length;
-  }
-
-  get totalAdmins() {
-    return this.allUsers.filter(u => u.role === 'Administrador').length;
-  }
+  get totalAtivos() { return this.allUsers.filter(u => u.active === true).length; }
+  get totalAdmins() { return this.allUsers.filter(u => u.role === 'ADMINISTRADOR').length; }
 
   setTab(tab: 'Todos' | 'Ativos' | 'Inativos') {
     this.activeTab = tab;
@@ -70,10 +63,20 @@ export class ConfigsHome implements OnInit {
   }
 
   getRoleAvatarClass(role: string): string {
-    if (role === 'Administrador') return 'avatar-admin';
-    if (role === 'Gerente') return 'avatar-manager';
-    if (role === 'Operador') return 'avatar-operator';
+    if (role === 'ADMINISTRADOR') return 'avatar-admin';
+    if (role === 'GERENTE') return 'avatar-manager';
+    if (role === 'OPERADOR') return 'avatar-operator';
     return 'avatar-viewer';
+  }
+
+  getRoleLabel(role: string): string {
+    const map: Record<string, string> = {
+      ADMINISTRADOR: 'Administrador',
+      GERENTE: 'Gerente',
+      OPERADOR: 'Operador',
+      VISUALIZADOR: 'Visualizador'
+    };
+    return map[role] ?? role;
   }
 
   openCreateUser(): void {
@@ -82,13 +85,21 @@ export class ConfigsHome implements OnInit {
     this.isUserFormOpen = true;
   }
 
-  openEditUser(user: any): void {
-    this.userFormMode = 'edit';
+  openEditUser(user: User): void {
     this.selectedUser = user;
-    this.isUserFormOpen = true;
+    this.userFormMode = 'edit';
+    if (this.isUserFormOpen) {
+      this.isUserFormOpen = false;
+      setTimeout(() => {
+        this.isUserFormOpen = true;
+        this.cdr.detectChanges();
+      }, 0);
+    } else {
+      this.isUserFormOpen = true;
+    }
   }
 
-  openViewUser(user: any): void {
+  openViewUser(user: User): void {
     this.userFormMode = 'view';
     this.selectedUser = user;
     this.isUserFormOpen = true;
@@ -98,7 +109,40 @@ export class ConfigsHome implements OnInit {
     this.isUserFormOpen = false;
   }
 
-  constructor(private headerService: HeaderService) {}
+  backdropClick(): void {
+    if (this.userFormMode === 'view') {
+      this.closeUserForm();
+    } else {
+      this.userForm?.attemptClose();
+    }
+  }
+
+  onUserSaved(): void {
+    const wasCreate = this.userFormMode === 'create';
+    this.closeUserForm();
+    this.loadUsers();
+
+    this.successLeaving = false;
+    this.successMessage = wasCreate
+      ? 'Usuário cadastrado com sucesso.'
+      : 'Usuário atualizado com sucesso.';
+
+    setTimeout(() => {
+      this.successLeaving = true;
+      this.cdr.detectChanges();
+      setTimeout(() => {
+        this.successMessage = '';
+        this.successLeaving = false;
+        this.cdr.detectChanges();
+      }, 400);
+    }, 4000);
+  }
+
+  constructor(
+    private headerService: HeaderService,
+    private userService: UserService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.headerService.setConfig({
@@ -106,6 +150,18 @@ export class ConfigsHome implements OnInit {
       showSearch: true,
       primaryButtonLabel: 'Novo Usuário',
       primaryButtonIcon: 'ph ph-plus'
+    });
+    this.loadUsers();
+  }
+
+  loadUsers(): void {
+    this.userService.getAll().subscribe({
+      next: (data) => {
+        this.allUsers = data.sort((a, b) => a.fullName.localeCompare(b.fullName));
+        this.paginaAtual = Math.min(this.paginaAtual, this.totalPaginas);
+        this.cdr.detectChanges();
+      },
+      error: (err) => console.error('Erro ao carregar usuários', err)
     });
   }
 }

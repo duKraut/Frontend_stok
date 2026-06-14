@@ -1,0 +1,32 @@
+<div class="searchable-select" [class.is-disabled]="disabled" [class.input-error]="errorClass">
+  <div class="select-input-wrap">
+    <input
+      type="text"
+      [value]="searchText"
+      (input)="onInput($event)"
+      (focus)="onFocus()"
+      (blur)="onBlur()"
+      [placeholder]="placeholder"
+      [disabled]="disabled"
+      autocomplete="off"
+    />
+    <button *ngIf="selectedId && !disabled" type="button" class="clear-btn" (mousedown)="clear($event)">
+      <i class="ph ph-x"></i>
+    </button>
+    <i class="ph ph-caret-down select-caret" *ngIf="!selectedId || disabled"></i>
+  </div>
+
+  <div class="select-dropdown" *ngIf="isOpen">
+    <button
+      type="button"
+      class="select-option"
+      *ngFor="let opt of filteredOptions"
+      (mousedown)="select(opt)"
+    >
+      {{ displayFn(opt) }}
+    </button>
+    <div class="select-empty" *ngIf="filteredOptions.length === 0">
+      Nenhum resultado encontrado
+    </div>
+  </div>
+</div>

@@ -11,7 +11,7 @@
     </div>
   </div>
   <div class="header-actions-btn">
-    <button class="btn-primary" type="button" (click)="openCreate()">
+    <button *ngIf="canEdit" class="btn-primary" type="button" (click)="openCreate()">
       <i class="ph ph-arrows-left-right"></i><span> Nova Movimentação</span>
     </button>
   </div>
