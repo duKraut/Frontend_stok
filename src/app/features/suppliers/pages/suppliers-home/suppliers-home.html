@@ -4,7 +4,7 @@
         <p>Gerenciamento e cadastro de Fornecedores</p>
     </div>
     <div class="header-actions-btn">
-        <button class="btn-primary" type="button" (click)="openCreateSupplier()"><i class="ph ph-plus"></i><span> Novo Fornecedor</span></button>
+        <button *ngIf="canEdit" class="btn-primary" type="button" (click)="openCreateSupplier()"><i class="ph ph-plus"></i><span> Novo Fornecedor</span></button>
     </div>
 </div>
 
@@ -85,7 +85,7 @@
                 <td><span class="badge" [ngClass]="active.active ? 'badge-active' : 'badge-inactive'">{{ active.active ? 'Ativo' : 'Inativo' }}</span></td>
                 <td class="actions-td">
                     <button type="button" (click)="openViewSupplier(active)"><i class="ph ph-eye"></i></button>
-                    <button type="button" (click)="openEditSupplier(active)"><i class="ph ph-pencil-simple"></i></button>
+                    <button *ngIf="canEdit" type="button" (click)="openEditSupplier(active)"><i class="ph ph-pencil-simple"></i></button>
                 </td>
             </tr>
         </tbody>

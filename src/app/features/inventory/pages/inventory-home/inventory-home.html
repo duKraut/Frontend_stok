@@ -7,7 +7,7 @@
     <button class="btn-outline" type="button" (click)="goToMovimentacoes()">
       <i class="ph ph-arrows-left-right"></i><span>Movimentações</span>
     </button>
-    <button class="btn-primary" type="button" (click)="openCreateItem()">
+    <button *ngIf="canEdit" class="btn-primary" type="button" (click)="openCreateItem()">
       <i class="ph ph-plus"></i><span>Novo Item</span>
     </button>
   </div>
@@ -88,7 +88,7 @@
           <button type="button" title="Visualizar" (click)="openViewItem(item)">
             <i class="ph ph-eye"></i>
           </button>
-          <button type="button" title="Editar" (click)="openEditItem(item)">
+          <button *ngIf="canEdit" type="button" title="Editar" (click)="openEditItem(item)">
             <i class="ph ph-pencil-simple"></i>
           </button>
           <button type="button" title="Ver Histórico" (click)="goToHistoricoItem(item)">

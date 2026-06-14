@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { AuthService } from '../../../../core/services/auth.service';
 import { InventoryItem, InventoryService } from '../../services/inventory.service';
 import { InventoryMovementService } from '../../services/inventory-movement.service';
 import { Supplier, SupplierService } from '../../../suppliers/services/supplier.service';
@@ -80,11 +81,15 @@ export class InventoryForm implements OnChanges, OnInit {
     return Object.values(this.validationErrors).some(v => v);
   }
 
+  get canEdit(): boolean { return this.auth.canEdit(); }
+  get canDelete(): boolean { return this.auth.canDelete(); }
+
   constructor(
     private inventoryService: InventoryService,
     private movementService: InventoryMovementService,
     private supplierService: SupplierService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private auth: AuthService
   ) {}
 
   ngOnInit(): void {

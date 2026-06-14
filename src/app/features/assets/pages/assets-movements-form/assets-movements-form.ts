@@ -8,6 +8,7 @@ import {
   Output,
   SimpleChanges
 } from '@angular/core';
+import { AuthService } from '../../../../core/services/auth.service';
 import { AssetMovement, AssetMovementService } from '../../services/asset-movement.service';
 import { Asset, AssetService } from '../../services/asset.service';
 
@@ -107,10 +108,13 @@ export class AssetsMovementsForm implements OnChanges, OnInit {
     return Object.values(this.validationErrors).some(v => v);
   }
 
+  get canDelete(): boolean { return this.auth.canDelete(); }
+
   constructor(
     private movService: AssetMovementService,
     private assetService: AssetService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private auth: AuthService
   ) {}
 
   ngOnInit(): void {

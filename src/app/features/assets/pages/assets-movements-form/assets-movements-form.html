@@ -205,7 +205,7 @@
             <option value="BOM">Bom</option>
             <option value="REGULAR">Regular</option>
             <option value="SUBSTITUIR">Substituir — necessita substituição</option>
-            <option value="BAIXAR">Baixar bem — remover do inventário ativo</option>
+            <option *ngIf="canDelete" value="BAIXAR">Baixar bem — remover do inventário ativo</option>
           </select>
         </div>
 

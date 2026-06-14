@@ -43,7 +43,7 @@
         <h3>Identificação Corporativa</h3>
       </div>
 
-      <div class="active-switch-group" *ngIf="mode !== 'create'">
+      <div class="active-switch-group" *ngIf="mode !== 'create' && canDelete">
         <span>Fornecedor Ativo</span>
 
         <button
@@ -133,8 +133,8 @@
     </section>
   </div>
 
-  <div class="drawer-footer">
-    <button *ngIf="mode === 'view'" class="btn-save" type="button" (click)="requestEdit()">
+  <div class="drawer-footer" *ngIf="mode !== 'view' || canEdit">
+    <button *ngIf="mode === 'view' && canEdit" class="btn-save" type="button" (click)="requestEdit()">
       <i class="ph ph-pencil-simple"></i>
       Editar Fornecedor
     </button>

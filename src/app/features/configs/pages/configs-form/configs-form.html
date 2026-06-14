@@ -11,7 +11,7 @@
     </button>
   </div>
 
-  <div class="drawer-content">
+  <div class="drawer-content" [formGroup]="form">
 
     <section class="form-card">
       <div class="form-section-header">
@@ -21,7 +21,7 @@
 
       <div class="form-group checkbox-group">
         <label class="checkbox-label">
-          <input type="checkbox" checked [disabled]="mode === 'view'" />
+          <input type="checkbox" formControlName="active" />
           <span>Usuário Ativo</span>
         </label>
       </div>
@@ -29,25 +29,35 @@
       <div class="form-grid">
         <div class="form-group full">
           <label>Nome Completo</label>
-          <input type="text" placeholder="Ex: João Pedro da Silva" [disabled]="mode === 'view'"
-            [value]="user?.name || ''" />
+          <input type="text" placeholder="Ex: João Pedro da Silva" formControlName="fullName" />
         </div>
 
         <div class="form-group full">
           <label>E-mail</label>
-          <input type="email" placeholder="usuario@sistema.com" [disabled]="mode === 'view'"
-            [value]="user?.email || ''" />
+          <input type="email" placeholder="usuario@sistema.com" formControlName="email" />
         </div>
 
-        <div class="form-group" *ngIf="mode === 'create'">
-          <label>Senha Provisória</label>
-          <input type="password" placeholder="Mín. 8 caracteres" />
-        </div>
+        <ng-container *ngIf="mode === 'create'">
+          <div class="form-group">
+            <label>Senha</label>
+            <input type="password" placeholder="Mín. 6 caracteres" formControlName="password" />
+          </div>
+          <div class="form-group">
+            <label>Confirmar Senha</label>
+            <input type="password" placeholder="Repita a senha" formControlName="confirm" />
+          </div>
+        </ng-container>
 
-        <div class="form-group" *ngIf="mode === 'create'">
-          <label>Confirmar Senha</label>
-          <input type="password" placeholder="Repita a senha" />
-        </div>
+        <ng-container *ngIf="mode === 'edit'">
+          <div class="form-group">
+            <label>Nova Senha <span style="font-weight:400;opacity:.6">(opcional)</span></label>
+            <input type="password" placeholder="Deixe em branco para manter" formControlName="password" />
+          </div>
+          <div class="form-group">
+            <label>Confirmar Nova Senha</label>
+            <input type="password" placeholder="Repita a senha" formControlName="confirm" />
+          </div>
+        </ng-container>
       </div>
     </section>
 
@@ -59,19 +69,29 @@
 
       <div class="form-grid">
         <div class="form-group">
-          <label>Cargo</label>
-          <input type="text" placeholder="Ex: Analista de TI" [disabled]="mode === 'view'"
-            [value]="user?.role || ''" />
+          <label>Departamento</label>
+          <select formControlName="department">
+            <option value="">Selecione...</option>
+            <option value="TI - Sede">TI - Sede</option>
+            <option value="TI - Infra">TI - Infra</option>
+            <option value="Administrativo">Administrativo</option>
+            <option value="Financeiro">Financeiro</option>
+            <option value="Almoxarifado">Almoxarifado</option>
+            <option value="Vendas">Vendas</option>
+            <option value="Recursos Humanos">Recursos Humanos</option>
+            <option value="Diretoria">Diretoria</option>
+            <option value="Manutenção">Manutenção</option>
+            <option value="Recepção">Recepção</option>
+          </select>
         </div>
 
         <div class="form-group">
-          <label>Departamento</label>
-          <select [disabled]="mode === 'view'">
-            <option [selected]="user?.department === 'TI'">TI</option>
-            <option [selected]="user?.department === 'Almoxarifado'">Almoxarifado</option>
-            <option [selected]="user?.department === 'Patrimônio'">Patrimônio</option>
-            <option [selected]="user?.department === 'Compras'">Compras</option>
-            <option [selected]="user?.department === 'Financeiro'">Financeiro</option>
+          <label>Perfil de Acesso</label>
+          <select formControlName="role">
+            <option value="ADMINISTRADOR">Administrador</option>
+            <option value="GERENTE">Gerente</option>
+            <option value="OPERADOR">Operador</option>
+            <option value="VISUALIZADOR">Visualizador</option>
           </select>
         </div>
       </div>
@@ -81,16 +101,6 @@
       <div class="form-section-header">
         <span class="section-number">03</span>
         <h3>Perfil de Acesso</h3>
-      </div>
-
-      <div class="form-group full">
-        <label>Perfil do Usuário</label>
-        <select [disabled]="mode === 'view'">
-          <option [selected]="user?.role === 'Administrador'">Administrador</option>
-          <option [selected]="user?.role === 'Gerente'">Gerente</option>
-          <option [selected]="user?.role === 'Operador'">Operador</option>
-          <option [selected]="user?.role === 'Visualizador'">Visualizador</option>
-        </select>
       </div>
 
       <div class="role-descriptions">
@@ -125,29 +135,48 @@
       </div>
     </section>
 
-    <section class="form-card">
+    <section class="form-card" formGroupName="modules">
       <div class="form-section-header">
         <span class="section-number">04</span>
         <h3>Módulos Liberados</h3>
       </div>
 
       <div class="modules-grid">
-        <label class="module-item" *ngFor="let mod of modules">
+        <label class="module-item" *ngFor="let mod of allModules">
           <div class="module-left">
             <i [ngClass]="mod.icon"></i>
             <span>{{ mod.label }}</span>
           </div>
-          <input type="checkbox" [disabled]="mode === 'view'" checked />
+          <input type="checkbox" [formControlName]="mod.key" />
         </label>
       </div>
     </section>
 
+    <div *ngIf="errorMsg" class="form-error">{{ errorMsg }}</div>
+
   </div>
 
   <div class="drawer-footer" *ngIf="mode !== 'view'">
-    <button class="btn-save" type="button">
+    <button class="btn-save" type="button" (click)="onSubmit()" [disabled]="loading">
       <i class="ph ph-floppy-disk"></i>
-      {{ mode === 'create' ? 'Cadastrar Usuário' : 'Salvar Alterações' }}
+      {{ loading ? 'Salvando...' : (mode === 'create' ? 'Cadastrar Usuário' : 'Salvar Alterações') }}
+    </button>
+  </div>
+
+  <div class="drawer-footer" *ngIf="mode === 'view'">
+    <button class="btn-save" type="button" (click)="requestEdit()">
+      <i class="ph ph-pencil-simple"></i>
+      Editar Usuário
     </button>
   </div>
 </aside>
+
+<div class="confirm-overlay" *ngIf="showCloseConfirm">
+  <div class="confirm-box">
+    <p>Há alterações não salvas. Deseja sair mesmo assim?</p>
+    <div class="confirm-actions">
+      <button class="btn-confirm-cancel" (click)="cancelClose()">Continuar editando</button>
+      <button class="btn-confirm-ok" (click)="confirmClose()">Sair sem salvar</button>
+    </div>
+  </div>
+</div>

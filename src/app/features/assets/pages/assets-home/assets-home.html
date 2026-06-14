@@ -10,7 +10,7 @@
       <span>Movimentações</span>
     </button>
 
-    <button class="btn-primary" type="button" (click)="openCreateBem()">
+    <button *ngIf="canEdit" class="btn-primary" type="button" (click)="openCreateBem()">
       <i class="ph ph-plus"></i>
       <span>Novo Bem</span>
     </button>
@@ -146,7 +146,7 @@
             <i class="ph ph-eye"></i>
           </button>
 
-          <button type="button" title="Editar" (click)="openEditBem(asset)">
+          <button *ngIf="canEdit" type="button" title="Editar" (click)="openEditBem(asset)">
             <i class="ph ph-pencil-simple"></i>
           </button>
 

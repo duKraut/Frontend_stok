@@ -9,6 +9,7 @@ import {
   SimpleChanges
 } from '@angular/core';
 
+import { AuthService } from '../../../../core/services/auth.service';
 import { Asset, AssetService } from '../../services/asset.service';
 import { Supplier, SupplierService } from '../../../suppliers/services/supplier.service';
 
@@ -129,7 +130,10 @@ export class AssetsForm implements OnChanges, OnInit {
     { label: 'Soma dos Dígitos dos Anos', value: 'SOMA_DIGITOS' }
   ];
 
-  constructor(private assetService: AssetService, private supplierService: SupplierService, private cdr: ChangeDetectorRef) {}
+  get canEdit(): boolean { return this.auth.canEdit(); }
+  get canDelete(): boolean { return this.auth.canDelete(); }
+
+  constructor(private assetService: AssetService, private supplierService: SupplierService, private cdr: ChangeDetectorRef, private auth: AuthService) {}
 
   ngOnInit(): void {
     this.supplierService.getAll().subscribe({

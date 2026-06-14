@@ -29,10 +29,10 @@
       <h2>{{ totalAdmins }}</h2>
     </div>
   </div>
-  <div class="card stat-box stat-box-warning">
-    <div class="stat-top"><span>PENDENTES DE APROVAÇÃO</span></div>
+  <div class="card stat-box">
+    <div class="stat-top"><span>INATIVOS</span></div>
     <div class="stat-bottom">
-      <h2>1</h2>
+      <h2>{{ allUsers.length - totalAtivos }}</h2>
     </div>
   </div>
 </div>
@@ -49,7 +49,6 @@
   <table class="data-table">
     <thead>
       <tr>
-        <th>ID</th>
         <th>USUÁRIO</th>
         <th>DEPARTAMENTO</th>
         <th>PERFIL</th>
@@ -59,25 +58,28 @@
     </thead>
     <tbody>
       <tr *ngFor="let user of itemsDisplayed">
-        <td>{{ user.id }}</td>
         <td>
           <div class="user-cell">
             <div class="user-avatar" [ngClass]="getRoleAvatarClass(user.role)">
-              {{ getInitials(user.name) }}
+              {{ getInitials(user.fullName) }}
             </div>
             <div class="user-info">
-              <strong>{{ user.name }}</strong>
+              <strong>{{ user.fullName }}</strong>
               <span>{{ user.email }}</span>
             </div>
           </div>
         </td>
-        <td>{{ user.department }}</td>
+        <td>{{ user.department || '—' }}</td>
         <td>
           <div class="role-badge-wrap">
-            <span class="role-badge" [ngClass]="'role-' + user.role">{{ user.role }}</span>
+            <span class="role-badge" [ngClass]="'role-' + user.role">{{ getRoleLabel(user.role) }}</span>
           </div>
         </td>
-        <td><span class="badge" [ngClass]="user.statusClass">{{ user.status }}</span></td>
+        <td>
+          <span class="badge" [ngClass]="user.active ? 'badge-Ativo' : 'badge-Inativo'">
+            {{ user.active ? 'Ativo' : 'Inativo' }}
+          </span>
+        </td>
         <td class="actions-td">
           <button type="button" title="Visualizar" (click)="openViewUser(user)"><i class="ph ph-eye"></i></button>
           <button type="button" title="Editar" (click)="openEditUser(user)"><i class="ph ph-pencil-simple"></i></button>
@@ -103,11 +105,22 @@
   </div>
 </div>
 
-<div class="drawer-backdrop" *ngIf="isUserFormOpen" (click)="closeUserForm()"></div>
+<div class="drawer-backdrop" *ngIf="isUserFormOpen" (click)="backdropClick()"></div>
 
 <app-configs-form
+  #userForm
   *ngIf="isUserFormOpen"
   [mode]="userFormMode"
   [user]="selectedUser"
-  (close)="closeUserForm()">
+  (close)="closeUserForm()"
+  (saved)="onUserSaved()"
+  (editRequested)="openEditUser(selectedUser!)">
 </app-configs-form>
+
+<div
+  class="toast toast-success"
+  *ngIf="successMessage"
+  [class.toast-leaving]="successLeaving">
+  <i class="ph ph-check-circle"></i>
+  <span>{{ successMessage }}</span>
+</div>

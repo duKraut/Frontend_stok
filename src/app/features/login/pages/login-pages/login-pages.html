@@ -19,31 +19,103 @@
 
     <section class="login-panel right-panel">
       <div class="form-wrapper">
-        <h2>Bem-vindo</h2>
-        <p>Entre para acessar o sistema.</p>
 
-        <form class="login-form">
-          <div class="form-group">
-            <label for="email">Usuário</label>
-            <input id="email" type="text" placeholder="Digite seu usuário" />
+        <!-- LOGIN -->
+        <ng-container *ngIf="view === 'login'">
+          <h2>Bem-vindo</h2>
+          <p>Entre para acessar o sistema.</p>
+
+          <form class="login-form" [formGroup]="loginForm" (ngSubmit)="onLogin()">
+            <div class="form-group">
+              <label for="email">E-mail</label>
+              <input id="email" type="email" placeholder="seu@email.com" formControlName="email" />
+            </div>
+
+            <div class="form-group">
+              <label for="password">Senha</label>
+              <input id="password" type="password" placeholder="Digite sua senha" formControlName="password" />
+            </div>
+
+            <div *ngIf="errorMsg" class="error-msg">{{ errorMsg }}</div>
+
+            <div class="form-options">
+              <span></span>
+              <a (click)="setView('forgot')" class="forgot-link">Esqueci minha senha</a>
+            </div>
+
+            <button type="submit" class="btn-login" [disabled]="loading">
+              {{ loading ? 'Entrando...' : 'Entrar' }}
+            </button>
+          </form>
+        </ng-container>
+
+        <!-- ESQUECI MINHA SENHA -->
+        <ng-container *ngIf="view === 'forgot'">
+          <h2>Recuperar Acesso</h2>
+          <p>Informe seu e-mail para receber o link de redefinição.</p>
+
+          <form class="login-form" [formGroup]="forgotForm" (ngSubmit)="onForgot()">
+            <div class="form-group">
+              <label for="forgot-email">E-mail</label>
+              <input id="forgot-email" type="email" placeholder="seu@email.com" formControlName="email" />
+            </div>
+
+            <div *ngIf="errorMsg" class="error-msg">{{ errorMsg }}</div>
+
+            <button type="submit" class="btn-login" [disabled]="loading">
+              {{ loading ? 'Enviando...' : 'Enviar link' }}
+            </button>
+
+            <button type="button" class="btn-back" (click)="setView('login')">
+              ← Voltar ao login
+            </button>
+          </form>
+        </ng-container>
+
+        <!-- E-MAIL ENVIADO -->
+        <ng-container *ngIf="view === 'forgot-sent'">
+          <div class="success-box">
+            <i class="ph ph-check-circle"></i>
+            <h2>E-mail enviado!</h2>
+            <p>Verifique sua caixa de entrada e clique no link para redefinir sua senha.</p>
+            <button type="button" class="btn-login" (click)="setView('login')">Voltar ao login</button>
           </div>
+        </ng-container>
 
-          <div class="form-group">
-            <label for="password">Senha</label>
-            <input id="password" type="password" placeholder="Digite sua senha" />
+        <!-- REDEFINIR SENHA -->
+        <ng-container *ngIf="view === 'reset'">
+          <h2>Nova Senha</h2>
+          <p>Crie uma nova senha para sua conta.</p>
+
+          <form class="login-form" [formGroup]="resetForm" (ngSubmit)="onReset()">
+            <div class="form-group">
+              <label>Nova Senha</label>
+              <input type="password" placeholder="Mín. 6 caracteres" formControlName="password" />
+            </div>
+
+            <div class="form-group">
+              <label>Confirmar Senha</label>
+              <input type="password" placeholder="Repita a senha" formControlName="confirm" />
+            </div>
+
+            <div *ngIf="errorMsg" class="error-msg">{{ errorMsg }}</div>
+
+            <button type="submit" class="btn-login" [disabled]="loading">
+              {{ loading ? 'Salvando...' : 'Salvar nova senha' }}
+            </button>
+          </form>
+        </ng-container>
+
+        <!-- SENHA REDEFINIDA -->
+        <ng-container *ngIf="view === 'reset-done'">
+          <div class="success-box">
+            <i class="ph ph-check-circle"></i>
+            <h2>Senha atualizada!</h2>
+            <p>Sua senha foi redefinida com sucesso. Faça login com a nova senha.</p>
+            <button type="button" class="btn-login" (click)="setView('login')">Ir para o login</button>
           </div>
+        </ng-container>
 
-          <div class="form-options">
-            <label class="remember-me">
-              <input type="checkbox" />
-              <span>Lembrar acesso</span>
-            </label>
-
-            <a href="#">Esqueci minha senha</a>
-          </div>
-
-          <button routerLink="/dashboard" type="button" class="btn-login">Entrar</button>
-        </form>
       </div>
     </section>
   </div>
