@@ -30,7 +30,7 @@
     <div class="stat-bottom">
       <h2>
         {{
-          allAssets.reduce((total, asset) => total + (asset.acquisitionValue || 0), 0)
+          allAssets.reduce((total, asset) => total + (asset.currentValue ?? asset.acquisitionValue ?? 0), 0)
             | currency:'BRL':'symbol':'1.2-2'
         }}
       </h2>
