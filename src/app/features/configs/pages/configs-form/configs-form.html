@@ -12,6 +12,7 @@
   </div>
 
   <div class="drawer-content" [formGroup]="form">
+    <p class="required-hint" *ngIf="mode !== 'view'">Campos com <span class="required-mark">*</span> são obrigatórios</p>
 
     <section class="form-card">
       <div class="form-section-header">
@@ -19,58 +20,32 @@
         <h3>Identificação do Usuário</h3>
       </div>
 
-      <div class="form-group checkbox-group">
-        <label class="checkbox-label">
-          <input type="checkbox" formControlName="active" />
-          <span>Usuário Ativo</span>
-        </label>
+      <div class="active-switch-group">
+        <span>Usuário Ativo</span>
+        <button type="button" class="status-toggle"
+                [class.active]="form.get('active')?.value"
+                (click)="toggleActive()"
+                [disabled]="mode === 'view'">
+          <span class="toggle-knob"></span>
+        </button>
       </div>
 
       <div class="form-grid">
         <div class="form-group full">
-          <label>Nome Completo</label>
-          <input type="text" placeholder="Ex: João Pedro da Silva" formControlName="fullName" />
+          <label>Nome Completo <span class="required-mark" *ngIf="mode !== 'view'">*</span></label>
+          <input type="text" placeholder="Ex: João Pedro da Silva" formControlName="fullName"
+                 [class.input-error]="submitted && validationErrors.fullName" />
         </div>
 
         <div class="form-group full">
-          <label>E-mail</label>
-          <input type="email" placeholder="usuario@sistema.com" formControlName="email" />
+          <label>E-mail <span class="required-mark" *ngIf="mode !== 'view'">*</span></label>
+          <input type="email" placeholder="usuario@sistema.com" formControlName="email"
+                 [class.input-error]="submitted && validationErrors.email" />
         </div>
 
-        <ng-container *ngIf="mode === 'create'">
-          <div class="form-group">
-            <label>Senha</label>
-            <input type="password" placeholder="Mín. 6 caracteres" formControlName="password" />
-          </div>
-          <div class="form-group">
-            <label>Confirmar Senha</label>
-            <input type="password" placeholder="Repita a senha" formControlName="confirm" />
-          </div>
-        </ng-container>
-
-        <ng-container *ngIf="mode === 'edit'">
-          <div class="form-group">
-            <label>Nova Senha <span style="font-weight:400;opacity:.6">(opcional)</span></label>
-            <input type="password" placeholder="Deixe em branco para manter" formControlName="password" />
-          </div>
-          <div class="form-group">
-            <label>Confirmar Nova Senha</label>
-            <input type="password" placeholder="Repita a senha" formControlName="confirm" />
-          </div>
-        </ng-container>
-      </div>
-    </section>
-
-    <section class="form-card">
-      <div class="form-section-header">
-        <span class="section-number">02</span>
-        <h3>Dados Funcionais</h3>
-      </div>
-
-      <div class="form-grid">
-        <div class="form-group">
-          <label>Departamento</label>
-          <select formControlName="department">
+        <div class="form-group full">
+          <label>Departamento <span class="required-mark" *ngIf="mode !== 'view'">*</span></label>
+          <select formControlName="department" [class.input-error]="submitted && validationErrors.department">
             <option value="">Selecione...</option>
             <option value="TI - Sede">TI - Sede</option>
             <option value="TI - Infra">TI - Infra</option>
@@ -85,59 +60,90 @@
           </select>
         </div>
 
-        <div class="form-group">
-          <label>Perfil de Acesso</label>
-          <select formControlName="role">
-            <option value="ADMINISTRADOR">Administrador</option>
-            <option value="GERENTE">Gerente</option>
-            <option value="OPERADOR">Operador</option>
-            <option value="VISUALIZADOR">Visualizador</option>
-          </select>
-        </div>
+        <ng-container *ngIf="mode === 'create'">
+          <div class="form-group">
+            <label>Senha <span class="required-mark">*</span></label>
+            <input type="password" placeholder="Mín. 6 caracteres" formControlName="password"
+                   [class.input-error]="submitted && validationErrors.password" />
+          </div>
+          <div class="form-group">
+            <label>Confirmar Senha <span class="required-mark">*</span></label>
+            <input type="password" placeholder="Repita a senha" formControlName="confirm"
+                   [class.input-error]="submitted && validationErrors.confirm" />
+          </div>
+        </ng-container>
+
+        <ng-container *ngIf="mode === 'edit'">
+          <div class="form-group">
+            <label>Nova Senha <span style="font-weight:400;opacity:.6">(opcional)</span></label>
+            <input type="password" placeholder="Deixe em branco para manter" formControlName="password" />
+          </div>
+          <div class="form-group">
+            <label>Confirmar Nova Senha</label>
+            <input type="password" placeholder="Repita a senha" formControlName="confirm"
+                   [class.input-error]="submitted && validationErrors.confirm" />
+          </div>
+        </ng-container>
       </div>
     </section>
 
     <section class="form-card">
       <div class="form-section-header">
-        <span class="section-number">03</span>
+        <span class="section-number">02</span>
         <h3>Perfil de Acesso</h3>
       </div>
 
-      <div class="role-descriptions">
-        <div class="role-desc-item role-desc-admin">
+      <div class="role-buttons">
+        <button type="button" class="role-btn role-btn-admin"
+                [class.role-active]="form.get('role')?.value === 'ADMINISTRADOR'"
+                (click)="selectRole('ADMINISTRADOR')"
+                [disabled]="mode === 'view'">
           <i class="ph ph-shield-check"></i>
           <div>
             <strong>Administrador</strong>
             <span>Acesso total ao sistema, incluindo configurações</span>
           </div>
-        </div>
-        <div class="role-desc-item role-desc-manager">
+        </button>
+
+        <button type="button" class="role-btn role-btn-manager"
+                [class.role-active]="form.get('role')?.value === 'GERENTE'"
+                (click)="selectRole('GERENTE')"
+                [disabled]="mode === 'view'">
           <i class="ph ph-user-gear"></i>
           <div>
             <strong>Gerente</strong>
-            <span>Leitura e edição nos módulos atribuídos</span>
+            <span>Leitura, edição e exclusão nos módulos atribuídos</span>
           </div>
-        </div>
-        <div class="role-desc-item role-desc-operator">
+        </button>
+
+        <button type="button" class="role-btn role-btn-operator"
+                [class.role-active]="form.get('role')?.value === 'OPERADOR'"
+                (click)="selectRole('OPERADOR')"
+                [disabled]="mode === 'view'">
           <i class="ph ph-user"></i>
           <div>
             <strong>Operador</strong>
-            <span>Criação e edição limitadas ao seu setor</span>
+            <span>Criação e edição nos módulos atribuídos, sem exclusão</span>
           </div>
-        </div>
-        <div class="role-desc-item role-desc-viewer">
+        </button>
+
+        <button type="button" class="role-btn role-btn-viewer"
+                [class.role-active]="form.get('role')?.value === 'VISUALIZADOR'"
+                (click)="selectRole('VISUALIZADOR')"
+                [disabled]="mode === 'view'">
           <i class="ph ph-eye"></i>
           <div>
             <strong>Visualizador</strong>
             <span>Somente leitura, sem permissão de edição</span>
           </div>
-        </div>
+        </button>
       </div>
+      <p class="role-error-hint" *ngIf="submitted && validationErrors.role">Selecione um perfil de acesso.</p>
     </section>
 
     <section class="form-card" formGroupName="modules">
       <div class="form-section-header">
-        <span class="section-number">04</span>
+        <span class="section-number">03</span>
         <h3>Módulos Liberados</h3>
       </div>
 
@@ -152,13 +158,11 @@
       </div>
     </section>
 
-    <div *ngIf="errorMsg" class="form-error">{{ errorMsg }}</div>
-
   </div>
 
   <div class="drawer-footer" *ngIf="mode !== 'view'">
     <button class="btn-save" type="button" (click)="onSubmit()" [disabled]="loading">
-      <i class="ph ph-floppy-disk"></i>
+      <i class="ph" [ngClass]="loading ? 'ph-circle-notch loading-icon' : 'ph-floppy-disk'"></i>
       {{ loading ? 'Salvando...' : (mode === 'create' ? 'Cadastrar Usuário' : 'Salvar Alterações') }}
     </button>
   </div>
@@ -169,14 +173,25 @@
       Editar Usuário
     </button>
   </div>
-</aside>
 
-<div class="confirm-overlay" *ngIf="showCloseConfirm">
-  <div class="confirm-box">
-    <p>Há alterações não salvas. Deseja sair mesmo assim?</p>
-    <div class="confirm-actions">
-      <button class="btn-confirm-cancel" (click)="cancelClose()">Continuar editando</button>
-      <button class="btn-confirm-ok" (click)="confirmClose()">Sair sem salvar</button>
+  <div class="confirm-close-overlay" *ngIf="showCloseConfirm">
+    <div class="confirm-close-box">
+      <i class="ph-fill ph-warning"></i>
+      <p>Há dados não salvos. Deseja sair sem salvar as alterações?</p>
+      <div class="confirm-close-actions">
+        <button class="btn-cancel-close" type="button" (click)="cancelClose()">Continuar editando</button>
+        <button class="btn-confirm-close" type="button" (click)="confirmClose()">Descartar e sair</button>
+      </div>
     </div>
   </div>
+</aside>
+
+<div class="toast toast-error" *ngIf="warnMessage" [class.toast-leaving]="warnLeaving">
+  <i class="ph ph-warning"></i>
+  <span>{{ warnMessage }}</span>
+</div>
+
+<div class="toast toast-error" *ngIf="errorMessage" [class.toast-leaving]="toastLeaving">
+  <i class="ph ph-warning-circle"></i>
+  <span>{{ errorMessage }}</span>
 </div>

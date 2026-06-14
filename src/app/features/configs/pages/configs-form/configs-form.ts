@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService, User } from '../../services/user.service';
 
@@ -18,8 +18,12 @@ export class ConfigsForm implements OnInit {
 
   form!: FormGroup;
   loading = false;
-  errorMsg = '';
+  errorMessage = '';
+  toastLeaving = false;
+  warnMessage = '';
+  warnLeaving = false;
   showCloseConfirm = false;
+  submitted = false;
 
   allModules = [
     { key: 'ALMOXARIFADO', label: 'Almoxarifado', icon: 'ph ph-archive-box' },
@@ -29,7 +33,28 @@ export class ConfigsForm implements OnInit {
     { key: 'CONFIGURACOES', label: 'Configurações', icon: 'ph ph-gear' },
   ];
 
-  constructor(private fb: FormBuilder, private userService: UserService) {}
+  get validationErrors() {
+    const val = this.form?.value ?? {};
+    const passwordFilled = !!val.password;
+    return {
+      fullName: !val.fullName?.trim(),
+      email: !val.email?.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val.email),
+      password: this.mode === 'create' && !val.password,
+      confirm: (this.mode === 'create' || passwordFilled) && val.password !== val.confirm,
+      department: !val.department,
+      role: !val.role,
+    };
+  }
+
+  get hasErrors(): boolean {
+    return Object.values(this.validationErrors).some(v => v);
+  }
+
+  constructor(
+    private fb: FormBuilder,
+    private userService: UserService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     const userModules = this.user?.modules ?? [];
@@ -40,7 +65,7 @@ export class ConfigsForm implements OnInit {
       email: [this.user?.email ?? '', [Validators.required, Validators.email]],
       password: ['', this.mode === 'create' ? Validators.required : []],
       confirm: [''],
-      role: [this.user?.role ?? 'OPERADOR', Validators.required],
+      role: [this.mode === 'create' ? '' : (this.user?.role ?? ''), Validators.required],
       department: [this.user?.department ?? ''],
       modules: this.fb.group(
         Object.fromEntries(this.allModules.map(m => [m.key, userModules.includes(m.key)]))
@@ -52,20 +77,17 @@ export class ConfigsForm implements OnInit {
     }
   }
 
-  isModuleChecked(key: string): boolean {
-    return this.form.get('modules')?.get(key)?.value ?? false;
-  }
-
   onSubmit(): void {
-    if (this.form.invalid) return;
+    this.submitted = true;
 
-    const val = this.form.value;
-
-    if ((this.mode === 'create' || val.password) && val.password !== val.confirm) {
-      this.errorMsg = 'As senhas não coincidem.';
+    if (this.hasErrors) {
+      if (this.validationErrors.email && this.form.value.email?.trim()) {
+        this.showWarn('E-mail inválido.');
+      }
       return;
     }
 
+    const val = this.form.value;
     const selectedModules = this.allModules
       .filter(m => val.modules[m.key])
       .map(m => m.key);
@@ -81,7 +103,6 @@ export class ConfigsForm implements OnInit {
     };
 
     this.loading = true;
-    this.errorMsg = '';
 
     const call = this.mode === 'create'
       ? this.userService.create(req)
@@ -94,9 +115,58 @@ export class ConfigsForm implements OnInit {
       },
       error: (err) => {
         this.loading = false;
-        this.errorMsg = err.error?.message || 'Erro ao salvar usuário.';
+        this.showError(err);
       }
     });
+  }
+
+  private showWarn(message: string): void {
+    this.warnLeaving = false;
+    this.warnMessage = message;
+    this.cdr.detectChanges();
+
+    setTimeout(() => {
+      this.warnLeaving = true;
+      this.cdr.detectChanges();
+
+      setTimeout(() => {
+        this.warnMessage = '';
+        this.warnLeaving = false;
+        this.cdr.detectChanges();
+      }, 400);
+    }, 4000);
+  }
+
+  private showError(error: any): void {
+    this.toastLeaving = false;
+    this.errorMessage = error?.error?.message || 'Erro ao salvar usuário. Tente novamente.';
+    this.cdr.detectChanges();
+
+    setTimeout(() => {
+      this.toastLeaving = true;
+      this.cdr.detectChanges();
+
+      setTimeout(() => {
+        this.errorMessage = '';
+        this.toastLeaving = false;
+        this.cdr.detectChanges();
+      }, 400);
+    }, 4000);
+  }
+
+  toggleActive(): void {
+    if (this.mode !== 'view') {
+      const ctrl = this.form.get('active');
+      ctrl?.setValue(!ctrl.value);
+      this.form.markAsDirty();
+    }
+  }
+
+  selectRole(role: string): void {
+    if (this.mode !== 'view') {
+      this.form.get('role')?.setValue(role);
+      this.form.markAsDirty();
+    }
   }
 
   attemptClose(): void {
@@ -109,6 +179,7 @@ export class ConfigsForm implements OnInit {
 
   confirmClose(): void {
     this.showCloseConfirm = false;
+    this.submitted = false;
     this.close.emit();
   }
 

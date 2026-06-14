@@ -284,26 +284,26 @@
 
 .confirm-close-box {
   background: #ffffff;
-  border-radius: 12px;
-  padding: 28px 28px 24px;
-  max-width: 320px;
+  border-radius: 14px;
+  padding: 44px 44px 36px;
+  max-width: 480px;
   width: calc(100% - 48px);
   text-align: center;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: 22px;
 }
 
 .confirm-close-box i {
-  font-size: 36px;
+  font-size: 48px;
   color: #f59e0b;
 }
 
 .confirm-close-box p {
   margin: 0;
-  font-size: 14px;
+  font-size: 16px;
   color: #374151;
   line-height: 1.5;
   font-weight: 500;
@@ -311,18 +311,18 @@
 
 .confirm-close-actions {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   width: 100%;
 }
 
 .btn-cancel-close {
   flex: 1;
-  height: 42px;
+  height: 48px;
   border: 1.5px solid #d1d5db;
   border-radius: 8px;
   background: #f9fafb;
   color: #374151;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   font-family: 'Inter', sans-serif;
@@ -333,12 +333,12 @@
 
 .btn-confirm-close {
   flex: 1;
-  height: 42px;
+  height: 48px;
   border: none;
   border-radius: 8px;
   background: #b91c1c;
   color: #fff;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   font-family: 'Inter', sans-serif;
