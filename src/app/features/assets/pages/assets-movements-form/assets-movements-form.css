@@ -138,10 +138,10 @@
   margin-bottom: 24px;
 }
 
-.transferencia-card { background: #eff6ff; }
-.manutencao-card    { background: #fffbeb; }
-.baixa-card         { background: #fff1f2; }
-.estado-card        { background: #f0fdf4; }
+.transferencia-card { background: #eef2ff; }
+.manutencao-card    { background: #eef2ff; }
+.baixa-card         { background: #eef2ff; }
+.estado-card        { background: #eef2ff; }
 
 .form-section-header {
   display: flex;
@@ -164,10 +164,10 @@
   flex-shrink: 0;
 }
 
-.section-transferencia { background: #1e40af; }
-.section-manutencao    { background: #d97706; }
-.section-baixa         { background: #b91c1c; }
-.section-estado        { background: #15803d; }
+.section-transferencia { background: #063b75; }
+.section-manutencao    { background: #063b75; }
+.section-baixa         { background: #063b75; }
+.section-estado        { background: #063b75; }
 
 .form-section-header h3 {
   margin: 0;
@@ -178,10 +178,10 @@
   font-weight: 700;
 }
 
-.header-transferencia { color: #1e40af; }
-.header-manutencao    { color: #d97706; }
-.header-baixa         { color: #991b1b; }
-.header-estado        { color: #15803d; }
+.header-transferencia { color: #063b75; }
+.header-manutencao    { color: #063b75; }
+.header-baixa         { color: #063b75; }
+.header-estado        { color: #063b75; }
 
 .alert-baixa {
   display: flex;
@@ -241,18 +241,18 @@
 }
 
 .transferencia-card .form-group input,
-.transferencia-card .form-group select { background: #bfdbfe; }
+.transferencia-card .form-group select { background: #dbe5ff; }
 
 .manutencao-card .form-group input,
 .manutencao-card .form-group select,
-.manutencao-card .form-group textarea { background: #fde68a; }
+.manutencao-card .form-group textarea { background: #dbe5ff; }
 
 .baixa-card .form-group input,
-.baixa-card .form-group select { background: #fecaca; }
+.baixa-card .form-group select { background: #dbe5ff; }
 
 .estado-card .form-group input,
 .estado-card .form-group select,
-.estado-card .form-group textarea { background: #bbf7d0; }
+.estado-card .form-group textarea { background: #dbe5ff; }
 
 .form-group textarea {
   height: auto;
@@ -286,8 +286,8 @@
   height: 56px;
   border: none;
   border-radius: 8px;
-  background: #1e40af;
-  color: #dbeafe;
+  background: #047857;
+  color: #d1fae5;
   font-size: 15px;
   font-weight: 800;
   text-transform: uppercase;
@@ -297,36 +297,36 @@
   align-items: center;
   justify-content: center;
   gap: 10px;
-  box-shadow: 0 12px 24px rgba(30, 64, 175, 0.22);
+  box-shadow: 0 12px 24px rgba(4, 120, 87, 0.22);
   font-family: 'Inter', sans-serif;
   transition: background 0.2s;
 }
 
-.btn-save:hover { background: #1d4ed8; }
+.btn-save:hover { background: #065f46; }
 
 .btn-save-manutencao {
-  background: #d97706;
-  color: #fef3c7;
-  box-shadow: 0 12px 24px rgba(217, 119, 6, 0.22);
+  background: #047857;
+  color: #d1fae5;
+  box-shadow: 0 12px 24px rgba(4, 120, 87, 0.22);
 }
 
-.btn-save-manutencao:hover { background: #b45309; }
+.btn-save-manutencao:hover { background: #065f46; }
 
 .btn-save-baixa {
-  background: #b91c1c;
-  color: #fee2e2;
-  box-shadow: 0 12px 24px rgba(185, 28, 28, 0.22);
+  background: #047857;
+  color: #d1fae5;
+  box-shadow: 0 12px 24px rgba(4, 120, 87, 0.22);
 }
 
-.btn-save-baixa:hover { background: #991b1b; }
+.btn-save-baixa:hover { background: #065f46; }
 
 .btn-save-estado {
-  background: #15803d;
-  color: #dcfce7;
-  box-shadow: 0 12px 24px rgba(21, 128, 61, 0.22);
+  background: #047857;
+  color: #d1fae5;
+  box-shadow: 0 12px 24px rgba(4, 120, 87, 0.22);
 }
 
-.btn-save-estado:hover { background: #166534; }
+.btn-save-estado:hover { background: #065f46; }
 
 /* Confirm close overlay */
 .confirm-close-overlay {
