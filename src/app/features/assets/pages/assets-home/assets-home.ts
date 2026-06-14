@@ -17,7 +17,7 @@ export class AssetsHome implements OnInit {
 
   allAssets: Asset[] = [];
 
-  activeTab: 'Todos' | 'Excelente' | 'Bom' | 'Regular' | 'Manutenção' | 'Substituir' | 'Baixado' = 'Todos';
+  activeTab: 'Todos' | 'Excelente' | 'Bom' | 'Regular' | 'Manutenção' | 'Substituir' | 'Baixado' | 'Ativos' = 'Todos';
   paginaAtual = 1;
   itensPorPagina = 5;
 
@@ -30,6 +30,7 @@ export class AssetsHome implements OnInit {
 
   get ativosFiltrados() {
     if (this.activeTab === 'Baixado')    return this.allAssets.filter(a => !a.active);
+    if (this.activeTab === 'Ativos')     return this.allAssets.filter(a => a.active);
     if (this.activeTab === 'Excelente')  return this.allAssets.filter(a => a.active && a.conservationStatus === 'EXCELENTE');
     if (this.activeTab === 'Bom')        return this.allAssets.filter(a => a.active && a.conservationStatus === 'BOM');
     if (this.activeTab === 'Regular')    return this.allAssets.filter(a => a.active && a.conservationStatus === 'REGULAR');
@@ -47,7 +48,7 @@ export class AssetsHome implements OnInit {
 
   get arrayPaginas() { return Array(this.totalPaginas).fill(0).map((_, i) => i + 1); }
 
-  setTab(tab: 'Todos' | 'Excelente' | 'Bom' | 'Regular' | 'Manutenção' | 'Substituir' | 'Baixado') {
+  setTab(tab: 'Todos' | 'Excelente' | 'Bom' | 'Regular' | 'Manutenção' | 'Substituir' | 'Baixado' | 'Ativos') {
     this.activeTab = tab;
     this.paginaAtual = 1;
   }
@@ -129,7 +130,7 @@ export class AssetsHome implements OnInit {
   loadAssets(): void {
     this.assetService.getAll().subscribe({
       next: (data) => {
-        this.allAssets = data;
+        this.allAssets = data.sort((a, b) => (b.tombamento ?? 0) - (a.tombamento ?? 0));
         this.cdr.detectChanges();
       },
       error: (error) => console.error('Erro ao buscar bens', error)

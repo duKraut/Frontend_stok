@@ -95,7 +95,7 @@ export class InventoryMovements implements OnInit {
 
     obs.subscribe({
       next: (data) => {
-        this.todasMovimentacoes = data;
+        this.todasMovimentacoes = data.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
         this.cdr.detectChanges();
       },
       error: (err) => console.error('Erro ao carregar movimentações', err)

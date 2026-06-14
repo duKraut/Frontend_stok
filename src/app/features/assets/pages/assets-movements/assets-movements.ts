@@ -17,7 +17,7 @@ export class AssetsMovements implements OnInit {
   filtroAssetId = '';
   filtroAssetName = '';
 
-  activeTab: 'Todos' | 'Transferência' | 'Manutenção' | 'Estado' = 'Todos';
+  activeTab: 'Todos' | 'Transferência' | 'Manutenção' | 'Estado' | 'Baixas' = 'Todos';
   paginaAtual = 1;
   itensPorPagina = 5;
 
@@ -31,7 +31,8 @@ export class AssetsMovements implements OnInit {
   get filtradas() {
     if (this.activeTab === 'Transferência') return this.todasMovimentacoes.filter(m => m.type === 'TRANSFERENCIA');
     if (this.activeTab === 'Manutenção')   return this.todasMovimentacoes.filter(m => m.type === 'MANUTENCAO');
-    if (this.activeTab === 'Estado')       return this.todasMovimentacoes.filter(m => m.type === 'ESTADO');
+    if (this.activeTab === 'Estado')       return this.todasMovimentacoes.filter(m => m.type === 'ESTADO' && !m.decommission);
+    if (this.activeTab === 'Baixas')       return this.todasMovimentacoes.filter(m => m.type === 'ESTADO' && m.decommission);
     return this.todasMovimentacoes;
   }
 
@@ -66,7 +67,7 @@ export class AssetsMovements implements OnInit {
     return mov.decommission ? 'ph ph-trash' : 'ph ph-arrows-clockwise';
   }
 
-  setTab(tab: 'Todos' | 'Transferência' | 'Manutenção' | 'Estado') {
+  setTab(tab: 'Todos' | 'Transferência' | 'Manutenção' | 'Estado' | 'Baixas') {
     this.activeTab = tab;
     this.paginaAtual = 1;
   }
@@ -145,7 +146,7 @@ export class AssetsMovements implements OnInit {
 
     req$.subscribe({
       next: (data) => {
-        this.todasMovimentacoes = data;
+        this.todasMovimentacoes = data.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
         this.cdr.detectChanges();
       },
       error: (err) => console.error('Erro ao buscar movimentações', err)
