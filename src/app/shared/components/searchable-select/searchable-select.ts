@@ -11,6 +11,7 @@ export class SearchableSelect implements OnChanges {
   @Input() displayFn: (option: any) => string = (o) => String(o);
   @Input() selectedId = '';
   @Output() selectedIdChange = new EventEmitter<string>();
+  @Input() valueFn: (option: any) => string = (o) => o.id;
   @Input() disabled = false;
   @Input() placeholder = 'Pesquisar...';
   @Input() errorClass = false;
@@ -35,8 +36,8 @@ export class SearchableSelect implements OnChanges {
       this.searchText = '';
       return;
     }
-    const found = this.options.find(o => o.id === this.selectedId);
-    this.searchText = found ? this.displayFn(found) : '';
+    const found = this.options.find(o => this.valueFn(o) === this.selectedId);
+    this.searchText = found ? this.displayFn(found) : this.selectedId;
   }
 
   onInput(event: Event): void {
@@ -66,8 +67,9 @@ export class SearchableSelect implements OnChanges {
   }
 
   select(option: any): void {
-    this.selectedId = option.id;
-    this.selectedIdChange.emit(option.id);
+    const value = this.valueFn(option);
+    this.selectedId = value;
+    this.selectedIdChange.emit(value);
     this.searchText = this.displayFn(option);
     this.isOpen = false;
   }

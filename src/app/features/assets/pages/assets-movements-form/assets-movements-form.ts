@@ -11,6 +11,7 @@ import {
 import { AuthService } from '../../../../core/services/auth.service';
 import { AssetMovement, AssetMovementService } from '../../services/asset-movement.service';
 import { Asset, AssetService } from '../../services/asset.service';
+import { User, UserService } from '../../../configs/services/user.service';
 
 @Component({
   selector: 'app-assets-movements-form',
@@ -30,6 +31,9 @@ export class AssetsMovementsForm implements OnChanges, OnInit {
   selectedAssetId = '';
   assets: Asset[] = [];
   assetDisplay = (a: any) => `${a.name} (Tomb. ${a.tombamento})`;
+
+  users: User[] = [];
+  userNameFn = (u: any) => u.fullName;
 
   submitted = false;
   isSaving = false;
@@ -114,17 +118,19 @@ export class AssetsMovementsForm implements OnChanges, OnInit {
   constructor(
     private movService: AssetMovementService,
     private assetService: AssetService,
+    private userService: UserService,
     private cdr: ChangeDetectorRef,
     private auth: AuthService
   ) {}
 
   ngOnInit(): void {
     this.assetService.getAll().subscribe({
-      next: (data) => {
-        this.assets = data.filter(a => a.active);
-        this.cdr.detectChanges();
-      },
+      next: (data) => { this.assets = data.filter(a => a.active); this.cdr.detectChanges(); },
       error: (err) => console.error('Erro ao carregar bens', err)
+    });
+    this.userService.getAll().subscribe({
+      next: (data) => { this.users = data.filter(u => u.active); this.cdr.detectChanges(); },
+      error: (err) => console.error('Erro ao carregar usuários', err)
     });
   }
 

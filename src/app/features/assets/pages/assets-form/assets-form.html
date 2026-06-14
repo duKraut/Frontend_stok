@@ -112,7 +112,15 @@
 
         <div class="form-group full">
           <label>Responsável pelo Bem</label>
-          <input type="text" [(ngModel)]="formData.responsible" placeholder="Nome do responsável ou usuário" [disabled]="mode === 'view'" />
+          <app-searchable-select
+            [options]="users"
+            [displayFn]="userNameFn"
+            [valueFn]="userNameFn"
+            [selectedId]="formData.responsible || ''"
+            (selectedIdChange)="formData.responsible = $event"
+            [disabled]="mode === 'view'"
+            placeholder="Buscar usuário..."
+          ></app-searchable-select>
         </div>
       </div>
     </section>

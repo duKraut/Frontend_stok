@@ -69,8 +69,15 @@
 
         <div class="form-group">
           <label>Responsável <span class="required-mark" *ngIf="mode === 'create'">*</span></label>
-          <input type="text" [(ngModel)]="formData.responsible" placeholder="Nome do responsável"
-            [disabled]="mode === 'view'" [class.input-error]="submitted && validationErrors.responsible" />
+          <app-searchable-select
+            [options]="users"
+            [displayFn]="userNameFn"
+            [valueFn]="userNameFn"
+            [(selectedId)]="formData.responsible"
+            [disabled]="mode === 'view'"
+            [errorClass]="submitted && validationErrors.responsible"
+            placeholder="Buscar usuário..."
+          ></app-searchable-select>
         </div>
       </div>
     </section>
