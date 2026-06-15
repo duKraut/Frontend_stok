@@ -1,5 +1,6 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { AuthService } from '../../../../core/services/auth.service';
 import { HeaderService } from '../../../../core/services/header';
 import { InventoryMovement, InventoryMovementService } from '../../services/inventory-movement.service';
@@ -13,13 +14,15 @@ type MovFormMode = 'create' | 'view';
   templateUrl: './inventory-movements.html',
   styleUrl: './inventory-movements.css',
 })
-export class InventoryMovements implements OnInit {
+export class InventoryMovements implements OnInit, OnDestroy {
   @ViewChild('movForm') movForm?: InventoryMovementsForm;
 
   todasMovimentacoes: InventoryMovement[] = [];
 
   filtroItemId = '';
   filtroItemName = '';
+  termoBusca = '';
+  private searchSub?: Subscription;
 
   activeTab: 'Todos' | 'Entrada' | 'Saída' = 'Todos';
   paginaAtual = 1;
@@ -32,9 +35,16 @@ export class InventoryMovements implements OnInit {
   readonly today = new Date().toLocaleDateString('en-CA');
 
   get filtradas() {
-    if (this.activeTab === 'Entrada') return this.todasMovimentacoes.filter(m => m.type === 'ENTRADA');
-    if (this.activeTab === 'Saída') return this.todasMovimentacoes.filter(m => m.type === 'SAIDA');
-    return this.todasMovimentacoes;
+    let result = this.todasMovimentacoes;
+    if (this.activeTab === 'Entrada') result = result.filter(m => m.type === 'ENTRADA');
+    else if (this.activeTab === 'Saída') result = result.filter(m => m.type === 'SAIDA');
+    if (this.termoBusca) result = result.filter(m => this.match(this.termoBusca, m.item?.name, m.responsible, m.sector, m.supplierName, m.nfNumber, m.observations));
+    return result;
+  }
+
+  private match(term: string, ...fields: (string | number | undefined | null)[]): boolean {
+    const t = term.toLowerCase();
+    return fields.some(f => f?.toString().toLowerCase().includes(t));
   }
 
   get totalPaginas() { return Math.max(1, Math.ceil(this.filtradas.length / this.itensPorPagina)); }
@@ -89,6 +99,8 @@ export class InventoryMovements implements OnInit {
     this.loadMovements(this.filtroItemId || undefined);
   }
 
+  ngOnDestroy(): void { this.searchSub?.unsubscribe(); }
+
   loadMovements(itemId?: string): void {
     const obs = itemId
       ? this.movService.getByItem(itemId)
@@ -119,6 +131,11 @@ export class InventoryMovements implements OnInit {
       showSearch: true,
       primaryButtonLabel: 'Nova Movimentação',
       primaryButtonIcon: 'ph ph-arrows-left-right'
+    });
+    this.searchSub = this.headerService.search$.subscribe(t => {
+      this.termoBusca = t;
+      this.paginaAtual = 1;
+      this.cdr.detectChanges();
     });
 
     this.route.queryParams.subscribe(params => {

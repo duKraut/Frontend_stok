@@ -17,9 +17,17 @@ export class HeaderService {
     showSearch: true
   });
 
+  private searchSubject = new BehaviorSubject<string>('');
+
   config$ = this.configSubject.asObservable();
+  search$ = this.searchSubject.asObservable();
 
   setConfig(config: HeaderConfig): void {
     this.configSubject.next(config);
+    this.searchSubject.next('');
+  }
+
+  setSearch(term: string): void {
+    this.searchSubject.next(term);
   }
 }

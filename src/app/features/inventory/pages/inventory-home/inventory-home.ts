@@ -1,5 +1,6 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { AuthService } from '../../../../core/services/auth.service';
 import { HeaderService } from '../../../../core/services/header';
 import { InventoryItem, InventoryService } from '../../services/inventory.service';
@@ -13,10 +14,12 @@ type ItemFormMode = 'create' | 'edit' | 'view';
   templateUrl: './inventory-home.html',
   styleUrl: './inventory-home.css',
 })
-export class InventoryHome implements OnInit {
+export class InventoryHome implements OnInit, OnDestroy {
   @ViewChild('itemForm') itemForm?: InventoryForm;
 
   todosItens: InventoryItem[] = [];
+  termoBusca = '';
+  private searchSub?: Subscription;
 
   activeTab: 'Todos' | 'Em Estoque' | 'Estoque Baixo' | 'Esgotados' | 'Ativos' = 'Todos';
   paginaAtual = 1;
@@ -30,11 +33,18 @@ export class InventoryHome implements OnInit {
   successLeaving = false;
 
   get itensFiltrados() {
-    if (this.activeTab === 'Ativos')      return this.todosItens.filter(i => i.active);
-    if (this.activeTab === 'Em Estoque')  return this.todosItens.filter(i => (i.currentStock ?? 0) >= i.minStock && (i.currentStock ?? 0) > 0);
-    if (this.activeTab === 'Estoque Baixo') return this.todosItens.filter(i => (i.currentStock ?? 0) > 0 && (i.currentStock ?? 0) < i.minStock);
-    if (this.activeTab === 'Esgotados')   return this.todosItens.filter(i => (i.currentStock ?? 0) === 0);
-    return this.todosItens;
+    let result = this.todosItens;
+    if (this.activeTab === 'Ativos')        result = result.filter(i => i.active);
+    else if (this.activeTab === 'Em Estoque')    result = result.filter(i => (i.currentStock ?? 0) >= i.minStock && (i.currentStock ?? 0) > 0);
+    else if (this.activeTab === 'Estoque Baixo') result = result.filter(i => (i.currentStock ?? 0) > 0 && (i.currentStock ?? 0) < i.minStock);
+    else if (this.activeTab === 'Esgotados')     result = result.filter(i => (i.currentStock ?? 0) === 0);
+    if (this.termoBusca) result = result.filter(i => this.match(this.termoBusca, i.name, i.brand, i.category, i.location, i.description));
+    return result;
+  }
+
+  private match(term: string, ...fields: (string | number | undefined | null)[]): boolean {
+    const t = term.toLowerCase();
+    return fields.some(f => f?.toString().toLowerCase().includes(t));
   }
 
   get totalEmBaixa() { return this.todosItens.filter(i => (i.currentStock ?? 0) > 0 && (i.currentStock ?? 0) < i.minStock).length; }
@@ -148,8 +158,15 @@ export class InventoryHome implements OnInit {
       primaryButtonLabel: 'Novo Item',
       primaryButtonIcon: 'ph ph-plus'
     });
+    this.searchSub = this.headerService.search$.subscribe(t => {
+      this.termoBusca = t;
+      this.paginaAtual = 1;
+      this.cdr.detectChanges();
+    });
     this.loadItens();
   }
+
+  ngOnDestroy(): void { this.searchSub?.unsubscribe(); }
 
   loadItens(): void {
     this.inventoryService.getAll().subscribe({

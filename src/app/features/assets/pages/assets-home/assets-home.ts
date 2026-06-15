@@ -1,4 +1,5 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
 import { HeaderService } from '../../../../core/services/header';
@@ -13,10 +14,12 @@ type BemFormMode = 'create' | 'edit' | 'view';
   templateUrl: './assets-home.html',
   styleUrl: './assets-home.css',
 })
-export class AssetsHome implements OnInit {
+export class AssetsHome implements OnInit, OnDestroy {
   @ViewChild('bemForm') bemForm?: AssetsForm;
 
   allAssets: Asset[] = [];
+  termoBusca = '';
+  private searchSub?: Subscription;
 
   activeTab: 'Todos' | 'Excelente' | 'Bom' | 'Regular' | 'Manutenção' | 'Substituir' | 'Baixado' | 'Ativos' = 'Todos';
   paginaAtual = 1;
@@ -30,14 +33,21 @@ export class AssetsHome implements OnInit {
   successLeaving = false;
 
   get ativosFiltrados() {
-    if (this.activeTab === 'Baixado')    return this.allAssets.filter(a => !a.active);
-    if (this.activeTab === 'Ativos')     return this.allAssets.filter(a => a.active);
-    if (this.activeTab === 'Excelente')  return this.allAssets.filter(a => a.active && a.conservationStatus === 'EXCELENTE');
-    if (this.activeTab === 'Bom')        return this.allAssets.filter(a => a.active && a.conservationStatus === 'BOM');
-    if (this.activeTab === 'Regular')    return this.allAssets.filter(a => a.active && a.conservationStatus === 'REGULAR');
-    if (this.activeTab === 'Manutenção') return this.allAssets.filter(a => a.active && a.conservationStatus === 'MANUTENCAO');
-    if (this.activeTab === 'Substituir') return this.allAssets.filter(a => a.active && a.conservationStatus === 'SUBSTITUIR');
-    return this.allAssets;
+    let result = this.allAssets;
+    if (this.activeTab === 'Baixado')    result = result.filter(a => !a.active);
+    else if (this.activeTab === 'Ativos')     result = result.filter(a => a.active);
+    else if (this.activeTab === 'Excelente')  result = result.filter(a => a.active && a.conservationStatus === 'EXCELENTE');
+    else if (this.activeTab === 'Bom')        result = result.filter(a => a.active && a.conservationStatus === 'BOM');
+    else if (this.activeTab === 'Regular')    result = result.filter(a => a.active && a.conservationStatus === 'REGULAR');
+    else if (this.activeTab === 'Manutenção') result = result.filter(a => a.active && a.conservationStatus === 'MANUTENCAO');
+    else if (this.activeTab === 'Substituir') result = result.filter(a => a.active && a.conservationStatus === 'SUBSTITUIR');
+    if (this.termoBusca) result = result.filter(a => this.match(this.termoBusca, a.name, a.brand, a.model, a.category, a.department, a.responsible, a.tombamento));
+    return result;
+  }
+
+  private match(term: string, ...fields: (string | number | undefined | null)[]): boolean {
+    const t = term.toLowerCase();
+    return fields.some(f => f?.toString().toLowerCase().includes(t));
   }
 
   get totalPaginas() { return Math.ceil(this.ativosFiltrados.length / this.itensPorPagina); }
@@ -126,9 +136,15 @@ export class AssetsHome implements OnInit {
       primaryButtonLabel: 'Novo Bem',
       primaryButtonIcon: 'ph ph-plus'
     });
-
+    this.searchSub = this.headerService.search$.subscribe(t => {
+      this.termoBusca = t;
+      this.paginaAtual = 1;
+      this.cdr.detectChanges();
+    });
     this.loadAssets();
   }
+
+  ngOnDestroy(): void { this.searchSub?.unsubscribe(); }
 
   loadAssets(): void {
     this.assetService.getAll().subscribe({

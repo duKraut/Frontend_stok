@@ -1,4 +1,5 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { HeaderService } from '../../../../core/services/header';
 import { UserService, User } from '../../services/user.service';
 import { ConfigsForm } from '../configs-form/configs-form';
@@ -11,10 +12,12 @@ type UserFormMode = 'create' | 'edit' | 'view';
   templateUrl: './configs-home.html',
   styleUrl: './configs-home.css',
 })
-export class ConfigsHome implements OnInit {
+export class ConfigsHome implements OnInit, OnDestroy {
   @ViewChild('userForm') userForm?: ConfigsForm;
 
   allUsers: User[] = [];
+  termoBusca = '';
+  private searchSub?: Subscription;
 
   activeTab: 'Todos' | 'Ativos' | 'Inativos' = 'Todos';
   paginaAtual = 1;
@@ -28,9 +31,16 @@ export class ConfigsHome implements OnInit {
   successLeaving = false;
 
   get filteredUsers() {
-    if (this.activeTab === 'Ativos') return this.allUsers.filter(u => u.active === true);
-    if (this.activeTab === 'Inativos') return this.allUsers.filter(u => u.active === false);
-    return this.allUsers;
+    let result = this.allUsers;
+    if (this.activeTab === 'Ativos') result = result.filter(u => u.active === true);
+    if (this.activeTab === 'Inativos') result = result.filter(u => u.active === false);
+    if (this.termoBusca) result = result.filter(u => this.match(this.termoBusca, u.fullName, u.email, u.role, u.department));
+    return result;
+  }
+
+  private match(term: string, ...fields: (string | number | undefined | null)[]): boolean {
+    const t = term.toLowerCase();
+    return fields.some(f => f?.toString().toLowerCase().includes(t));
   }
 
   get totalPaginas() {
@@ -151,8 +161,15 @@ export class ConfigsHome implements OnInit {
       primaryButtonLabel: 'Novo Usuário',
       primaryButtonIcon: 'ph ph-plus'
     });
+    this.searchSub = this.headerService.search$.subscribe(t => {
+      this.termoBusca = t;
+      this.paginaAtual = 1;
+      this.cdr.detectChanges();
+    });
     this.loadUsers();
   }
+
+  ngOnDestroy(): void { this.searchSub?.unsubscribe(); }
 
   loadUsers(): void {
     this.userService.getAll().subscribe({

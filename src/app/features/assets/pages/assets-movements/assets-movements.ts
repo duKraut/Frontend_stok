@@ -1,5 +1,6 @@
-import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs';
 import { AuthService } from '../../../../core/services/auth.service';
 import { HeaderService } from '../../../../core/services/header';
 import { AssetMovement, AssetMovementService } from '../../services/asset-movement.service';
@@ -11,12 +12,14 @@ import { AssetsMovementsForm } from '../assets-movements-form/assets-movements-f
   templateUrl: './assets-movements.html',
   styleUrl: './assets-movements.css',
 })
-export class AssetsMovements implements OnInit {
+export class AssetsMovements implements OnInit, OnDestroy {
   @ViewChild('movForm') movForm?: AssetsMovementsForm;
 
   todasMovimentacoes: AssetMovement[] = [];
   filtroAssetId = '';
   filtroAssetName = '';
+  termoBusca = '';
+  private searchSub?: Subscription;
 
   activeTab: 'Todos' | 'Transferência' | 'Manutenção' | 'Estado' | 'Baixas' = 'Todos';
   paginaAtual = 1;
@@ -30,11 +33,18 @@ export class AssetsMovements implements OnInit {
   successLeaving = false;
 
   get filtradas() {
-    if (this.activeTab === 'Transferência') return this.todasMovimentacoes.filter(m => m.type === 'TRANSFERENCIA');
-    if (this.activeTab === 'Manutenção')   return this.todasMovimentacoes.filter(m => m.type === 'MANUTENCAO');
-    if (this.activeTab === 'Estado')       return this.todasMovimentacoes.filter(m => m.type === 'ESTADO' && !m.decommission);
-    if (this.activeTab === 'Baixas')       return this.todasMovimentacoes.filter(m => m.type === 'ESTADO' && m.decommission);
-    return this.todasMovimentacoes;
+    let result = this.todasMovimentacoes;
+    if (this.activeTab === 'Transferência') result = result.filter(m => m.type === 'TRANSFERENCIA');
+    else if (this.activeTab === 'Manutenção') result = result.filter(m => m.type === 'MANUTENCAO');
+    else if (this.activeTab === 'Estado')     result = result.filter(m => m.type === 'ESTADO' && !m.decommission);
+    else if (this.activeTab === 'Baixas')     result = result.filter(m => m.type === 'ESTADO' && m.decommission);
+    if (this.termoBusca) result = result.filter(m => this.match(this.termoBusca, m.asset?.name, m.responsible, m.fromDepartment, m.toDepartment, m.serviceProvider, m.observations));
+    return result;
+  }
+
+  private match(term: string, ...fields: (string | number | undefined | null)[]): boolean {
+    const t = term.toLowerCase();
+    return fields.some(f => f?.toString().toLowerCase().includes(t));
   }
 
   get totalPaginas() { return Math.max(1, Math.ceil(this.filtradas.length / this.itensPorPagina)); }
@@ -133,6 +143,11 @@ export class AssetsMovements implements OnInit {
       primaryButtonLabel: 'Nova Movimentação',
       primaryButtonIcon: 'ph ph-arrows-left-right'
     });
+    this.searchSub = this.headerService.search$.subscribe(t => {
+      this.termoBusca = t;
+      this.paginaAtual = 1;
+      this.cdr.detectChanges();
+    });
 
     this.route.queryParams.subscribe(params => {
       this.filtroAssetId   = params['assetId']   ?? '';
@@ -142,6 +157,8 @@ export class AssetsMovements implements OnInit {
       this.cdr.detectChanges();
     });
   }
+
+  ngOnDestroy(): void { this.searchSub?.unsubscribe(); }
 
   loadMovements(assetId?: string): void {
     const req$ = assetId

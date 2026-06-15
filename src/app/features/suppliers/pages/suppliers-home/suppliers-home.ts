@@ -1,4 +1,5 @@
-import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { AuthService } from '../../../../core/services/auth.service';
 import { HeaderService } from '../../../../core/services/header';
 import { SupplierService, Supplier } from '../../services/supplier.service';
@@ -12,10 +13,12 @@ type SupplierFormMode = 'create' | 'edit' | 'view';
   templateUrl: './suppliers-home.html',
   styleUrl: './suppliers-home.css',
 })
-export class SuppliersHome implements OnInit {
+export class SuppliersHome implements OnInit, OnDestroy {
   @ViewChild('supplierForm') supplierForm?: SuppliersForm;
 
   allSuppliers: Supplier[] = [];
+  termoBusca = '';
+  private searchSub?: Subscription;
 
   activeTab: 'Todos' | 'Ativos' | 'Inativos' = 'Todos';
   paginaAtual = 1;
@@ -29,9 +32,16 @@ export class SuppliersHome implements OnInit {
   successLeaving = false;
 
   get filteredSuppliers() {
-    if (this.activeTab === 'Ativos') return this.allSuppliers.filter(s => s.active === true);
-    if (this.activeTab === 'Inativos') return this.allSuppliers.filter(s => s.active === false);
-    return this.allSuppliers;
+    let result = this.allSuppliers;
+    if (this.activeTab === 'Ativos') result = result.filter(s => s.active === true);
+    if (this.activeTab === 'Inativos') result = result.filter(s => s.active === false);
+    if (this.termoBusca) result = result.filter(s => this.match(this.termoBusca, s.name, s.document, s.category, s.contactName, s.email, s.city));
+    return result;
+  }
+
+  private match(term: string, ...fields: (string | number | undefined | null)[]): boolean {
+    const t = term.toLowerCase();
+    return fields.some(f => f?.toString().toLowerCase().includes(t));
   }
 
   get totalAtivos() { return this.allSuppliers.filter(s => s.active === true).length; }
@@ -136,9 +146,15 @@ export class SuppliersHome implements OnInit {
       primaryButtonLabel: 'Novo Fornecedor',
       primaryButtonIcon: 'ph ph-plus'
     });
-
+    this.searchSub = this.headerService.search$.subscribe(t => {
+      this.termoBusca = t;
+      this.paginaAtual = 1;
+      this.cdr.detectChanges();
+    });
     this.loadSuppliers();
   }
+
+  ngOnDestroy(): void { this.searchSub?.unsubscribe(); }
 
   loadSuppliers(): void {
     this.supplierService.getAll().subscribe({

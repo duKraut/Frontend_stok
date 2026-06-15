@@ -2,10 +2,11 @@
 
     <div class="search-box" *ngIf="config.showSearch">
         <i class="ph ph-magnifying-glass"></i>
-
         <input
             type="text"
             [placeholder]="config.searchPlaceholder"
+            [value]="(headerService.search$ | async) ?? ''"
+            (input)="headerService.setSearch($any($event.target).value)"
         />
     </div>
 

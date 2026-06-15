@@ -1,59 +1,152 @@
-# Tcc
+# stok — Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.1.4.
+> Interface web do sistema **Stok**, desenvolvida com Angular para gerenciamento de patrimônio, almoxarifado e fornecedores.
 
-## Development server
+---
 
-To start a local development server, run:
+## Tecnologias
+
+| Tecnologia | Versão |
+|---|---|
+| Angular | 21.1.0 |
+| TypeScript | 5.9 |
+| Node.js | 20+ |
+| npm | 11.8.0 |
+| pdfmake | 0.3.11 |
+| RxJS | 7.8 |
+
+---
+
+## Pré-requisitos
+
+- **Node.js 20+** — [Instalar](https://nodejs.org/)
+- **npm 11+** — incluído com o Node.js
+- **Angular CLI 21** — instalado automaticamente via `npx` ou globalmente:
 
 ```bash
+npm install -g @angular/cli@21
+```
+
+- **Backend rodando** em `http://localhost:8080` — veja o README do repositório `stok-backend`
+
+---
+
+## Instalação
+
+```bash
+# Clone o repositório
+git clone <url-do-repositorio>
+cd <pasta-do-projeto>
+
+# Instale as dependências
+npm install
+```
+
+---
+
+## Como rodar
+
+### Modo desenvolvimento
+
+```bash
+npm start
+# ou
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+A aplicação estará disponível em **`http://localhost:4200`**.
 
-## Code scaffolding
+> A aplicação recarrega automaticamente ao salvar qualquer arquivo fonte.
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+### Build para produção
 
 ```bash
-ng generate --help
+npm run build
 ```
 
-## Building
+Os arquivos compilados são gerados em `dist/`. Para servir em produção, use um servidor web como Nginx ou Apache apontando para essa pasta.
 
-To build the project run:
+---
 
-```bash
-ng build
+## Primeiro acesso
+
+Com o backend rodando, acesse `http://localhost:4200` e faça login com as credenciais padrão:
+
+| Campo | Valor |
+|---|---|
+| E-mail | `admin@stok.com` |
+| Senha | `Admin@123` |
+
+---
+
+## Módulos e telas
+
+| Rota | Módulo | Descrição | Acesso |
+|---|---|---|---|
+| `/login` | Login | Autenticação | Público |
+| `/dashboard` | Dashboard | Gráficos de entradas/saídas e resumo de bens | Qualquer usuário |
+| `/suppliers` | Fornecedores | Listagem, cadastro e edição de fornecedores | Módulo FORNECEDORES |
+| `/assets` | Patrimônio | Listagem e cadastro de bens patrimoniais | Módulo PATRIMONIO |
+| `/assets/movements` | Patrimônio | Transferências, manutenções e baixas de bens | Módulo PATRIMONIO |
+| `/inventory` | Almoxarifado | Listagem e cadastro de itens de estoque | Módulo ALMOXARIFADO |
+| `/inventory/movements` | Almoxarifado | Entradas e saídas de estoque | Módulo ALMOXARIFADO |
+| `/reports` | Relatórios | Geração de relatórios em PDF | Módulo RELATORIOS |
+| `/configs` | Configurações | Gerenciamento de usuários e permissões | Somente Administrador |
+| `/profile` | Perfil | Alteração de e-mail e senha do usuário logado | Qualquer usuário |
+
+---
+
+## Perfis e permissões
+
+| Perfil | Visualizar | Criar/Editar | Desativar | Gerenciar usuários |
+|---|---|---|---|---|
+| **Administrador** | ✅ | ✅ | ✅ | ✅ |
+| **Gerente** | ✅ | ✅ | ✅ | ❌ |
+| **Operador** | ✅ | ✅ | ❌ | ❌ |
+| **Visualizador** | ✅ | ❌ | ❌ | ❌ |
+
+> O acesso a cada módulo é controlado individualmente pelo Administrador na tela de Configurações.
+
+---
+
+## Estrutura do projeto
+
+```
+src/app/
+├── core/
+│   ├── components/        # Header e Sidebar (compartilhados)
+│   ├── guards/            # AuthGuard (login) e ModuleGuard (permissão de módulo)
+│   ├── interceptors/      # AuthInterceptor — injeta o JWT em todas as requisições
+│   └── services/          # AuthService, HeaderService
+├── features/
+│   ├── login/             # Tela de login e recuperação de senha
+│   ├── dashboard/         # Gráficos e resumo
+│   ├── suppliers/         # Fornecedores
+│   ├── assets/            # Patrimônio (bens e movimentações)
+│   ├── inventory/         # Almoxarifado (itens e movimentações)
+│   ├── reports/           # Relatórios PDF
+│   ├── configs/           # Gerenciamento de usuários
+│   └── profile/           # Perfil do usuário logado
+├── layouts/
+│   └── private-layout/    # Layout com sidebar e header (telas autenticadas)
+└── shared/                # Componentes e pipes compartilhados
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+---
 
-## Running unit tests
+## Autenticação
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+- O token JWT é armazenado no `localStorage` após o login.
+- O `AuthInterceptor` injeta o header `Authorization: Bearer <token>` em todas as requisições HTTP.
+- O `AuthGuard` redireciona para `/login` caso o usuário não esteja autenticado.
+- O `ModuleGuard` verifica se o usuário tem permissão para acessar o módulo da rota.
 
-```bash
-ng test
+---
+
+## Variável de ambiente (URL do backend)
+
+A URL base da API está configurada no `AuthService` (`src/app/core/services/auth.service.ts`). Se o backend rodar em uma porta ou host diferente, altere a constante `API_URL` nesse arquivo.
+
+```typescript
+private readonly API_URL = 'http://localhost:8080';
 ```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
