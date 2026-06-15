@@ -27,7 +27,7 @@
 npm install -g @angular/cli@21
 ```
 
-- **Backend rodando** em `http://localhost:8080` — veja o README do repositório `stok-backend`
+- **Backend rodando** em `http://localhost:8080` — veja o README do repositório `stok-backend` [clicando aqui](https://github.com/duKraut/backend-stok)
 
 ---
 
