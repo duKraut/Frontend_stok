@@ -35,8 +35,8 @@ npm install -g @angular/cli@21
 
 ```bash
 # Clone o repositório
-git clone <url-do-repositorio>
-cd <pasta-do-projeto>
+git clone https://github.com/duKraut/Frontend_stok.git
+cd Frontend_stok
 
 # Instale as dependências
 npm install
