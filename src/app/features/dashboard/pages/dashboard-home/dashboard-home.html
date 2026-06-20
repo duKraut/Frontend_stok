@@ -58,11 +58,11 @@
           <div class="bar-col" *ngFor="let m of chartMonths">
             <div class="bars">
               <div class="bar-wrap">
-                <span class="bar-value">{{ m.consumo }}</span>
+                <span class="bar-value" *ngIf="m.consumo > 0">{{ m.consumo }}</span>
                 <div class="bar consumption" [style.height.%]="m.consumoPct"></div>
               </div>
               <div class="bar-wrap">
-                <span class="bar-value">{{ m.aquisicao }}</span>
+                <span class="bar-value" *ngIf="m.aquisicao > 0">{{ m.aquisicao }}</span>
                 <div class="bar acquisition" [style.height.%]="m.aquisicaoPct"></div>
               </div>
             </div>

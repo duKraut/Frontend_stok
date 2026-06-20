@@ -84,6 +84,7 @@
   flex: 1;
   display: flex;
   gap: 12px;
+  min-height: 0;
 }
 
 .y-axis {
@@ -103,6 +104,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
+  min-height: 0;
 }
 
 .gridlines {
@@ -123,11 +125,12 @@
 
 .chart-bars {
   display: flex;
-  align-items: flex-end;
+  align-items: stretch;
   gap: 12px;
   flex: 1;
   position: relative;
   z-index: 1;
+  min-height: 0;
 }
 
 .bar-col {
@@ -136,7 +139,6 @@
   align-items: center;
   gap: 6px;
   flex: 1;
-  height: 200px;
 }
 
 .bars {
@@ -145,6 +147,7 @@
   gap: 4px;
   flex: 1;
   width: 100%;
+  min-height: 0;
 }
 
 .bar-wrap {

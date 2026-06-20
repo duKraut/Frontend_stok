@@ -106,19 +106,23 @@ export class DashboardHome implements OnInit {
 
     const maxVal = Math.max(...months.map(m => Math.max(m.consumo, m.aquisicao)), 1);
 
+    const tickCount = 8;
+    const rawStep = (maxVal * 1.25) / (tickCount - 1);
+    const magnitude = Math.pow(10, Math.floor(Math.log10(rawStep)));
+    const normalized = rawStep / magnitude;
+    const step = normalized <= 1 ? magnitude
+               : normalized <= 2 ? 2 * magnitude
+               : normalized <= 5 ? 5 * magnitude
+               : 10 * magnitude;
+    const ceiling = step * (tickCount - 1);
+
     months.forEach(m => {
-      m.consumoPct = Math.round((m.consumo / maxVal) * 100);
-      m.aquisicaoPct = Math.round((m.aquisicao / maxVal) * 100);
+      m.consumoPct = Math.round((m.consumo / ceiling) * 100);
+      m.aquisicaoPct = Math.round((m.aquisicao / ceiling) * 100);
     });
 
     this.chartMonths = months;
-    this.chartYTicks = [
-      maxVal,
-      Math.round(maxVal * 0.75),
-      Math.round(maxVal * 0.5),
-      Math.round(maxVal * 0.25),
-      0
-    ];
+    this.chartYTicks = Array.from({ length: tickCount }, (_, i) => ceiling - i * step);
   }
 
   navigateTo(action: CriticalAction): void {
