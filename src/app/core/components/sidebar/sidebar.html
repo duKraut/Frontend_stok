@@ -43,3 +43,14 @@
         </button>
     </div>
 </aside>
+
+<div class="confirm-logout-overlay" *ngIf="showLogoutConfirm">
+  <div class="confirm-logout-box">
+    <i class="ph-fill ph-warning"></i>
+    <p>Deseja realmente sair do sistema?</p>
+    <div class="confirm-logout-actions">
+      <button class="btn-cancel-logout" type="button" (click)="cancelLogout()">Cancelar</button>
+      <button class="btn-confirm-logout" type="button" (click)="confirmLogout()">Sair</button>
+    </div>
+  </div>
+</div>

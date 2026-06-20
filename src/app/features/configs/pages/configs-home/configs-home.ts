@@ -1,5 +1,4 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { HeaderService } from '../../../../core/services/header';
 import { UserService, User } from '../../services/user.service';
 import { ConfigsForm } from '../configs-form/configs-form';
@@ -12,12 +11,11 @@ type UserFormMode = 'create' | 'edit' | 'view';
   templateUrl: './configs-home.html',
   styleUrl: './configs-home.css',
 })
-export class ConfigsHome implements OnInit, OnDestroy {
+export class ConfigsHome implements OnInit {
   @ViewChild('userForm') userForm?: ConfigsForm;
 
   allUsers: User[] = [];
   termoBusca = '';
-  private searchSub?: Subscription;
 
   activeTab: 'Todos' | 'Ativos' | 'Inativos' = 'Todos';
   paginaAtual = 1;
@@ -154,22 +152,15 @@ export class ConfigsHome implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef
   ) {}
 
-  ngOnInit(): void {
-    this.headerService.setConfig({
-      searchPlaceholder: 'Buscar usuário, e-mail ou perfil...',
-      showSearch: true,
-      primaryButtonLabel: 'Novo Usuário',
-      primaryButtonIcon: 'ph ph-plus'
-    });
-    this.searchSub = this.headerService.search$.subscribe(t => {
-      this.termoBusca = t;
-      this.paginaAtual = 1;
-      this.cdr.detectChanges();
-    });
-    this.loadUsers();
+  onSearch(event: Event): void {
+    this.termoBusca = (event.target as HTMLInputElement).value;
+    this.paginaAtual = 1;
   }
 
-  ngOnDestroy(): void { this.searchSub?.unsubscribe(); }
+  ngOnInit(): void {
+    this.headerService.setConfig({ searchPlaceholder: '', showSearch: false, hidden: true });
+    this.loadUsers();
+  }
 
   loadUsers(): void {
     this.userService.getAll().subscribe({

@@ -10,6 +10,13 @@
       </div>
     </div>
   </div>
+  <div class="search-area">
+    <div class="search-box-inline">
+      <i class="ph ph-magnifying-glass"></i>
+      <input type="text" placeholder="Buscar item, NF ou responsável..."
+             [value]="termoBusca" (input)="onSearch($event)" />
+    </div>
+  </div>
   <div class="header-actions-btn">
     <button *ngIf="canEdit" class="btn-primary" type="button" (click)="openCreate()">
       <i class="ph ph-arrows-left-right"></i><span> Nova Movimentação</span>
@@ -54,6 +61,7 @@
   <table class="data-table">
     <thead>
       <tr>
+        <th>CÓDIGO</th>
         <th>TIPO</th>
         <th>ITEM</th>
         <th>QUANTIDADE</th>
@@ -65,6 +73,7 @@
     </thead>
     <tbody>
       <tr *ngFor="let mov of itensExibidos">
+        <td><span class="mov-id">{{ mov.codigo }}</span></td>
         <td>
           <span class="tipo-badge" [ngClass]="mov.type === 'ENTRADA' ? 'tipo-entrada' : 'tipo-saida'">
             <i [ngClass]="mov.type === 'ENTRADA' ? 'ph ph-arrow-circle-down' : 'ph ph-arrow-circle-up'"></i>

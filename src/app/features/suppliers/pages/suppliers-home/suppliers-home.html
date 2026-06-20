@@ -3,6 +3,13 @@
         <h1>Fornecedores</h1>
         <p>Gerenciamento e cadastro de Fornecedores</p>
     </div>
+    <div class="search-area">
+        <div class="search-box-inline">
+            <i class="ph ph-magnifying-glass"></i>
+            <input type="text" placeholder="Buscar fornecedor, CNPJ ou categoria..."
+                   [value]="termoBusca" (input)="onSearch($event)" />
+        </div>
+    </div>
     <div class="header-actions-btn">
         <button *ngIf="canEdit" class="btn-primary" type="button" (click)="openCreateSupplier()"><i class="ph ph-plus"></i><span> Novo Fornecedor</span></button>
     </div>

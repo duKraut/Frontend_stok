@@ -1,5 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { AuthService } from '../../../../core/services/auth.service';
 import { HeaderService } from '../../../../core/services/header';
 import { SupplierService, Supplier } from '../../services/supplier.service';
@@ -13,12 +12,11 @@ type SupplierFormMode = 'create' | 'edit' | 'view';
   templateUrl: './suppliers-home.html',
   styleUrl: './suppliers-home.css',
 })
-export class SuppliersHome implements OnInit, OnDestroy {
+export class SuppliersHome implements OnInit {
   @ViewChild('supplierForm') supplierForm?: SuppliersForm;
 
   allSuppliers: Supplier[] = [];
   termoBusca = '';
-  private searchSub?: Subscription;
 
   activeTab: 'Todos' | 'Ativos' | 'Inativos' = 'Todos';
   paginaAtual = 1;
@@ -139,22 +137,15 @@ export class SuppliersHome implements OnInit, OnDestroy {
     private auth: AuthService
   ) {}
 
-  ngOnInit(): void {
-    this.headerService.setConfig({
-      searchPlaceholder: 'Buscar Fornecedor, CNPJ ou categoria...',
-      showSearch: true,
-      primaryButtonLabel: 'Novo Fornecedor',
-      primaryButtonIcon: 'ph ph-plus'
-    });
-    this.searchSub = this.headerService.search$.subscribe(t => {
-      this.termoBusca = t;
-      this.paginaAtual = 1;
-      this.cdr.detectChanges();
-    });
-    this.loadSuppliers();
+  onSearch(event: Event): void {
+    this.termoBusca = (event.target as HTMLInputElement).value;
+    this.paginaAtual = 1;
   }
 
-  ngOnDestroy(): void { this.searchSub?.unsubscribe(); }
+  ngOnInit(): void {
+    this.headerService.setConfig({ searchPlaceholder: '', showSearch: false, hidden: true });
+    this.loadSuppliers();
+  }
 
   loadSuppliers(): void {
     this.supplierService.getAll().subscribe({

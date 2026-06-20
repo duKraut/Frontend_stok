@@ -3,6 +3,16 @@
     <h1>Gestão de Almoxarifado</h1>
     <p>Controle e monitoramento de itens de consumo e níveis de estoque.</p>
   </div>
+  <div class="search-area">
+    <div class="search-box-inline">
+      <i class="ph ph-magnifying-glass"></i>
+      <input
+        type="text"
+        placeholder="Buscar item, marca ou categoria..."
+        [value]="termoBusca"
+        (input)="onSearch($event)" />
+    </div>
+  </div>
   <div class="header-actions-btn">
     <button class="btn-outline" type="button" (click)="goToMovimentacoes()">
       <i class="ph ph-arrows-left-right"></i><span>Movimentações</span>

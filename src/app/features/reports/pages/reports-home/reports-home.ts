@@ -78,7 +78,7 @@ export class ReportsHome implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.headerService.setConfig({ showSearch: false, searchPlaceholder: '' });
+    this.headerService.setConfig({ showSearch: false, searchPlaceholder: '', hidden: true });
   }
 
   selectReport(type: 'movements' | 'departments' | 'critical'): void {

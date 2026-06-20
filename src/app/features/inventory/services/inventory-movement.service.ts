@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 
 export interface InventoryMovement {
   id?: string;
+  codigo?: number;
   item?: { id: string; name?: string; codigo?: number; unit?: string };
   type: 'ENTRADA' | 'SAIDA';
   quantity: number;

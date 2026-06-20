@@ -3,6 +3,13 @@
     <h1>Usuários e Acessos</h1>
     <p>Cadastro de usuários e gerenciamento de permissões do sistema</p>
   </div>
+  <div class="search-area">
+    <div class="search-box-inline">
+      <i class="ph ph-magnifying-glass"></i>
+      <input type="text" placeholder="Buscar usuário, e-mail ou perfil..."
+             [value]="termoBusca" (input)="onSearch($event)" />
+    </div>
+  </div>
   <div class="header-actions-btn">
     <button class="btn-primary" type="button" (click)="openCreateUser()">
       <i class="ph ph-plus"></i><span> Novo Usuário</span>

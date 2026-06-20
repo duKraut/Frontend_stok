@@ -9,6 +9,7 @@ import { AuthService, StoredUser } from '../../services/auth.service';
 })
 export class Sidebar implements OnInit {
   user: StoredUser | null = null;
+  showLogoutConfirm = false;
 
   constructor(private auth: AuthService) {}
 
@@ -44,6 +45,15 @@ export class Sidebar implements OnInit {
   }
 
   logout(): void {
+    this.showLogoutConfirm = true;
+  }
+
+  confirmLogout(): void {
+    this.showLogoutConfirm = false;
     this.auth.logout();
+  }
+
+  cancelLogout(): void {
+    this.showLogoutConfirm = false;
   }
 }

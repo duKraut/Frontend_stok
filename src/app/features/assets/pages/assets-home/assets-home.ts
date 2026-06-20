@@ -1,5 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, ViewChild } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Component, OnInit, ChangeDetectorRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
 import { HeaderService } from '../../../../core/services/header';
@@ -14,12 +13,11 @@ type BemFormMode = 'create' | 'edit' | 'view';
   templateUrl: './assets-home.html',
   styleUrl: './assets-home.css',
 })
-export class AssetsHome implements OnInit, OnDestroy {
+export class AssetsHome implements OnInit {
   @ViewChild('bemForm') bemForm?: AssetsForm;
 
   allAssets: Asset[] = [];
   termoBusca = '';
-  private searchSub?: Subscription;
 
   activeTab: 'Todos' | 'Excelente' | 'Bom' | 'Regular' | 'Manutenção' | 'Substituir' | 'Baixado' | 'Ativos' = 'Todos';
   paginaAtual = 1;
@@ -129,22 +127,15 @@ export class AssetsHome implements OnInit, OnDestroy {
 
   constructor(private headerService: HeaderService, private router: Router, private assetService: AssetService, private cdr: ChangeDetectorRef, private auth: AuthService) {}
 
-  ngOnInit(): void {
-    this.headerService.setConfig({
-      searchPlaceholder: 'Buscar tombamento, descrição ou categoria...',
-      showSearch: true,
-      primaryButtonLabel: 'Novo Bem',
-      primaryButtonIcon: 'ph ph-plus'
-    });
-    this.searchSub = this.headerService.search$.subscribe(t => {
-      this.termoBusca = t;
-      this.paginaAtual = 1;
-      this.cdr.detectChanges();
-    });
-    this.loadAssets();
+  onSearch(event: Event): void {
+    this.termoBusca = (event.target as HTMLInputElement).value;
+    this.paginaAtual = 1;
   }
 
-  ngOnDestroy(): void { this.searchSub?.unsubscribe(); }
+  ngOnInit(): void {
+    this.headerService.setConfig({ searchPlaceholder: '', showSearch: false, hidden: true });
+    this.loadAssets();
+  }
 
   loadAssets(): void {
     this.assetService.getAll().subscribe({

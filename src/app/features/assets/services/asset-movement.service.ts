@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 
 export interface AssetMovement {
   id?: string;
+  codigo?: number;
   asset?: any;
   type: 'TRANSFERENCIA' | 'MANUTENCAO' | 'ESTADO';
   fromDepartment: string;

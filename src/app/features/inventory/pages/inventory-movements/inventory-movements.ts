@@ -1,6 +1,5 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs';
 import { AuthService } from '../../../../core/services/auth.service';
 import { HeaderService } from '../../../../core/services/header';
 import { InventoryMovement, InventoryMovementService } from '../../services/inventory-movement.service';
@@ -14,7 +13,7 @@ type MovFormMode = 'create' | 'view';
   templateUrl: './inventory-movements.html',
   styleUrl: './inventory-movements.css',
 })
-export class InventoryMovements implements OnInit, OnDestroy {
+export class InventoryMovements implements OnInit {
   @ViewChild('movForm') movForm?: InventoryMovementsForm;
 
   todasMovimentacoes: InventoryMovement[] = [];
@@ -22,7 +21,6 @@ export class InventoryMovements implements OnInit, OnDestroy {
   filtroItemId = '';
   filtroItemName = '';
   termoBusca = '';
-  private searchSub?: Subscription;
 
   activeTab: 'Todos' | 'Entrada' | 'Saída' = 'Todos';
   paginaAtual = 1;
@@ -99,7 +97,10 @@ export class InventoryMovements implements OnInit, OnDestroy {
     this.loadMovements(this.filtroItemId || undefined);
   }
 
-  ngOnDestroy(): void { this.searchSub?.unsubscribe(); }
+  onSearch(event: Event): void {
+    this.termoBusca = (event.target as HTMLInputElement).value;
+    this.paginaAtual = 1;
+  }
 
   loadMovements(itemId?: string): void {
     const obs = itemId
@@ -126,17 +127,7 @@ export class InventoryMovements implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.headerService.setConfig({
-      searchPlaceholder: 'Buscar por item, NF ou responsável...',
-      showSearch: true,
-      primaryButtonLabel: 'Nova Movimentação',
-      primaryButtonIcon: 'ph ph-arrows-left-right'
-    });
-    this.searchSub = this.headerService.search$.subscribe(t => {
-      this.termoBusca = t;
-      this.paginaAtual = 1;
-      this.cdr.detectChanges();
-    });
+    this.headerService.setConfig({ searchPlaceholder: '', showSearch: false, hidden: true });
 
     this.route.queryParams.subscribe(params => {
       this.filtroItemId = params['itemId'] ?? '';

@@ -1,6 +1,5 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
 import { AuthService } from '../../../../core/services/auth.service';
 import { HeaderService } from '../../../../core/services/header';
 import { InventoryItem, InventoryService } from '../../services/inventory.service';
@@ -14,12 +13,11 @@ type ItemFormMode = 'create' | 'edit' | 'view';
   templateUrl: './inventory-home.html',
   styleUrl: './inventory-home.css',
 })
-export class InventoryHome implements OnInit, OnDestroy {
+export class InventoryHome implements OnInit {
   @ViewChild('itemForm') itemForm?: InventoryForm;
 
   todosItens: InventoryItem[] = [];
   termoBusca = '';
-  private searchSub?: Subscription;
 
   activeTab: 'Todos' | 'Em Estoque' | 'Estoque Baixo' | 'Esgotados' | 'Ativos' = 'Todos';
   paginaAtual = 1;
@@ -151,22 +149,15 @@ export class InventoryHome implements OnInit, OnDestroy {
     private auth: AuthService
   ) {}
 
-  ngOnInit(): void {
-    this.headerService.setConfig({
-      searchPlaceholder: 'Buscar item, marca ou categoria...',
-      showSearch: true,
-      primaryButtonLabel: 'Novo Item',
-      primaryButtonIcon: 'ph ph-plus'
-    });
-    this.searchSub = this.headerService.search$.subscribe(t => {
-      this.termoBusca = t;
-      this.paginaAtual = 1;
-      this.cdr.detectChanges();
-    });
-    this.loadItens();
+  onSearch(event: Event): void {
+    this.termoBusca = (event.target as HTMLInputElement).value;
+    this.paginaAtual = 1;
   }
 
-  ngOnDestroy(): void { this.searchSub?.unsubscribe(); }
+  ngOnInit(): void {
+    this.headerService.setConfig({ searchPlaceholder: '', showSearch: false, hidden: true });
+    this.loadItens();
+  }
 
   loadItens(): void {
     this.inventoryService.getAll().subscribe({

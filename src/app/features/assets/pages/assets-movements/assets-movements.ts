@@ -1,6 +1,5 @@
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Subscription } from 'rxjs';
 import { AuthService } from '../../../../core/services/auth.service';
 import { HeaderService } from '../../../../core/services/header';
 import { AssetMovement, AssetMovementService } from '../../services/asset-movement.service';
@@ -12,14 +11,13 @@ import { AssetsMovementsForm } from '../assets-movements-form/assets-movements-f
   templateUrl: './assets-movements.html',
   styleUrl: './assets-movements.css',
 })
-export class AssetsMovements implements OnInit, OnDestroy {
+export class AssetsMovements implements OnInit {
   @ViewChild('movForm') movForm?: AssetsMovementsForm;
 
   todasMovimentacoes: AssetMovement[] = [];
   filtroAssetId = '';
   filtroAssetName = '';
   termoBusca = '';
-  private searchSub?: Subscription;
 
   activeTab: 'Todos' | 'Transferência' | 'Manutenção' | 'Estado' | 'Baixas' = 'Todos';
   paginaAtual = 1;
@@ -136,18 +134,13 @@ export class AssetsMovements implements OnInit, OnDestroy {
     private auth: AuthService
   ) {}
 
+  onSearch(event: Event): void {
+    this.termoBusca = (event.target as HTMLInputElement).value;
+    this.paginaAtual = 1;
+  }
+
   ngOnInit(): void {
-    this.headerService.setConfig({
-      searchPlaceholder: 'Buscar por bem, tombamento ou responsável...',
-      showSearch: true,
-      primaryButtonLabel: 'Nova Movimentação',
-      primaryButtonIcon: 'ph ph-arrows-left-right'
-    });
-    this.searchSub = this.headerService.search$.subscribe(t => {
-      this.termoBusca = t;
-      this.paginaAtual = 1;
-      this.cdr.detectChanges();
-    });
+    this.headerService.setConfig({ searchPlaceholder: '', showSearch: false, hidden: true });
 
     this.route.queryParams.subscribe(params => {
       this.filtroAssetId   = params['assetId']   ?? '';
@@ -157,8 +150,6 @@ export class AssetsMovements implements OnInit, OnDestroy {
       this.cdr.detectChanges();
     });
   }
-
-  ngOnDestroy(): void { this.searchSub?.unsubscribe(); }
 
   loadMovements(assetId?: string): void {
     const req$ = assetId
