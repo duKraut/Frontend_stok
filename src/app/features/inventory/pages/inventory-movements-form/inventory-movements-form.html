@@ -33,7 +33,6 @@
 
     <p class="required-hint" *ngIf="mode === 'create'">Campos com <span class="required-mark">*</span> são obrigatórios</p>
 
-    <!-- Seção 01: Item e Quantidade -->
     <section class="form-card">
       <div class="form-section-header">
         <span class="section-number">01</span>
@@ -90,7 +89,6 @@
       </div>
     </section>
 
-    <!-- Seção 02: Dados de Entrada -->
     <section class="form-card entrada-card" *ngIf="tipoSelecionado === 'ENTRADA'">
       <div class="form-section-header">
         <span class="section-number section-entrada">02</span>
@@ -143,7 +141,6 @@
       </div>
     </section>
 
-    <!-- Seção 02: Dados de Saída -->
     <section class="form-card saida-card" *ngIf="tipoSelecionado === 'SAIDA'">
       <div class="form-section-header">
         <span class="section-number section-saida">02</span>
@@ -164,7 +161,6 @@
       </div>
     </section>
 
-    <!-- Seção 03: Observações -->
     <section class="form-card" *ngIf="mode === 'create' || formData.observations">
       <div class="form-section-header">
         <span class="section-number">03</span>

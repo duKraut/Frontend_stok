@@ -38,7 +38,6 @@
 
     <p class="required-hint" *ngIf="mode === 'create'">Campos com <span class="required-mark">*</span> são obrigatórios</p>
 
-    <!-- Seção 01: Bem e data -->
     <section class="form-card">
       <div class="form-section-header">
         <span class="section-number">01</span>
@@ -82,7 +81,6 @@
       </div>
     </section>
 
-    <!-- Seção 02: Transferência -->
     <section class="form-card" *ngIf="tipoSelecionado === 'TRANSFERENCIA'">
       <div class="form-section-header">
         <span class="section-number">02</span>
@@ -117,7 +115,6 @@
       </div>
     </section>
 
-    <!-- Seção 02: Manutenção -->
     <section class="form-card" *ngIf="tipoSelecionado === 'MANUTENCAO'">
       <div class="form-section-header">
         <span class="section-number">02</span>
@@ -195,7 +192,6 @@
       </div>
     </section>
 
-    <!-- Seção 02: Estado -->
     <section class="form-card" *ngIf="tipoSelecionado === 'ESTADO'">
       <div class="form-section-header">
         <span class="section-number">02</span>
@@ -216,7 +212,6 @@
           </select>
         </div>
 
-        <!-- Campos de baixa — só aparecem ao selecionar Baixar -->
         <ng-container *ngIf="novoEstado === 'BAIXAR' || (mode === 'view' && formData.decommission)">
           <div class="form-group full">
             <div class="alert-baixa">
@@ -260,7 +255,6 @@
       </div>
     </section>
 
-    <!-- Seção 03: Observações -->
     <section class="form-card" *ngIf="tipoSelecionado !== 'TRANSFERENCIA' || (mode === 'view' && formData.observations)">
       <div class="form-section-header">
         <span class="section-number">03</span>

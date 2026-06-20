@@ -40,6 +40,7 @@
         <div class="form-group full">
           <label>E-mail <span class="required-mark" *ngIf="mode !== 'view'">*</span></label>
           <input type="email" placeholder="usuario@sistema.com" formControlName="email"
+                 name="email" autocomplete="username"
                  [class.input-error]="submitted && validationErrors.email" />
         </div>
 
@@ -64,11 +65,13 @@
           <div class="form-group">
             <label>Senha <span class="required-mark">*</span></label>
             <input type="password" placeholder="Mín. 6 caracteres" formControlName="password"
+                   name="password" autocomplete="current-password"
                    [class.input-error]="submitted && validationErrors.password" />
           </div>
           <div class="form-group">
             <label>Confirmar Senha <span class="required-mark">*</span></label>
             <input type="password" placeholder="Repita a senha" formControlName="confirm"
+                   autocomplete="new-password"
                    [class.input-error]="submitted && validationErrors.confirm" />
           </div>
         </ng-container>

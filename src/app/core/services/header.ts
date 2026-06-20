@@ -4,6 +4,7 @@ import { BehaviorSubject } from 'rxjs';
 export interface HeaderConfig {
   searchPlaceholder: string;
   showSearch: boolean;
+  hidden?: boolean;
   primaryButtonLabel?: string;
   primaryButtonIcon?: string;
 }

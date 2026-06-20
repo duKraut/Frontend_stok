@@ -260,7 +260,6 @@ export class ReportsHome implements OnInit {
 
     let content: any[] = [];
 
-    /* ── RELATÓRIO 1: MOVIMENTAÇÕES ── */
     if (this.generatedReport === 'movements' && this.movementsData) {
       const d = this.movementsData;
       const pct = (n: number) => d.total > 0 ? `${Math.round((n / d.total) * 100)}%` : '0%';
@@ -333,7 +332,6 @@ export class ReportsHome implements OnInit {
         { text: obsText, style: 'obs' },
       ];
 
-    /* ── RELATÓRIO 2: DEPARTAMENTOS ── */
     } else if (this.generatedReport === 'departments' && this.departmentsData) {
       const d = this.departmentsData;
       const top3 = d.rows.slice(0, 3);
@@ -398,7 +396,6 @@ export class ReportsHome implements OnInit {
         { text: obsText, style: 'obs' },
       ];
 
-    /* ── RELATÓRIO 3: CRÍTICOS ── */
     } else if (this.generatedReport === 'critical' && this.criticalData) {
       const d = this.criticalData;
       const total = d.totalActive;

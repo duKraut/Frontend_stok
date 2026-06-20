@@ -52,7 +52,7 @@ export class DashboardHome implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.headerService.setConfig({ searchPlaceholder: '', showSearch: false });
+    this.headerService.setConfig({ searchPlaceholder: '', showSearch: false, hidden: true });
     this.loadData();
   }
 

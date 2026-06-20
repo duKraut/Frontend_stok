@@ -174,7 +174,7 @@ export class ConfigsHome implements OnInit, OnDestroy {
   loadUsers(): void {
     this.userService.getAll().subscribe({
       next: (data) => {
-        this.allUsers = data.sort((a, b) => a.fullName.localeCompare(b.fullName));
+        this.allUsers = data.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         this.paginaAtual = Math.min(this.paginaAtual, this.totalPaginas);
         this.cdr.detectChanges();
       },

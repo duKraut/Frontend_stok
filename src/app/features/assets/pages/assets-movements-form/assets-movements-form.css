@@ -69,7 +69,6 @@
   letter-spacing: 0.08em;
 }
 
-/* Toggle tipo */
 .tipo-toggle {
   display: flex;
   width: 100%;
@@ -103,7 +102,6 @@
   box-shadow: 0 8px 18px rgba(6, 59, 117, 0.22);
 }
 
-/* View badge */
 .tipo-view-badge {
   margin-bottom: 0;
 }
@@ -124,7 +122,6 @@
 .tipo-estado        { background: #dcfce7; color: #15803d; }
 .tipo-badge i { font-size: 18px; }
 
-/* Form cards */
 .form-card {
   background: #eef2ff;
   border-radius: 12px;
@@ -239,7 +236,6 @@
   cursor: not-allowed;
 }
 
-/* Footer */
 .drawer-footer {
   padding: 22px 28px;
   background: #ffffff;
@@ -270,7 +266,6 @@
 
 .btn-save:hover { background: #042a55; }
 
-/* Confirm close overlay */
 .confirm-close-overlay {
   position: absolute;
   inset: 0;

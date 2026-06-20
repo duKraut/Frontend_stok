@@ -5,7 +5,6 @@
   </div>
 </div>
 
-<!-- Cards de seleção -->
 <div class="report-cards">
 
   <div class="report-card" [class.selected]="selectedReport === 'movements'"
@@ -55,7 +54,6 @@
 
 </div>
 
-<!-- Controles -->
 <div class="report-controls">
   <div class="period-row" *ngIf="selectedReport === 'movements'">
     <label>Período</label>
@@ -75,7 +73,6 @@
   </button>
 </div>
 
-<!-- Relatório gerado -->
 <div class="report-output" *ngIf="generatedReport && !isLoading">
 
   <div class="output-toolbar">
@@ -93,7 +90,6 @@
 
   <div class="report-doc" id="print-area">
 
-    <!-- RELATÓRIO 1: MOVIMENTAÇÕES -->
     <ng-container *ngIf="generatedReport === 'movements' && movementsData">
       <div class="doc-header">
         <span class="doc-org">STOK — Sistema de Gestão Patrimonial</span>
@@ -168,7 +164,6 @@
       </div>
     </ng-container>
 
-    <!-- RELATÓRIO 2: DEPARTAMENTOS -->
     <ng-container *ngIf="generatedReport === 'departments' && departmentsData">
       <div class="doc-header">
         <span class="doc-org">STOK — Sistema de Gestão Patrimonial</span>
@@ -224,7 +219,6 @@
       </div>
     </ng-container>
 
-    <!-- RELATÓRIO 3: CRÍTICOS -->
     <ng-container *ngIf="generatedReport === 'critical' && criticalData">
       <div class="doc-header">
         <span class="doc-org">STOK — Sistema de Gestão Patrimonial</span>
